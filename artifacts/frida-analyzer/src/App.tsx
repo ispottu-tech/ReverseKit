@@ -3,13 +3,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "@/components/layout";
-import Dashboard from "@/pages/dashboard";
-import Processes from "@/pages/processes";
-import Applications from "@/pages/applications";
-import Sessions from "@/pages/sessions";
-import SessionDetail from "@/pages/session-detail";
-import Scripts from "@/pages/scripts";
+import Home from "@/pages/home";
 import BinaryAnalyzer from "@/pages/binary-analyzer";
+import HexViewer from "@/pages/hex-viewer";
+import Scripts from "@/pages/scripts";
+import Device from "@/pages/device";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -18,13 +16,11 @@ function Router() {
   return (
     <Layout>
       <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/processes" component={Processes} />
-        <Route path="/applications" component={Applications} />
-        <Route path="/sessions" component={Sessions} />
-        <Route path="/sessions/:sessionId" component={SessionDetail} />
-        <Route path="/scripts" component={Scripts} />
+        <Route path="/" component={Home} />
         <Route path="/binary" component={BinaryAnalyzer} />
+        <Route path="/hex" component={HexViewer} />
+        <Route path="/scripts" component={Scripts} />
+        <Route path="/device" component={Device} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

@@ -57,4 +57,78 @@ router.post("/binary/analyze", upload.single("file"), async (req, res) => {
   }
 });
 
+router.post("/binary/hexdump", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const tmpPath = req.file.path;
+  const originalName = req.file.originalname;
+  const rawOffset = parseInt(req.body.offset || "0", 10);
+  const rawLength = parseInt(req.body.length || "4096", 10);
+  if (isNaN(rawOffset) || isNaN(rawLength) || rawOffset < 0 || rawLength < 1) {
+    try { fs.unlinkSync(tmpPath); } catch {}
+    return res.status(400).json({ error: "Invalid offset or length" });
+  }
+  const offset = rawOffset;
+  const length = Math.min(rawLength, 65536);
+
+  try {
+    const stat = fs.statSync(tmpPath);
+    const fd = fs.openSync(tmpPath, "r");
+    const buffer = Buffer.alloc(length);
+    const bytesRead = fs.readSync(fd, buffer, 0, length, offset);
+    fs.closeSync(fd);
+
+    const bytes = Array.from(buffer.subarray(0, bytesRead));
+
+    res.json({
+      filename: originalName,
+      fileSize: stat.size,
+      offset,
+      length: bytesRead,
+      bytes,
+    });
+  } catch (err: unknown) {
+    const error = err as { message?: string };
+    res.status(500).json({ error: error.message || String(err) });
+  } finally {
+    try { fs.unlinkSync(tmpPath); } catch {}
+  }
+});
+
+router.post("/binary/fileinfo", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const tmpPath = req.file.path;
+  const originalName = req.file.originalname;
+
+  try {
+    const stat = fs.statSync(tmpPath);
+    const fileOut = await execFileAsync("file", ["-b", tmpPath], { timeout: 10000 }).catch(() => ({ stdout: "Unknown" }));
+
+    const fd = fs.openSync(tmpPath, "r");
+    const header = Buffer.alloc(Math.min(16, stat.size));
+    fs.readSync(fd, header, 0, header.length, 0);
+    fs.closeSync(fd);
+
+    const magic = header.subarray(0, 4).toString("hex").toUpperCase();
+
+    res.json({
+      filename: originalName,
+      size: stat.size,
+      type: (fileOut.stdout || "").trim(),
+      magic,
+      headerHex: header.toString("hex").toUpperCase(),
+    });
+  } catch (err: unknown) {
+    const error = err as { message?: string };
+    res.status(500).json({ error: error.message || String(err) });
+  } finally {
+    try { fs.unlinkSync(tmpPath); } catch {}
+  }
+});
+
 export default router;

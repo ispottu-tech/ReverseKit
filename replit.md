@@ -95,11 +95,15 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 
 React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to `api-server` at `/api`.
 
-- Entry: `src/App.tsx` — React Router with pages: Dashboard, Processes, Applications, Sessions, Script Library, Binary Analyzer
+- Entry: `src/App.tsx` — wouter router with pages: Home, Binary Inspector, Hex Viewer, Script Arsenal, Device Manager
 - API base: computed from `import.meta.env.BASE_URL`
 - Pages: `src/pages/` — each page is a self-contained component
-- **Binary Analyzer** page: `src/pages/binary-analyzer.tsx` — full static analysis UI with tabs for Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Pseudo-C, Sections; plus security properties panel, obfuscation detection, hash display
-- Layout: `src/components/layout.tsx` — dark sidebar nav
+  - `home.tsx` — Welcome page with tool cards, Quick Start guide, Integrated Analysis Engines listing
+  - `binary-analyzer.tsx` — Full static analysis UI with 10 tabs (Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Pseudo-C, Sections) + security properties panel + obfuscation detection
+  - `hex-viewer.tsx` — Upload any file, view hex bytes + ASCII + file info + magic bytes
+  - `scripts.tsx` — Script Arsenal with localStorage persistence, built-in Frida scripts
+  - `device.tsx` — Consolidated Device Manager: Frida connection, process browser, app spawner, sessions, class/method browser, hooks, script executor
+- Layout: `src/components/layout.tsx` — dark sidebar with sections (Static Analysis, Tools, Dynamic Analysis) + Frida connection status
 
 ### Binary Analyzer Engine
 
@@ -107,7 +111,10 @@ React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to 
   - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, llvm-nm, llvm-objdump, strings
   - Detects: obfuscation (Hikari, OLLVM), anti-debug (ptrace, sysctl), jailbreak detection, Frida detection, SSL pinning, root detection, XOR string encryption
   - Outputs: hashes (MD5/SHA1/SHA256), Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties (PIE/NX/canary/ARC), ROP gadgets, pseudo-C decompilation
-- **API route**: `artifacts/api-server/src/routes/binary.ts` — POST `/api/binary/analyze` with multer file upload, 120s timeout, 20MB buffer
+- **API routes** (`artifacts/api-server/src/routes/binary.ts`):
+  - POST `/api/binary/analyze` — Full binary analysis with multer upload, 120s timeout, 20MB buffer
+  - POST `/api/binary/hexdump` — Hex dump of uploaded file (offset/length params, max 64KB)
+  - POST `/api/binary/fileinfo` — File type, size, magic bytes
 - **Python path**: `/home/runner/workspace/.pythonlibs/bin/python3`
 - **ROPgadget path**: `/home/runner/workspace/.pythonlibs/bin/ROPgadget`
 
@@ -117,7 +124,7 @@ radare2 5.9.8, binutils, llvm (objdump/nm), python3, retdec, ghidra
 
 ### Python Packages (.pythonlibs)
 
-lief 0.17.6, capstone 5.0.7, keystone-engine, ROPgadget 7.7, pwntools 4.15.0, r2pipe
+lief 0.17.6, capstone 5.0.7, keystone-engine, ROPgadget 7.7, pwntools 4.15.0, r2pipe, frida-tools 17.9, objection 1.12
 Note: angr has cffi/pycparser conflicts on Python 3.11 — not installed.
 
 ### `scripts` (`@workspace/scripts`)
