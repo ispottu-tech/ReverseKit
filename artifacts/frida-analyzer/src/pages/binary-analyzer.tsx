@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import {
   Upload, FileSearch, Shield, Code2, Hash, Library,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, X,
-  Lock, Cpu, Zap, Eye, Bug, BarChart2, Layers, Key
+  Lock, Cpu, Zap, Eye, Bug, BarChart2, Layers, Key, Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -179,6 +179,40 @@ export default function BinaryAnalyzer() {
   const hasObfuscation = result?.obfuscation && result.obfuscation.length > 0;
   const criticalFindings = result?.obfuscation?.filter(o => o.severity === "critical" || o.severity === "high") ?? [];
 
+  const exportReport = useCallback(() => {
+    if (!result) return;
+    const report = {
+      _meta: {
+        tool: "ReverseKit v1.0",
+        generated: new Date().toISOString(),
+        engines: ["lief 0.17.6", "capstone 5.0", "radare2 5.9.8", "ROPgadget 7.7", "pwntools 4.15"],
+      },
+      filename: result.filename,
+      file_info: result.file_info,
+      file_size: result.file_size,
+      hashes: result.hashes,
+      macho: result.macho,
+      security_properties: result.security_properties,
+      security_features: result.security_features,
+      obfuscation: result.obfuscation,
+      functions: result.functions,
+      symbols: result.symbols,
+      imports: result.imports,
+      strings: result.strings,
+      rop_gadgets: result.rop_gadgets,
+      disassembly: result.disassembly,
+      capstone_disasm: result.capstone_disasm,
+      pseudo_c: result.pseudo_c,
+    };
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_analysis.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [result]);
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
@@ -260,6 +294,17 @@ export default function BinaryAnalyzer() {
                   <p className={cn("font-mono text-sm font-bold truncate leading-tight", warn ? "text-destructive" : "text-foreground")}>{value}</p>
                 </div>
               ))}
+            </div>
+
+            {/* Export Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={exportReport}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                Export Analysis Report (.json)
+              </button>
             </div>
 
             {/* Arch badges */}
