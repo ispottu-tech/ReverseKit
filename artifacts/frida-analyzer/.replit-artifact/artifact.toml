@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Frida iOS Analyzer"
+version = "1.0.0"
+id = "artifacts/frida-analyzer"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23218
+
+[services.development]
+run = "pnpm --filter @workspace/frida-analyzer run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/frida-analyzer", "run", "build" ]
+publicDir = "artifacts/frida-analyzer/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23218"
+BASE_PATH = "/"

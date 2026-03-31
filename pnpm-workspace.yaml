@@ -70,6 +70,7 @@ autoInstallPeers: false
 onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
+  - frida
   - msw
   - unrs-resolver
 

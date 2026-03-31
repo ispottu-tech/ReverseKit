@@ -1,15 +1,16 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Frida iOS Analyzer API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: frida
+    description: Frida Server operations
 paths:
   /healthz:
     get:
@@ -24,6 +25,371 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /frida/connect:
+    post:
+      operationId: connectFrida
+      tags: [frida]
+      summary: Connect to Frida server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConnectRequest"
+      responses:
+        "200":
+          description: Connection successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectionStatus"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Connection failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/status:
+    get:
+      operationId: getFridaStatus
+      tags: [frida]
+      summary: Get Frida connection status
+      responses:
+        "200":
+          description: Status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectionStatus"
+
+  /frida/disconnect:
+    post:
+      operationId: disconnectFrida
+      tags: [frida]
+      summary: Disconnect from Frida server
+      responses:
+        "200":
+          description: Disconnected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /frida/processes:
+    get:
+      operationId: listProcesses
+      tags: [frida]
+      summary: List running processes
+      responses:
+        "200":
+          description: List of processes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Process"
+        "400":
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/applications:
+    get:
+      operationId: listApplications
+      tags: [frida]
+      summary: List installed applications
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+        "400":
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions:
+    get:
+      operationId: listSessions
+      tags: [frida]
+      summary: List active Frida sessions
+      responses:
+        "200":
+          description: Active sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+    post:
+      operationId: createSession
+      tags: [frida]
+      summary: Attach to a process and create a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "201":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad request or not connected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Failed to attach
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}:
+    delete:
+      operationId: deleteSession
+      tags: [frida]
+      summary: Detach and delete a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}/classes:
+    get:
+      operationId: listClasses
+      tags: [frida]
+      summary: List all Objective-C classes in a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional filter string to search class names
+      responses:
+        "200":
+          description: List of class names
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClassListResponse"
+        "404":
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}/classes/{className}/methods:
+    get:
+      operationId: listMethods
+      tags: [frida]
+      summary: List methods of an Objective-C class
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Methods of the class
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MethodListResponse"
+        "404":
+          description: Session or class not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}/script:
+    post:
+      operationId: executeScript
+      tags: [frida]
+      summary: Execute a Frida script in a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecuteScriptRequest"
+      responses:
+        "200":
+          description: Script executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScriptResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Script execution failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}/hooks:
+    get:
+      operationId: listHooks
+      tags: [frida]
+      summary: List active hooks in a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Active hooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hook"
+        "404":
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createHook
+      tags: [frida]
+      summary: Hook a method in a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateHookRequest"
+      responses:
+        "201":
+          description: Hook created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hook"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /frida/sessions/{sessionId}/hooks/{hookId}:
+    delete:
+      operationId: deleteHook
+      tags: [frida]
+      summary: Remove a hook
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hookId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Hook removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Hook or session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +400,242 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    ConnectRequest:
+      type: object
+      properties:
+        host:
+          type: string
+          description: Frida server host (IP or hostname)
+        port:
+          type: integer
+          description: Frida server port (default 27042)
+      required:
+        - host
+        - port
+
+    ConnectionStatus:
+      type: object
+      properties:
+        connected:
+          type: boolean
+        host:
+          type: ["string", "null"]
+        port:
+          type: ["integer", "null"]
+        deviceType:
+          type: ["string", "null"]
+        deviceName:
+          type: ["string", "null"]
+      required:
+        - connected
+        - host
+        - port
+        - deviceType
+        - deviceName
+
+    Process:
+      type: object
+      properties:
+        pid:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: ["string", "null"]
+        smallIcon:
+          type: ["string", "null"]
+        largeIcon:
+          type: ["string", "null"]
+      required:
+        - pid
+        - name
+        - identifier
+        - smallIcon
+        - largeIcon
+
+    Application:
+      type: object
+      properties:
+        identifier:
+          type: string
+        name:
+          type: string
+        pid:
+          type: ["integer", "null"]
+        smallIcon:
+          type: ["string", "null"]
+        largeIcon:
+          type: ["string", "null"]
+      required:
+        - identifier
+        - name
+        - pid
+        - smallIcon
+        - largeIcon
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        target:
+          type: string
+          description: Process name, bundle ID, or PID
+        targetType:
+          type: string
+          enum: [pid, name, identifier]
+          description: How to identify the target process
+      required:
+        - target
+        - targetType
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        target:
+          type: string
+        targetType:
+          type: string
+        pid:
+          type: integer
+        processName:
+          type: string
+        status:
+          type: string
+          enum: [active, detached]
+        createdAt:
+          type: string
+      required:
+        - id
+        - target
+        - targetType
+        - pid
+        - processName
+        - status
+        - createdAt
+
+    ClassListResponse:
+      type: object
+      properties:
+        classes:
+          type: array
+          items:
+            type: string
+        total:
+          type: integer
+        filtered:
+          type: integer
+      required:
+        - classes
+        - total
+        - filtered
+
+    MethodListResponse:
+      type: object
+      properties:
+        className:
+          type: string
+        instanceMethods:
+          type: array
+          items:
+            type: string
+        classMethods:
+          type: array
+          items:
+            type: string
+      required:
+        - className
+        - instanceMethods
+        - classMethods
+
+    ExecuteScriptRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Frida JavaScript code to execute
+        timeout:
+          type: integer
+          description: Timeout in milliseconds (default 10000)
+      required:
+        - code
+
+    ScriptResult:
+      type: object
+      properties:
+        output:
+          type: array
+          items:
+            type: string
+        error:
+          type: ["string", "null"]
+        duration:
+          type: integer
+      required:
+        - output
+        - error
+        - duration
+
+    CreateHookRequest:
+      type: object
+      properties:
+        className:
+          type: string
+        methodName:
+          type: string
+        methodType:
+          type: string
+          enum: [instance, class]
+        logArgs:
+          type: boolean
+        logReturn:
+          type: boolean
+      required:
+        - className
+        - methodName
+        - methodType
+
+    Hook:
+      type: object
+      properties:
+        id:
+          type: string
+        className:
+          type: string
+        methodName:
+          type: string
+        methodType:
+          type: string
+        logArgs:
+          type: boolean
+        logReturn:
+          type: boolean
+        callCount:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - className
+        - methodName
+        - methodType
+        - logArgs
+        - logReturn
+        - callCount
+        - createdAt
