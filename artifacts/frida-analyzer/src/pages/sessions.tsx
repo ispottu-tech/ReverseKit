@@ -2,18 +2,17 @@ import { useListSessions, useDeleteSession, getListSessionsQueryKey } from "@wor
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Terminal, Trash2, ArrowRight, ActivitySquare, Cpu, Workflow } from "lucide-react";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Empty } from "@/components/ui/empty";
+import { Workflow, Trash2, ArrowRight, Cpu, AppWindow } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function Sessions() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
-  const { data: sessions, isLoading } = useListSessions({ 
-    query: { queryKey: getListSessionsQueryKey() } 
+  const { data: sessions, isLoading } = useListSessions({
+    query: { queryKey: getListSessionsQueryKey(), refetchInterval: 5000 }
   });
 
   const deleteSessionMutation = useDeleteSession({
@@ -22,7 +21,7 @@ export default function Sessions() {
         toast.success("Session detached");
         queryClient.invalidateQueries({ queryKey: getListSessionsQueryKey() });
       },
-      onError: (err: any) => toast.error(`Failed to detach: ${err.error || err.message}`)
+      onError: (err: any) => toast.error(`Failed: ${err.error || err.message}`)
     }
   });
 
@@ -32,94 +31,113 @@ export default function Sessions() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
-      <div className="p-8 pb-0 flex-shrink-0 mb-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Active Sessions</h1>
-        <p className="text-muted-foreground text-lg">Manage ongoing telemetry and hooking sessions.</p>
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="flex-shrink-0 px-8 py-5 border-b border-border/50">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Workflow className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight">Active Sessions</h1>
+            <p className="text-muted-foreground text-xs mt-0.5">
+              {sessions ? `${sessions.length} active hook session${sessions.length !== 1 ? "s" : ""}` : "Loading…"}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-8 pt-0">
+      <div className="flex-1 overflow-auto px-8 py-5">
         {isLoading ? (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             {Array(4).fill(0).map((_, i) => (
-              <Skeleton key={i} className="h-56 w-full rounded-xl" />
+              <Skeleton key={i} className="h-40 w-full rounded-xl" />
             ))}
           </div>
         ) : !sessions || sessions.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center border border-dashed border-border/50 rounded-xl bg-card/5 backdrop-blur-sm">
-            <Empty icon={ActivitySquare} title="No Active Sessions" description="Attach to a process or spawn an application to begin a session." />
-            <div className="flex gap-4 mt-8">
-              <Button onClick={() => setLocation("/processes")} variant="outline" className="border-border/60">
-                <Cpu className="w-4 h-4 mr-2" />
-                Browse Processes
+          <div className="h-full flex flex-col items-center justify-center gap-5 text-center border border-dashed border-border/40 rounded-xl">
+            <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center">
+              <Workflow className="w-7 h-7 text-muted-foreground/50" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">No Active Sessions</p>
+              <p className="text-sm text-muted-foreground mt-1">Attach to a process or spawn an app to start a session.</p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" size="sm" onClick={() => setLocation("/processes")}>
+                <Cpu className="w-3.5 h-3.5 mr-2" />
+                Processes
               </Button>
-              <Button onClick={() => setLocation("/applications")} className="shadow-lg shadow-primary/20">
-                <Workflow className="w-4 h-4 mr-2" />
-                Browse Apps
+              <Button size="sm" onClick={() => setLocation("/applications")}>
+                <AppWindow className="w-3.5 h-3.5 mr-2" />
+                Applications
               </Button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             {sessions.map(session => (
-              <Card 
-                key={session.id} 
-                className="border-border/40 bg-card/30 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_20px_rgba(var(--primary),0.05)] transition-all duration-300 cursor-pointer group flex flex-col rounded-xl overflow-hidden relative"
+              <div
+                key={session.id}
                 onClick={() => setLocation(`/sessions/${session.id}`)}
+                className={cn(
+                  "relative rounded-xl border border-border/50 bg-card/30 p-5 cursor-pointer",
+                  "hover:border-primary/40 hover:bg-primary/5 transition-all group overflow-hidden"
+                )}
               >
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary/80" />
-                <CardHeader className="pl-8 pt-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-2xl font-mono text-foreground flex items-center gap-3">
-                        <Terminal className="w-6 h-6 text-primary" />
+                {/* Active indicator stripe */}
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary/70 rounded-l-xl" />
+
+                <div className="pl-3">
+                  {/* Process name + status */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex h-2 w-2 relative flex-shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-60" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                      </div>
+                      <span className="font-mono font-bold text-foreground truncate group-hover:text-primary transition-colors">
                         {session.processName}
-                      </CardTitle>
-                      <CardDescription className="mt-2 font-mono text-sm flex items-center gap-2">
-                        <span className="text-muted-foreground uppercase tracking-wider text-[10px]">Target:</span> 
-                        <span className="text-primary/80">{session.target}</span>
-                        <span className="text-muted-foreground px-1">/</span>
-                        <span className="text-muted-foreground">{session.targetType}</span>
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20">
-                      <span className="flex h-2.5 w-2.5 relative">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary shadow-[0_0_8px_var(--color-primary)]"></span>
                       </span>
-                      <span className="text-xs font-bold text-primary uppercase tracking-wider">Active</span>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full flex-shrink-0">
+                      LIVE
+                    </span>
+                  </div>
+
+                  {/* Details */}
+                  <div className="grid grid-cols-3 gap-4 mb-4 text-xs bg-black/20 rounded-lg px-4 py-3 border border-white/5">
+                    <div>
+                      <div className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1">PID</div>
+                      <div className="font-mono text-foreground">{session.pid}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1">Target</div>
+                      <div className="font-mono text-foreground truncate">{session.target}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1">Started</div>
+                      <div className="font-mono text-foreground">{new Date(session.createdAt).toLocaleTimeString()}</div>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="flex-1 pl-8">
-                  <div className="grid grid-cols-2 gap-4 text-sm bg-black/20 p-4 rounded-lg border border-white/5">
-                    <div>
-                      <div className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-semibold">PID</div>
-                      <div className="font-mono text-base">{session.pid}</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground text-[10px] uppercase tracking-wider mb-1 font-semibold">Started</div>
-                      <div className="font-mono text-base truncate">{new Date(session.createdAt).toLocaleTimeString()}</div>
+
+                  {/* Actions */}
+                  <div className="flex justify-between items-center">
+                    <button
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors"
+                      onClick={(e) => handleDetach(e, session.id)}
+                      disabled={deleteSessionMutation.isPending}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Detach
+                    </button>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
+                      Open Workspace
+                      <ArrowRight className="w-3 h-3" />
                     </div>
                   </div>
-                </CardContent>
-                <CardFooter className="flex justify-between pt-4 pb-6 pl-8 border-t border-border/20 mt-auto bg-card/20">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-destructive/80 hover:text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/20 font-mono text-xs"
-                    onClick={(e) => handleDetach(e, session.id)}
-                    disabled={deleteSessionMutation.isPending}
-                  >
-                    <Trash2 className="w-3.5 h-3.5 mr-2" />
-                    Detach
-                  </Button>
-                  <Button variant="secondary" size="sm" className="font-mono text-xs group-hover:bg-primary group-hover:text-primary-foreground border border-border/50 group-hover:border-primary transition-all duration-300">
-                    Enter Workspace
-                    <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                  </Button>
-                </CardFooter>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}

@@ -93,7 +93,7 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 
 ### `artifacts/frida-analyzer` (`@workspace/frida-analyzer`)
 
-React + Vite frontend for the **Frida iOS Analyzer** app. Connects to `api-server` at `/api`.
+React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to `api-server` at `/api`.
 
 - Entry: `src/App.tsx` — React Router with pages: Dashboard, Processes, Applications, Sessions, Script Library, Binary Analyzer
 - API base: computed from `import.meta.env.BASE_URL`
