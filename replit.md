@@ -91,6 +91,35 @@ Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used b
 
 Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
 
+### `artifacts/frida-analyzer` (`@workspace/frida-analyzer`)
+
+React + Vite frontend for the **Frida iOS Analyzer** app. Connects to `api-server` at `/api`.
+
+- Entry: `src/App.tsx` — React Router with pages: Dashboard, Processes, Applications, Sessions, Script Library, Binary Analyzer
+- API base: computed from `import.meta.env.BASE_URL`
+- Pages: `src/pages/` — each page is a self-contained component
+- **Binary Analyzer** page: `src/pages/binary-analyzer.tsx` — full static analysis UI with tabs for Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Pseudo-C, Sections; plus security properties panel, obfuscation detection, hash display
+- Layout: `src/components/layout.tsx` — dark sidebar nav
+
+### Binary Analyzer Engine
+
+- **Python script**: `artifacts/api-server/src/lib/analyze_binary.py`
+  - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, llvm-nm, llvm-objdump, strings
+  - Detects: obfuscation (Hikari, OLLVM), anti-debug (ptrace, sysctl), jailbreak detection, Frida detection, SSL pinning, root detection, XOR string encryption
+  - Outputs: hashes (MD5/SHA1/SHA256), Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties (PIE/NX/canary/ARC), ROP gadgets, pseudo-C decompilation
+- **API route**: `artifacts/api-server/src/routes/binary.ts` — POST `/api/binary/analyze` with multer file upload, 120s timeout, 20MB buffer
+- **Python path**: `/home/runner/workspace/.pythonlibs/bin/python3`
+- **ROPgadget path**: `/home/runner/workspace/.pythonlibs/bin/ROPgadget`
+
+### System Tools (replit.nix)
+
+radare2 5.9.8, binutils, llvm (objdump/nm), python3, retdec, ghidra
+
+### Python Packages (.pythonlibs)
+
+lief 0.17.6, capstone 5.0.7, keystone-engine, ROPgadget 7.7, pwntools 4.15.0, r2pipe
+Note: angr has cffi/pycparser conflicts on Python 3.11 — not installed.
+
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.

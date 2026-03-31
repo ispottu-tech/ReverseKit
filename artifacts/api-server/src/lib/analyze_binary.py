@@ -1,32 +1,42 @@
 #!/usr/bin/env python3
+"""
+iOS Binary Analyzer — Unified Analysis Engine
+Tools: lief, capstone, r2pipe, ROPgadget, pwntools, strings, llvm-nm, llvm-objdump
+"""
 import sys
 import json
 import subprocess
 import os
 import struct
+import hashlib
 
-def run_cmd(cmd, timeout=30):
+PYTHON_BIN = sys.executable
+ROPGADGET_BIN = os.path.join(os.path.dirname(PYTHON_BIN), "ROPgadget")
+
+def run_cmd(cmd, timeout=60):
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, errors="replace")
         return r.stdout.strip()
-    except Exception as e:
+    except Exception:
         return ""
 
-def get_file_info(path):
-    out = run_cmd(["file", path])
-    return out
+def get_hashes(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    return {
+        "md5": hashlib.md5(data).hexdigest(),
+        "sha1": hashlib.sha1(data).hexdigest(),
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "size": len(data),
+    }
 
-def get_strings(path, min_len=4):
+def get_file_info(path):
+    return run_cmd(["file", path])
+
+def get_strings(path, min_len=5):
     out = run_cmd(["strings", "-a", "-n", str(min_len), path])
-    lines = [l.strip() for l in out.splitlines() if l.strip()]
-    # filter useful strings
-    useful = []
-    seen = set()
-    for l in lines:
-        if l not in seen and len(l) >= min_len:
-            seen.add(l)
-            useful.append(l)
-    return useful[:300]
+    lines = list(dict.fromkeys(l.strip() for l in out.splitlines() if l.strip() and len(l.strip()) >= min_len))
+    return lines[:400]
 
 def get_symbols(path):
     out = run_cmd(["llvm-nm", "--defined-only", "--arch=arm64", path])
@@ -43,187 +53,364 @@ def get_imports(path):
     out = run_cmd(["llvm-nm", "--undefined-only", "--arch=arm64", path])
     if not out:
         out = run_cmd(["llvm-nm", "--undefined-only", path])
-    imports = []
-    for line in out.splitlines():
-        parts = line.strip().split(None, 2)
-        if len(parts) >= 2:
-            name = parts[-1].lstrip("_")
-            imports.append(name)
-    return list(set(imports))
+    imports = list(set(line.strip().split()[-1].lstrip("_") for line in out.splitlines() if line.strip().split()))
+    return sorted(imports)
 
-def get_linked_libs(path):
-    out = run_cmd(["llvm-objdump", "--macho", "--dylibs-used", path])
-    libs = []
-    for line in out.splitlines():
-        line = line.strip()
-        if line and not line.endswith(":") and "/" in line:
-            libs.append(line.split()[0])
-    return libs
+def get_disassembly(path):
+    out = run_cmd(["llvm-objdump", "--macho", "--arch=arm64", "--disassemble", path], timeout=90)
+    return out[:10000] if out else ""
 
-def get_disassembly(path, arch="arm64"):
-    out = run_cmd(["llvm-objdump", "--macho", f"--arch={arch}", "--disassemble", path], timeout=60)
-    return out[:8000] if out else ""
-
-def get_radare2_analysis(path):
-    cmd = [
-        "r2", "-q", "-e", "bin.relocs.apply=true",
-        "-c", "aaa; afl; s entry0; pd 30",
-        path
-    ]
-    out = run_cmd(cmd, timeout=60)
-    lines = [l for l in out.splitlines() if not l.startswith("INFO") and not l.startswith("WARN") and not l.startswith("ERROR")]
-    return "\n".join(lines)[:5000]
-
-def get_radare2_pseudo_c(path):
-    cmd = [
-        "r2", "-q", "-e", "bin.relocs.apply=true",
-        "-c", "aaa; afva@@@F; s entry0; pdc",
-        path
-    ]
-    out = run_cmd(cmd, timeout=60)
-    lines = [l for l in out.splitlines() if not l.startswith("INFO") and not l.startswith("WARN") and not l.startswith("ERROR")]
-    return "\n".join(lines)[:6000]
-
-def get_sections(path):
-    out = run_cmd(["llvm-objdump", "--macho", "--arch=arm64", "--section-headers", path])
-    if not out:
-        out = run_cmd(["llvm-objdump", "--macho", "--section-headers", path])
-    sections = []
-    for line in out.splitlines():
-        parts = line.strip().split()
-        if len(parts) >= 3 and parts[0].startswith("_"):
-            sections.append(line.strip())
-    return sections
-
-def get_mach_o_info(path):
+def get_lief_analysis(path):
     try:
         import lief
-        fat = lief.parse(path)
-        if fat is None:
-            return {"error": "Could not parse binary"}
+        binary = lief.parse(path)
+        if binary is None:
+            return {"error": "Cannot parse binary"}
 
         result = {}
 
-        if isinstance(fat, lief.MachO.FatBinary):
-            result["type"] = "FAT Binary"
+        # Handle FAT binary
+        if isinstance(binary, lief.MachO.FatBinary):
+            result["type"] = "FAT Binary (Universal)"
             result["architectures"] = []
-            for binary in fat:
-                arch_info = {
-                    "cpu_type": str(binary.header.cpu_type).split(".")[-1],
-                    "file_type": str(binary.header.file_type).split(".")[-1],
-                    "flags": [str(f).split(".")[-1] for f in binary.header.flags_list],
-                }
-                result["architectures"].append(arch_info)
-
-            # Use first non-armv7 slice for details
             main_bin = None
-            for b in fat:
+            for b in binary:
                 cpu = str(b.header.cpu_type).split(".")[-1]
-                if "ARM64" in cpu.upper():
+                ft = str(b.header.file_type).split(".")[-1]
+                flags = [str(f).split(".")[-1] for f in b.header.flags_list]
+                result["architectures"].append({"cpu": cpu, "file_type": ft, "flags": flags})
+                if "ARM64" in cpu.upper() and main_bin is None:
                     main_bin = b
-                    break
             if main_bin is None:
-                main_bin = fat[0]
+                main_bin = binary[0]
         else:
-            main_bin = fat
-            result["type"] = "Thin Binary"
-            result["architectures"] = [{
-                "cpu_type": str(main_bin.header.cpu_type).split(".")[-1],
-                "file_type": str(main_bin.header.file_type).split(".")[-1],
-            }]
+            main_bin = binary
+            cpu = str(main_bin.header.cpu_type).split(".")[-1]
+            ft = str(main_bin.header.file_type).split(".")[-1]
+            result["type"] = f"Thin Binary ({cpu})"
+            result["architectures"] = [{"cpu": cpu, "file_type": ft}]
 
-        # ObjC classes
+        # ObjC classes + methods
         objc_classes = []
         try:
             for cls in main_bin.classes:
-                methods = [str(m.name) for m in cls.methods[:20]]
-                objc_classes.append({"name": str(cls.name), "methods": methods})
-        except:
+                methods = [str(m.name) for m in cls.methods[:30]]
+                protocols = [str(p) for p in getattr(cls, 'protocols', [])]
+                objc_classes.append({
+                    "name": str(cls.name),
+                    "methods": methods,
+                    "protocols": protocols,
+                    "method_count": len(list(cls.methods)),
+                })
+        except Exception:
             pass
+        result["objc_classes"] = objc_classes[:60]
 
-        result["objc_classes"] = objc_classes[:50]
-
-        # Encryption info
+        # Encryption detection
         result["encrypted"] = False
+        result["encryption_details"] = []
         try:
             for cmd in main_bin.commands:
-                cmd_str = str(type(cmd).__name__)
-                if "Encryption" in cmd_str:
-                    result["encrypted"] = True
-                    result["encryption_info"] = str(cmd)
-        except:
+                cmd_name = type(cmd).__name__
+                if "Encryption" in cmd_name:
+                    enc_data = {"command": cmd_name}
+                    if hasattr(cmd, 'crypt_id'):
+                        enc_data["crypt_id"] = cmd.crypt_id
+                        result["encrypted"] = cmd.crypt_id != 0
+                    result["encryption_details"].append(enc_data)
+        except Exception:
             pass
 
         # Libraries
-        linked = []
         try:
-            for lib in main_bin.libraries:
-                linked.append(str(lib.name))
-        except:
+            result["linked_libraries"] = [str(lib.name) for lib in main_bin.libraries]
+        except Exception:
+            result["linked_libraries"] = []
+
+        # Load commands
+        try:
+            result["load_commands"] = list(set(type(c).__name__ for c in main_bin.commands))
+        except Exception:
+            result["load_commands"] = []
+
+        # Entitlements (if present)
+        try:
+            if hasattr(main_bin, 'code_signature') and main_bin.code_signature:
+                result["has_code_signature"] = True
+        except Exception:
+            result["has_code_signature"] = False
+
+        # Sections with sizes
+        sections = []
+        try:
+            for seg in main_bin.segments:
+                for sec in seg.sections:
+                    sections.append({
+                        "name": f"{seg.name},{sec.name}",
+                        "size": sec.size,
+                        "offset": sec.offset,
+                    })
+        except Exception:
             pass
-        result["linked_libraries"] = linked
+        result["sections"] = sections
 
         return result
     except Exception as e:
         return {"error": str(e)}
 
+def get_radare2_analysis(path):
+    try:
+        import r2pipe
+        r2 = r2pipe.open(path, flags=["-2"])
+        r2.cmd("e bin.relocs.apply=true")
+        r2.cmd("aaa")
+
+        # Function list
+        funcs = r2.cmdj("aflj") or []
+        func_list = [{"name": f.get("name",""), "size": f.get("size",0), "addr": hex(f.get("offset",0))} for f in funcs[:30]]
+
+        # Entrypoints
+        entries = r2.cmdj("iej") or []
+
+        # Basic blocks of first interesting function
+        pseudo_c = ""
+        if funcs:
+            for fn in funcs:
+                name = fn.get("name", "")
+                if "logos" in name or "init" in name.lower() or "hook" in name.lower():
+                    r2.cmd(f"s {fn['offset']}")
+                    pseudo_c = r2.cmd("pdc") or ""
+                    break
+            if not pseudo_c and funcs:
+                r2.cmd(f"s {funcs[0]['offset']}")
+                pseudo_c = r2.cmd("pdc") or ""
+
+        # Filter INFO/WARN lines
+        clean_pc = "\n".join(l for l in pseudo_c.splitlines() if not l.startswith(("INFO", "WARN", "ERROR")))
+
+        r2.quit()
+        return {
+            "functions": func_list,
+            "entrypoints": entries,
+            "pseudo_c": clean_pc[:8000],
+        }
+    except Exception as e:
+        return {"error": str(e), "functions": [], "pseudo_c": ""}
+
+def get_ropgadgets(path):
+    try:
+        out = run_cmd([ROPGADGET_BIN, "--binary", path, "--rop", "--depth", "5"], timeout=60)
+        gadgets = []
+        for line in out.splitlines():
+            if " : " in line and "0x" in line:
+                parts = line.strip().split(" : ", 1)
+                if len(parts) == 2:
+                    gadgets.append({"addr": parts[0].strip(), "gadget": parts[1].strip()})
+        return gadgets[:100]
+    except Exception as e:
+        return []
+
+def get_checksec(path):
+    try:
+        context_import = "from pwn import *; context.log_level='error'"
+        script = f"""
+{context_import}
+import json, sys
+try:
+    e = ELF("{path}", checksec=False)
+    print(json.dumps({{"pie": e.pie, "nx": e.nx, "canary": e.canary, "relro": e.relro, "arch": e.arch}}))
+except Exception as ex:
+    print(json.dumps({{"error": str(ex)}}))
+"""
+        r = subprocess.run([PYTHON_BIN, "-c", script], capture_output=True, text=True, timeout=15)
+        if r.stdout.strip():
+            parsed = json.loads(r.stdout.strip())
+            if "error" not in parsed:
+                return parsed
+    except Exception:
+        pass
+    # Manual Mach-O security checks via lief
+    try:
+        import lief
+        binary = lief.parse(path)
+        if binary is None:
+            return {}
+        main = binary[0] if isinstance(binary, lief.MachO.FatBinary) else binary
+        flags = [str(f).split(".")[-1] for f in main.header.flags_list]
+        has_pie = "PIE" in flags
+        # Check for stack protection via symbols
+        syms = [str(s.name) for s in main.symbols]
+        has_canary = any("stack_chk" in s for s in syms)
+        has_arc = any("objc_release" in s or "objc_retain" in s for s in syms)
+        return {
+            "pie": has_pie,
+            "stack_canary": has_canary,
+            "arc": has_arc,
+            "flags": flags,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+def capstone_disasm(path):
+    """Direct ARM64 disassembly using capstone with annotations"""
+    try:
+        import lief
+        import capstone
+        binary = lief.parse(path)
+        if binary is None:
+            return ""
+        main = binary[0] if isinstance(binary, lief.MachO.FatBinary) else binary
+
+        # Find __text section
+        text_section = None
+        for seg in main.segments:
+            for sec in seg.sections:
+                if sec.name == "__text":
+                    text_section = sec
+                    break
+
+        if text_section is None:
+            return ""
+
+        content = bytes(text_section.content[:4096])
+        cs = capstone.Cs(capstone.CS_ARCH_ARM64, capstone.CS_MODE_ARM)
+        cs.detail = True
+
+        lines = []
+        for insn in cs.disasm(content, text_section.virtual_address):
+            lines.append(f"0x{insn.address:08x}:  {insn.mnemonic:<10} {insn.op_str}")
+            if len(lines) >= 200:
+                break
+
+        return "\n".join(lines)
+    except Exception as e:
+        return f"Error: {e}"
+
+def detect_obfuscation(strings_list, symbols, disasm):
+    """Detect obfuscation techniques"""
+    findings = []
+    all_text = " ".join(strings_list).lower()
+    sym_names = " ".join(s.get("name","") for s in symbols).lower()
+
+    # Check for known obfuscators
+    if "hikari" in all_text or "hikari" in sym_names:
+        findings.append({"type": "LLVM Hikari Obfuscator", "severity": "high", "note": "Control flow flattening detected"})
+    if "ollvm" in all_text or "fla_" in sym_names:
+        findings.append({"type": "OLLVM Obfuscation", "severity": "high", "note": "String and control flow obfuscation"})
+
+    # Check for anti-debug patterns
+    anti_debug = []
+    if "ptrace" in all_text or "ptrace" in sym_names:
+        anti_debug.append("ptrace")
+    if "sysctl" in all_text or "sysctl" in sym_names:
+        anti_debug.append("sysctl")
+    if "isattached" in sym_names or "debugger" in all_text:
+        anti_debug.append("debugger-check")
+    if "task_get_exception_ports" in sym_names:
+        anti_debug.append("exception-port-check")
+    if anti_debug:
+        findings.append({"type": "Anti-Debug Techniques", "severity": "high", "evidence": anti_debug})
+
+    # Jailbreak detection
+    jb_patterns = []
+    jb_checks = ["/Applications/Cydia.app", "/bin/bash", "cydia", "substrate", "sileo", "/etc/apt", "jailbreak", "MobileSubstrate"]
+    for p in jb_checks:
+        if p.lower() in all_text:
+            jb_patterns.append(p)
+    if jb_patterns:
+        findings.append({"type": "Jailbreak Detection", "severity": "medium", "evidence": jb_patterns[:5]})
+
+    # Frida detection
+    frida_patterns = [p for p in ["frida", "frida-gadget", "fridaserver", "gumjs", "stalker"] if p in all_text]
+    if frida_patterns:
+        findings.append({"type": "Frida Detection", "severity": "high", "evidence": frida_patterns, "note": "Binary actively detects Frida — use Frida anti-detection scripts"})
+
+    # SSL Pinning
+    ssl_patterns = [p for p in ["ssl", "pinning", "certificate", "trustkit", "afnetworking", "nsurlsession", "SecTrustEvaluate"] if p.lower() in all_text or p.lower() in sym_names]
+    if ssl_patterns:
+        findings.append({"type": "SSL Pinning", "severity": "medium", "evidence": ssl_patterns[:5], "bypass": "Use SSL Kill Switch or Frida ssl-pinning-bypass script"})
+
+    # String encryption hints (XOR patterns in asm)
+    if "eor" in disasm.lower() or "xor" in disasm.lower():
+        xor_count = disasm.lower().count("eor")
+        if xor_count > 10:
+            findings.append({"type": "Possible String Encryption (XOR/EOR)", "severity": "low", "note": f"Found {xor_count} EOR instructions — may indicate XOR string decryption"})
+
+    # Root detection
+    root_patterns = [p for p in ["getuid", "isRoot", "/etc/sudoers", "checkRoot", "id_look_up"] if p in all_text or p in sym_names]
+    if root_patterns:
+        findings.append({"type": "Root/Privilege Detection", "severity": "medium", "evidence": root_patterns[:3]})
+
+    return findings
+
 def detect_security_features(strings_list, imports_list, symbols_list):
+    """Quick security feature scan"""
     features = []
     all_text = " ".join(strings_list + imports_list + [s.get("name","") for s in symbols_list]).lower()
 
     checks = [
-        ("SSL Pinning", ["ssl", "certificate", "pinning", "trustkit", "afnetworking", "nsurlsession"]),
-        ("Anti-Debug", ["ptrace", "isattached", "debugger", "sysctl", "syscall"]),
-        ("Jailbreak Detection", ["cydia", "substrate", "jailbreak", "cyclick", "sileo", "/bin/bash", "mobile substrate"]),
-        ("Encryption", ["aes", "des", "rsa", "encrypt", "decrypt", "crypt", "cipher"]),
-        ("Network", ["http", "https", "socket", "nsurlsession", "alamofire", "request"]),
-        ("Root Detection", ["root", "su binary", "/etc/sudoers", "jailbreak"]),
-        ("Frida Detection", ["frida", "gum", "stalker", "interceptor"]),
-        ("Anti-Tampering", ["checksum", "integrity", "hash", "signature"]),
+        ("SSL/TLS Pinning", ["ssl", "certificate", "pinning", "trustkit"]),
+        ("Anti-Debug (ptrace)", ["ptrace", "isattached", "debugger"]),
+        ("Jailbreak Detection", ["cydia", "substrate", "/bin/bash", "sileo"]),
+        ("Frida Detection", ["frida", "gumjs", "stalker", "interceptor"]),
+        ("Encryption (AES/RSA)", ["aes", "rsa", "encrypt", "decrypt", "crypt"]),
+        ("Network Requests", ["http", "https", "nsurl", "alamofire"]),
+        ("Root Detection", ["getuid", "isroot", "sudoers"]),
+        ("Anti-Tampering", ["checksum", "integrity", "codesign"]),
+        ("Certificate Pinning (TrustKit)", ["trustkit", "hpkp", "publickey"]),
+        ("Biometrics (TouchID/FaceID)", ["biometry", "touchid", "faceid", "localauth"]),
     ]
 
     for name, keywords in checks:
         found = [k for k in keywords if k in all_text]
         if found:
-            features.append({"feature": name, "evidence": found[:3]})
+            features.append({"feature": name, "evidence": found[:4]})
 
     return features
 
 def analyze(path):
     result = {}
 
-    # Basic file info
+    # 1. File identification & hashes
     result["file_info"] = get_file_info(path)
-    result["file_size"] = os.path.getsize(path)
+    result["hashes"] = get_hashes(path)
 
-    # Mach-O deep analysis via lief
-    result["macho"] = get_mach_o_info(path)
+    # 2. Deep Mach-O analysis (lief)
+    result["macho"] = get_lief_analysis(path)
 
-    # Strings
+    # 3. Strings extraction
     result["strings"] = get_strings(path)
 
-    # Symbols
+    # 4. Symbols + Imports
     result["symbols"] = get_symbols(path)
-
-    # Imports
     result["imports"] = get_imports(path)
 
-    # Linked libraries
-    result["linked_libraries"] = get_linked_libs(path)
+    # 5. Security properties (PIE, Stack Canary, ARC)
+    result["security_properties"] = get_checksec(path)
 
-    # Sections
-    result["sections"] = get_sections(path)
+    # 6. Radare2 deep analysis (functions + pseudo-C)
+    r2 = get_radare2_analysis(path)
+    result["functions"] = r2.get("functions", [])
+    result["pseudo_c"] = r2.get("pseudo_c", "")
+    result["r2_error"] = r2.get("error")
 
-    # Disassembly (ARM64 preferred)
-    result["disassembly"] = get_disassembly(path, "arm64")
+    # 7. Capstone direct ARM64 disassembly
+    result["capstone_disasm"] = capstone_disasm(path)
 
-    # Radare2 analysis
-    result["r2_analysis"] = get_radare2_analysis(path)
+    # 8. llvm-objdump disassembly
+    result["disassembly"] = get_disassembly(path)
 
-    # Pseudo-C
-    result["pseudo_c"] = get_radare2_pseudo_c(path)
+    # 9. ROP Gadgets
+    result["rop_gadgets"] = get_ropgadgets(path)
 
-    # Security features detection
+    # 10. Obfuscation & protection analysis
+    result["obfuscation"] = detect_obfuscation(
+        result["strings"],
+        result["symbols"],
+        result.get("capstone_disasm", "") + result.get("disassembly", "")
+    )
+
+    # 11. Quick security feature scan
     result["security_features"] = detect_security_features(
         result["strings"],
         result["imports"],
