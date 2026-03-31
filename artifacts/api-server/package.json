@@ -10,6 +10,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@types/multer": "^2.1.0",
     "@workspace/api-zod": "workspace:*",
     "@workspace/db": "workspace:*",
     "cookie-parser": "^1.4.7",
@@ -17,6 +18,7 @@
     "drizzle-orm": "catalog:",
     "express": "^5",
     "frida": "^17.9.1",
+    "multer": "^2.1.1",
     "pino": "^9",
     "pino-http": "^10",
     "uuid": "^13.0.0"

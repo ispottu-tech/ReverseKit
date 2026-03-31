@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Activity, AppWindow, Cpu, TerminalSquare, ShieldAlert, Workflow, FileCode2 } from "lucide-react";
+import { Activity, AppWindow, Cpu, TerminalSquare, ShieldAlert, Workflow, FileCode2, ScanSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetFridaStatus, getGetFridaStatusQueryKey } from "@workspace/api-client-react";
 
@@ -15,6 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/applications", label: "Applications", icon: AppWindow },
     { href: "/sessions", label: "Sessions", icon: Workflow },
     { href: "/scripts", label: "Script Library", icon: FileCode2 },
+    { href: "/binary", label: "Binary Analyzer", icon: ScanSearch },
   ];
 
   return (

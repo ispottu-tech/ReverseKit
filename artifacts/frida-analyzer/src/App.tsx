@@ -9,6 +9,7 @@ import Applications from "@/pages/applications";
 import Sessions from "@/pages/sessions";
 import SessionDetail from "@/pages/session-detail";
 import Scripts from "@/pages/scripts";
+import BinaryAnalyzer from "@/pages/binary-analyzer";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ function Router() {
         <Route path="/sessions" component={Sessions} />
         <Route path="/sessions/:sessionId" component={SessionDetail} />
         <Route path="/scripts" component={Scripts} />
+        <Route path="/binary" component={BinaryAnalyzer} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
