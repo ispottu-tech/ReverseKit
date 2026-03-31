@@ -1,0 +1,334 @@
+{
+  "_meta": {
+    "tool": "ReverseKit v1.0",
+    "generated": "2026-03-31T18:18:13.397Z",
+    "engines": [
+      "lief 0.17.6",
+      "capstone 5.0",
+      "radare2 5.9.8",
+      "ROPgadget 7.7",
+      "pwntools 4.15"
+    ]
+  },
+  "filename": "BlockWAUpdates.dylib",
+  "file_info": "/tmp/f50d47a71df6a216a5ddefc3e7eb2b9e: Mach-O universal binary with 3 architectures: [armv7:\\012- Mach-O armv7 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>] [\\012- arm64:\\012- Mach-O 64-bit arm64 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>] [\\012- arm64e (caps: 0x2):\\012- Mach-O 64-bit arm64e 00) dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>]",
+  "hashes": {
+    "md5": "ec7520269756723a5a192d26cfe5aeb1",
+    "sha1": "3ca75f5ca08c3cd72503cbb7fc5cf87a3427918f",
+    "sha256": "2edebcacd2565614222864bacabb4e319bcc6c18cc4f1605c853c1e9075bff72",
+    "size": 183104
+  },
+  "macho": {
+    "type": "Thin Binary (ARM)",
+    "architectures": [
+      {
+        "cpu": "ARM",
+        "file_type": "DYLIB"
+      }
+    ],
+    "objc_classes": [],
+    "encrypted": false,
+    "encryption_details": [],
+    "linked_libraries": [
+      "/Library/MobileSubstrate/DynamicLibraries/BlockWAUpdates.dylib",
+      "/usr/lib/libobjc.A.dylib",
+      "/System/Library/Frameworks/Foundation.framework/Foundation",
+      "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+      "@rpath/CydiaSubstrate.framework/CydiaSubstrate",
+      "/usr/lib/libstdc++.6.dylib",
+      "/usr/lib/libSystem.B.dylib"
+    ],
+    "load_commands": [
+      "VersionMin",
+      "DynamicSymbolCommand",
+      "SegmentCommand",
+      "SymbolCommand",
+      "LinkEdit",
+      "CodeSignature",
+      "UUIDCommand",
+      "DataInCode",
+      "DylibCommand",
+      "DyldInfo",
+      "FunctionStarts"
+    ],
+    "has_code_signature": true,
+    "sections": [
+      {
+        "name": "__TEXT,__text",
+        "size": 268,
+        "offset": 15944
+      },
+      {
+        "name": "__TEXT,__stub_helper",
+        "size": 60,
+        "offset": 16212
+      },
+      {
+        "name": "__TEXT,__cstring",
+        "size": 21,
+        "offset": 16272
+      },
+      {
+        "name": "__TEXT,__objc_methname",
+        "size": 80,
+        "offset": 16293
+      },
+      {
+        "name": "__TEXT,__symbolstub1",
+        "size": 8,
+        "offset": 16376
+      },
+      {
+        "name": "__DATA,__lazy_symbol",
+        "size": 8,
+        "offset": 16384
+      },
+      {
+        "name": "__DATA,__nl_symbol_ptr",
+        "size": 8,
+        "offset": 16392
+      },
+      {
+        "name": "__DATA,__mod_init_func",
+        "size": 4,
+        "offset": 16400
+      },
+      {
+        "name": "__DATA,__objc_imageinfo",
+        "size": 8,
+        "offset": 16404
+      },
+      {
+        "name": "__DATA,__objc_selrefs",
+        "size": 16,
+        "offset": 16412
+      },
+      {
+        "name": "__DATA,__bss",
+        "size": 16,
+        "offset": 0
+      }
+    ]
+  },
+  "security_properties": {
+    "pie": false,
+    "stack_canary": false,
+    "arc": false,
+    "flags": [
+      "NOUNDEFS",
+      "DYLDLINK",
+      "TWOLEVEL",
+      "NO_REEXPORTED_DYLIBS"
+    ]
+  },
+  "security_features": [
+    {
+      "feature": "Jailbreak Detection",
+      "evidence": [
+        "cydia",
+        "substrate"
+      ]
+    }
+  ],
+  "obfuscation": [
+    {
+      "type": "Jailbreak Detection",
+      "severity": "medium",
+      "evidence": [
+        "cydia",
+        "substrate",
+        "MobileSubstrate"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "sym.imp.MSHookMessageEx",
+      "size": 4,
+      "addr": "0x3ffc"
+    },
+    {
+      "name": "sym.imp.objc_getClass",
+      "size": 4,
+      "addr": "0x3ff8"
+    },
+    {
+      "name": "sym._logosLocalInit__",
+      "size": 222,
+      "addr": "0x3e48"
+    },
+    {
+      "name": "sym._logos_method__ungrouped_WARootViewController_isBuildExpired_WARootViewController__objc_selector_",
+      "size": 16,
+      "addr": "0x3f26"
+    },
+    {
+      "name": "sym._logos_method__ungrouped_WARootViewController_expireBuild_WARootViewController__objc_selector_",
+      "size": 10,
+      "addr": "0x3f36"
+    },
+    {
+      "name": "sym._logos_method__ungrouped_WARootViewController_presentHelperScreen_WARootViewController__objc_selector_",
+      "size": 10,
+      "addr": "0x3f40"
+    },
+    {
+      "name": "sym._logos_method__ungrouped_WARootViewController_wa_applicationDidEnterBackground_WARootViewController__objc_selector_",
+      "size": 6,
+      "addr": "0x3f4a"
+    },
+    {
+      "name": "sym._stub_helpers",
+      "size": 28,
+      "addr": "0x3f54"
+    },
+    {
+      "name": "fcn.00003f84",
+      "size": 8,
+      "addr": "0x3f84"
+    },
+    {
+      "name": "fcn.00003f78",
+      "size": 8,
+      "addr": "0x3f78"
+    }
+  ],
+  "symbols": [
+    {
+      "addr": "0000000000007dac",
+      "type": "t",
+      "name": "__ZL15_logosLocalInitv"
+    },
+    {
+      "addr": "0000000000008058",
+      "type": "b",
+      "name": "__ZL55_logos_orig$_ungrouped$WARootViewController$expireBuild"
+    },
+    {
+      "addr": "0000000000007ec4",
+      "type": "t",
+      "name": "__ZL57_logos_method$_ungrouped$WARootViewController$expireBuildP20WARootViewControllerP13objc_selector"
+    },
+    {
+      "addr": "0000000000008050",
+      "type": "b",
+      "name": "__ZL58_logos_orig$_ungrouped$WARootViewController$isBuildExpired"
+    },
+    {
+      "addr": "0000000000007ea8",
+      "type": "t",
+      "name": "__ZL60_logos_method$_ungrouped$WARootViewController$isBuildExpiredP20WARootViewControllerP13objc_selector"
+    },
+    {
+      "addr": "0000000000008060",
+      "type": "b",
+      "name": "__ZL63_logos_orig$_ungrouped$WARootViewController$presentHelperScreen"
+    },
+    {
+      "addr": "0000000000007ed8",
+      "type": "t",
+      "name": "__ZL65_logos_method$_ungrouped$WARootViewController$presentHelperScreenP20WARootViewControllerP13objc_selector"
+    },
+    {
+      "addr": "0000000000008068",
+      "type": "b",
+      "name": "__ZL76_logos_orig$_ungrouped$WARootViewController$wa_applicationDidEnterBackground"
+    },
+    {
+      "addr": "0000000000007eec",
+      "type": "t",
+      "name": "__ZL78_logos_method$_ungrouped$WARootViewController$wa_applicationDidEnterBackgroundP20WARootViewControllerP13objc_selector"
+    }
+  ],
+  "imports": [
+    "MSHookMessageEx",
+    "dyld_stub_binder",
+    "objc_getClass"
+  ],
+  "strings": [
+    "__TEXT",
+    "__text",
+    "__stub_helper",
+    "__cstring",
+    "__objc_methname",
+    "__symbolstub1",
+    "__DATA",
+    "__lazy_symbol",
+    "__nl_symbol_ptr",
+    "__mod_init_func",
+    "__objc_imageinfo__DATA",
+    "__objc_selrefs",
+    "__bss",
+    "__LINKEDIT",
+    "/Library/MobileSubstrate/DynamicLibraries/BlockWAUpdates.dylib",
+    "/usr/lib/libobjc.A.dylib",
+    "/System/Library/Frameworks/Foundation.framework/Foundation",
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+    "@rpath/CydiaSubstrate.framework/CydiaSubstrate",
+    "/usr/lib/libstdc++.6.dylib",
+    "/usr/lib/libSystem.B.dylib",
+    "WARootViewController",
+    "isBuildExpired",
+    "expireBuild",
+    "presentHelperScreen",
+    "wa_applicationDidEnterBackground",
+    "@dyld_stub_binder",
+    "@_objc_getClass",
+    "@_MSHookMessageEx",
+    "/home/Kujman/blockwaupdates/.theos/obj/debug/armv7/",
+    "Tweak.xm.mm",
+    "/home/Kujman/blockwaupdates/.theos/obj/debug/armv7/Tweak.xm.a2d834ce.o",
+    "__ZL15_logosLocalInitv",
+    "Tweak.xm",
+    "__ZL60_logos_method$_ungrouped$WARootViewController$isBuildExpiredP20WARootViewControllerP13objc_selector",
+    "__ZL57_logos_method$_ungrouped$WARootViewController$expireBuildP20WARootViewControllerP13objc_selector",
+    "__ZL65_logos_method$_ungrouped$WARootViewController$presentHelperScreenP20WARootViewControllerP13objc_selector",
+    "__ZL78_logos_method$_ungrouped$WARootViewController$wa_applicationDidEnterBackgroundP20WARootViewControllerP13objc_selector",
+    "__ZL58_logos_orig$_ungrouped$WARootViewController$isBuildExpired",
+    "__ZL55_logos_orig$_ungrouped$WARootViewController$expireBuild",
+    "__ZL63_logos_orig$_ungrouped$WARootViewController$presentHelperScreen",
+    "__ZL76_logos_orig$_ungrouped$WARootViewController$wa_applicationDidEnterBackground",
+    "stub helpers",
+    "_MSHookMessageEx",
+    "_objc_getClass",
+    "dyld_stub_binder",
+    "BlockWAUpdates.dylib.47ba6b93.unsigned",
+    "__stubs",
+    "__unwind_info",
+    "__got",
+    "__la_symbol_ptr",
+    "/home/Kujman/blockwaupdates/.theos/obj/debug/arm64/",
+    "/home/Kujman/blockwaupdates/.theos/obj/debug/arm64/Tweak.xm.74f2abbf.o",
+    "__auth_stubs",
+    "__auth_got",
+    "__auth_ptr",
+    "/usr/lib/libc++.1.dylib",
+    "/Users/gilshahar7/blockwaupdates2/.theos/obj/debug/arm64e/",
+    "/Users/gilshahar7/blockwaupdates2/.theos/obj/debug/arm64e/Tweak.xm.f29c3bdc.o"
+  ],
+  "rop_gadgets": [
+    {
+      "addr": "0x00003e78",
+      "gadget": "andls r4, r7, sl, ror r4 ; ldmdavs r2, {r0, r1, r2, fp, ip, pc} ; ldrmi sb, [r1], -r6, lsl #2 ; blls #0x195854 ; ldm r8!, {ip, sp, lr, pc}"
+    },
+    {
+      "addr": "0x00003e84",
+      "gadget": "blls #0x195854 ; ldm r8!, {ip, sp, lr, pc}"
+    },
+    {
+      "addr": "0x00003e88",
+      "gadget": "ldm r8!, {ip, sp, lr, pc}"
+    },
+    {
+      "addr": "0x00003e7c",
+      "gadget": "ldmdavs r2, {r0, r1, r2, fp, ip, pc} ; ldrmi sb, [r1], -r6, lsl #2 ; blls #0x195854 ; ldm r8!, {ip, sp, lr, pc}"
+    },
+    {
+      "addr": "0x00003e80",
+      "gadget": "ldrmi sb, [r1], -r6, lsl #2 ; blls #0x195854 ; ldm r8!, {ip, sp, lr, pc}"
+    }
+  ],
+  "disassembly": "/tmp/f50d47a71df6a216a5ddefc3e7eb2b9e:\n(__TEXT,__text) section\n__ZL15_logosLocalInitv:\n    7dac:\tff c3 00 d1\tsub\tsp, sp, #0x30\n    7db0:\tfd 7b 02 a9\tstp\tx29, x30, [sp, #0x20]\n    7db4:\tfd 83 00 91\tadd\tx29, sp, #0x20\n    7db8:\t08 00 00 90\tadrp\tx8, 0 ; 0x7000\n    7dbc:\t00 21 3d 91\tadd\tx0, x8, #0xf48 ; literal pool for: \"WARootViewController\"\n    7dc0:\t50 00 00 94\tbl\t0x7f00 ; symbol stub for: _objc_getClass\n    7dc4:\t08 00 00 90\tadrp\tx8, 0 ; 0x7000\n    7dc8:\t08 a1 3a 91\tadd\tx8, x8, #0xea8\n    7dcc:\t1e 00 00 b0\tadrp\tx30, 1 ; 0x8000\n    7dd0:\tde 43 01 91\tadd\tx30, x30, #0x50\n    7dd4:\t09 00 00 b0\tadrp\tx9, 1 ; 0x8000\n    7dd8:\t29 c1 00 91\tadd\tx9, x9, #0x30 ; Objc selector ref: isBuildExpired\n    7ddc:\ta0 83 1f f8\tstur\tx0, [x29, #-0x8]\n    7de0:\ta0 83 5f f8\tldur\tx0, [x29, #-0x8]\n    7de4:\t21 01 40 f9\tldr\tx1, [x9]\n    7de8:\te2 03 08 aa\tmov\tx2, x8\n    7dec:\te3 03 1e aa\tmov\tx3, x30\n    7df0:\t47 00 00 94\tbl\t0x7f0c ; symbol stub for: _MSHookMessageEx\n    7df4:\t08 00 00 90\tadrp\tx8, 0 ; 0x7000\n    7df8:\t08 11 3b 91\tadd\tx8, x8, #0xec4\n    7dfc:\t09 00 00 b0\tadrp\tx9, 1 ; 0x8000\n    7e00:\t29 61 01 91\tadd\tx9, x9, #0x58\n    7e04:\t00 00 00 b0\tadrp\tx0, 1 ; 0x8000\n    7e08:\t00 e0 00 91\tadd\tx0, x0, #0x38 ; Objc selector ref: expireBuild\n    7e0c:\ta1 83 5f f8\tldur\tx1, [x29, #-0x8]\n    7e10:\t00 00 40 f9\tldr\tx0, [x0]\n    7e14:\te0 0b 00 f9\tstr\tx0, [sp, #0x10]\n    7e18:\te0 03 01 aa\tmov\tx0, x1\n    7e1c:\te1 0b 40 f9\tldr\tx1, [sp, #0x10]\n    7e20:\te2 03 08 aa\tmov\tx2, x8\n    7e24:\te3 03 09 aa\tmov\tx3, x9\n    7e28:\t39 00 00 94\tbl\t0x7f0c ; symbol stub for: _MSHookMessageEx\n    7e2c:\t08 00 00 90\tadrp\tx8, 0 ; 0x7000\n    7e30:\t08 61 3b 91\tadd\tx8, x8, #0xed8\n    7e34:\t09 00 00 b0\tadrp\tx9, 1 ; 0x8000\n    7e38:\t29 81 01 91\tadd\tx9, x9, #0x60\n    7e3c:\t00 00 00 b0\tadrp\tx0, 1 ; 0x8000\n    7e40:\t00 00 01 91\tadd\tx0, x0, #0x40 ; Objc selector ref: presentHelperScreen\n    7e44:\ta1 83 5f f8\tldur\tx1, [x29, #-0x8]\n    7e48:\t00 00 40 f9\tldr\tx0, [x0]\n    7e4c:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    7e50:\te0 03 01 aa\tmov\tx0, x1\n    7e54:\te1 07 40 f9\tldr\tx1, [sp, #0x8]\n    7e58:\te2 03 08 aa\tmov\tx2, x8\n    7e5c:\te3 03 09 aa\tmov\tx3, x9\n    7e60:\t2b 00 00 94\tbl\t0x7f0c ; symbol stub for: _MSHookMessageEx\n    7e64:\t08 00 00 90\tadrp\tx8, 0 ; 0x7000\n    7e68:\t08 b1 3b 91\tadd\tx8, x8, #0xeec\n    7e6c:\t09 00 00 b0\tadrp\tx9, 1 ; 0x8000\n    7e70:\t29 a1 01 91\tadd\tx9, x9, #0x68\n    7e74:\t00 00 00 b0\tadrp\tx0, 1 ; 0x8000\n    7e78:\t00 20 01 91\tadd\tx0, x0, #0x48 ; Objc selector ref: wa_applicationDidEnterBackground\n    7e7c:\ta1 83 5f f8\tldur\tx1, [x29, #-0x8]\n    7e80:\t00 00 40 f9\tldr\tx0, [x0]\n    7e84:\te0 03 00 f9\tstr\tx0, [sp]\n    7e88:\te0 03 01 aa\tmov\tx0, x1\n    7e8c:\te1 03 40 f9\tldr\tx1, [sp]\n    7e90:\te2 03 08 aa\tmov\tx2, x8\n    7e94:\te3 03 09 aa\tmov\tx3, x9\n    7e98:\t1d 00 00 94\tbl\t0x7f0c ; symbol stub for: _MSHookMessageEx\n    7e9c:\tfd 7b 42 a9\tldp\tx29, x30, [sp, #0x20]\n    7ea0:\tff c3 00 91\tadd\tsp, sp, #0x30\n    7ea4:\tc0 03 5f d6\tret\n__ZL60_logos_method$_ungrouped$WARootViewController$isBuildExpiredP20WARootViewControllerP13objc_selector:\n    7ea8:\tff 43 00 d1\tsub\tsp, sp, #0x10\n    7eac:\t08 00 80 52\tmov\tw8, #0x0\n    7eb0:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    7eb4:\te1 03 00 f9\tstr\tx1, [sp]\n    7eb8:\t00 01 00 12\tand\tw0, w8, #0x1\n    7ebc:\tff 43 00 91\tadd\tsp, sp, #0x10\n    7ec0:\tc0 03 5f d6\tret\n__ZL57_logos_method$_ungrouped$WARootViewController$expireBuildP20WARootViewControllerP13objc_selector:\n    7ec4:\tff 43 00 d1\tsub\tsp, sp, #0x10\n    7ec8:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    7ecc:\te1 03 00 f9\tstr\tx1, [sp]\n    7ed0:\tff 43 00 91\tadd\tsp, sp, #0x10\n    7ed4:\tc0 03 5f d6\tret\n__ZL65_logos_method$_ungrouped$WARootViewController$presentHelperScreenP20WARootViewControllerP13objc_selector:\n    7ed8:\tff 43 00 d1\tsub\tsp, sp, #0x10\n    7edc:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    7ee0:\te1 03 00 f9\tstr\tx1, [sp]\n    7ee4:\tff 43 00 91\tadd\tsp, sp, #0x10\n    7ee8:\tc0 03 5f d6\tret\n__ZL78_logos_method$_ungrouped$WARootViewController$wa_applicationDidEnterBackgroundP20WARootViewControllerP13objc_selector:\n    7eec:\tff 43 00 d1\tsub\tsp, sp, #0x10\n    7ef0:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    7ef4:\te1 03 00 f9\tstr\tx1, [sp]\n    7ef8:\tff 43 00 91\tadd\tsp, sp, #0x10\n    7efc:\tc0 03 5f d6\tret",
+  "capstone_disasm": "",
+  "pseudo_c": "// callconv: r0 arm32 (r0, r1);\nint sym.imp.MSHookMessageEx (int r0, int r1) {\n    loc_0x00003ffc:\n        // CALL XREFS from _logosLocalInit() @ 0x3e88(x), 0x3eba(x), 0x3eec(x), 0x3f1e(x) // sym._logosLocalInit__\n        pc = [pc]     // reloc.MSHookMessageEx // [0x4004:4]=0x3f84 fcn.00003f84 // fcn.00003f84\n        return r0;\n}\n"
+}
