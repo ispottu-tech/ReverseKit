@@ -522,6 +522,9 @@ export default function BinaryAnalyzer() {
                 <TabsTrigger value="swift" className="data-[state=active]:bg-orange-500/20 data-[state=active]:text-orange-300">
                   🔶 Swift
                 </TabsTrigger>
+                <TabsTrigger value="yara" className="data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-300">
+                  🔬 YARA ({result.yara_scan?.total_matches ?? 0})
+                </TabsTrigger>
                 <TabsTrigger value="rop">ROP ({result.rop_gadgets?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="asm">Disasm</TabsTrigger>
                 <TabsTrigger value="sections">Sections</TabsTrigger>
@@ -1137,6 +1140,76 @@ export default function BinaryAnalyzer() {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm text-center py-8">Swift metadata extraction not available</p>
+                )}
+              </TabsContent>
+
+              {/* YARA Threat Scan */}
+              <TabsContent value="yara" className="mt-4">
+                {result.yara_scan ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                        result.yara_scan.threat_level === "critical" ? "bg-red-600/20 text-red-400 border border-red-600/30" :
+                        result.yara_scan.threat_level === "high" ? "bg-red-500/20 text-red-400 border border-red-500/30" :
+                        result.yara_scan.threat_level === "medium" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" :
+                        result.yara_scan.threat_level === "low" ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" :
+                        "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      }`}>
+                        Threat: {result.yara_scan.threat_level}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{result.yara_scan.total_matches} rule(s) matched</span>
+                      <span className="text-xs text-muted-foreground ml-auto">{result.yara_scan.engine}</span>
+                    </div>
+
+                    {result.yara_scan.matches?.length > 0 ? (
+                      <div className="space-y-3">
+                        {result.yara_scan.matches.map((match: any, i: number) => (
+                          <div key={i} className={`p-3 rounded-lg border ${
+                            match.severity === "critical" ? "bg-red-600/5 border-red-600/30" :
+                            match.severity === "high" ? "bg-red-500/5 border-red-500/20" :
+                            match.severity === "medium" ? "bg-amber-500/5 border-amber-500/20" :
+                            match.severity === "low" ? "bg-blue-500/5 border-blue-500/20" :
+                            "bg-secondary/20 border-border/30"
+                          }`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold ${
+                                match.severity === "critical" ? "bg-red-600/30 text-red-300" :
+                                match.severity === "high" ? "bg-red-500/30 text-red-300" :
+                                match.severity === "medium" ? "bg-amber-500/30 text-amber-300" :
+                                match.severity === "low" ? "bg-blue-500/30 text-blue-300" :
+                                "bg-secondary/50 text-muted-foreground"
+                              }`}>{match.severity}</span>
+                              <span className="font-bold text-sm text-primary">{match.rule.replace(/_/g, " ")}</span>
+                              {match.category && (
+                                <span className="text-[10px] text-muted-foreground px-1.5 py-0.5 rounded bg-secondary/30">{match.category}</span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">{match.description}</p>
+                            {match.matched_strings?.length > 0 && (
+                              <div className="flex gap-1 mt-2 flex-wrap">
+                                {match.matched_strings.map((s: string, j: number) => (
+                                  <span key={j} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/15">{s}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-emerald-400 font-semibold">No threats detected</p>
+                        <p className="text-muted-foreground text-xs mt-1">10 YARA rules scanned — binary appears clean</p>
+                      </div>
+                    )}
+
+                    {result.yara_scan.error && (
+                      <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+                        YARA Error: {result.yara_scan.error}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">YARA scan not available</p>
                 )}
               </TabsContent>
             </Tabs>

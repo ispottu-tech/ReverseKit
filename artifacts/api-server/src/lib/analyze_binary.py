@@ -1223,6 +1223,239 @@ def extract_swift_metadata(path):
         return {"error": str(e), "has_swift": False, "swift_classes": [], "swift_protocols": [], "swift_headers": ""}
 
 
+IOS_YARA_RULES = r"""
+rule iOS_Jailbreak_Detection {
+    meta:
+        description = "Detects jailbreak detection code in iOS binaries"
+        severity = "medium"
+        category = "security"
+    strings:
+        $cydia = "/Applications/Cydia.app" ascii
+        $sileo = "/Applications/Sileo.app" ascii
+        $zebra = "/Applications/Zebra.app" ascii
+        $substrate = "/Library/MobileSubstrate" ascii
+        $ssh = "/usr/sbin/sshd" ascii
+        $bash = "/bin/bash" ascii
+        $apt = "/etc/apt" ascii
+        $dpkg = "/var/lib/dpkg" ascii
+        $varjb = "/var/jb" ascii
+        $cydia_url = "cydia://" ascii
+        $sileo_url = "sileo://" ascii
+    condition:
+        3 of them
+}
+
+rule iOS_Anti_Debug {
+    meta:
+        description = "Detects anti-debugging techniques"
+        severity = "high"
+        category = "anti-analysis"
+    strings:
+        $ptrace = "ptrace" ascii
+        $deny = "PT_DENY_ATTACH" ascii
+        $sysctl = "sysctl" ascii
+        $kern_proc = "KERN_PROC" ascii
+        $task_ports = "task_get_exception_ports" ascii
+        $isatty = "isatty" ascii
+        $getppid = "getppid" ascii
+    condition:
+        2 of them
+}
+
+rule iOS_Frida_Detection {
+    meta:
+        description = "Detects Frida instrumentation framework detection"
+        severity = "high"
+        category = "anti-analysis"
+    strings:
+        $frida1 = "frida" ascii nocase
+        $frida2 = "FridaGadget" ascii
+        $frida3 = "frida-server" ascii
+        $gumjs = "gumjs" ascii
+        $stalker = "stalker" ascii
+        $linjector = "linjector" ascii
+        $frida_port = "27042" ascii
+    condition:
+        2 of them
+}
+
+rule iOS_SSL_Pinning {
+    meta:
+        description = "Detects SSL/TLS certificate pinning"
+        severity = "medium"
+        category = "security"
+    strings:
+        $trustkit = "TrustKit" ascii
+        $pin1 = "SecTrustEvaluate" ascii
+        $pin2 = "SecTrustCopyPublicKey" ascii
+        $pin3 = "certificate" ascii nocase
+        $pin4 = "pinning" ascii nocase
+        $afn = "AFSecurityPolicy" ascii
+        $alamofire = "ServerTrustEvaluating" ascii
+    condition:
+        2 of them
+}
+
+rule iOS_Encryption_Usage {
+    meta:
+        description = "Detects encryption/cryptography usage"
+        severity = "low"
+        category = "crypto"
+    strings:
+        $aes = "CCCrypt" ascii
+        $aes2 = "kCCAlgorithmAES" ascii
+        $rsa = "SecKeyCreateEncryptedData" ascii
+        $keychain = "SecItemAdd" ascii
+        $keychain2 = "SecItemCopyMatching" ascii
+        $hash1 = "CC_SHA256" ascii
+        $hash2 = "CC_MD5" ascii
+        $hmac = "CCHmac" ascii
+    condition:
+        2 of them
+}
+
+rule iOS_Tweak_Logos {
+    meta:
+        description = "Theos/Logos jailbreak tweak framework"
+        severity = "info"
+        category = "framework"
+    strings:
+        $logos1 = "_logosLocalInit" ascii
+        $logos2 = "__logos_method" ascii
+        $logos3 = "_logos_orig" ascii
+        $mshook = "MSHookMessageEx" ascii
+        $msfunc = "MSHookFunction" ascii
+        $substrate = "CydiaSubstrate" ascii
+    condition:
+        2 of them
+}
+
+rule iOS_Malware_Indicators {
+    meta:
+        description = "Potential malware behavior indicators"
+        severity = "critical"
+        category = "malware"
+    strings:
+        $keylog = "keyLogger" ascii nocase
+        $screenshot = "UIGraphicsGetImageFromCurrentImageContext" ascii
+        $pasteboard = "UIPasteboard" ascii
+        $contacts = "CNContactStore" ascii
+        $location = "CLLocationManager" ascii
+        $camera = "AVCaptureDevice" ascii
+        $mic = "AVAudioRecorder" ascii
+        $sms = "MFMessageComposeViewController" ascii
+        $call = "tel://" ascii
+        $exfil = "uploadData" ascii nocase
+        $c2 = "command" ascii
+        $backdoor = "backdoor" ascii nocase
+        $inject = "inject" ascii nocase
+        $payload = "payload" ascii nocase
+    condition:
+        4 of them
+}
+
+rule iOS_Obfuscation_Detected {
+    meta:
+        description = "Code obfuscation detected"
+        severity = "high"
+        category = "obfuscation"
+    strings:
+        $ollvm = "ollvm" ascii nocase
+        $hikari = "hikari" ascii nocase
+        $fla = "fla_" ascii
+        $bcf = "bcf_" ascii
+        $sub = "sub_" ascii
+        $ixguard = "ixguard" ascii nocase
+        $guardsquare = "guardsquare" ascii nocase
+    condition:
+        2 of them
+}
+
+rule iOS_Network_Exfiltration {
+    meta:
+        description = "Network data exfiltration patterns"
+        severity = "high"
+        category = "network"
+    strings:
+        $upload = "uploadTask" ascii
+        $post_data = "HTTPBody" ascii
+        $nsurl = "NSURLSession" ascii
+        $send = "sendAsynchronousRequest" ascii
+        $ws = "WebSocket" ascii
+        $firebase = "firebaseio.com" ascii
+        $s3 = "s3.amazonaws.com" ascii
+    condition:
+        3 of them
+}
+
+rule iOS_Privacy_Violation {
+    meta:
+        description = "Accesses sensitive user data"
+        severity = "medium"
+        category = "privacy"
+    strings:
+        $idfa = "advertisingIdentifier" ascii
+        $idfv = "identifierForVendor" ascii
+        $device = "UIDevice" ascii
+        $sysname = "systemName" ascii
+        $sysver = "systemVersion" ascii
+        $model = "model" ascii
+        $carrier = "CTTelephonyNetworkInfo" ascii
+        $wifi = "CNCopyCurrentNetworkInfo" ascii
+    condition:
+        3 of them
+}
+"""
+
+
+def yara_scan(path):
+    """Run YARA rules against iOS binary for threat/pattern detection"""
+    try:
+        import yara
+        rules = yara.compile(source=IOS_YARA_RULES)
+        matches = rules.match(filepath=path)
+
+        results = []
+        for match in matches:
+            matched_strings = []
+            for s in match.strings:
+                for instance in s.instances:
+                    decoded = instance.matched_data.decode("utf-8", errors="replace")
+                    if decoded not in matched_strings and len(matched_strings) < 8:
+                        matched_strings.append(decoded)
+
+            results.append({
+                "rule": match.rule,
+                "description": match.meta.get("description", ""),
+                "severity": match.meta.get("severity", "info"),
+                "category": match.meta.get("category", ""),
+                "matched_strings": matched_strings,
+                "tags": list(match.tags) if match.tags else [],
+            })
+
+        severity_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
+        results.sort(key=lambda r: severity_order.get(r["severity"], 5))
+
+        threat_level = "clean"
+        if any(r["severity"] == "critical" for r in results):
+            threat_level = "critical"
+        elif any(r["severity"] == "high" for r in results):
+            threat_level = "high"
+        elif any(r["severity"] == "medium" for r in results):
+            threat_level = "medium"
+        elif results:
+            threat_level = "low"
+
+        return {
+            "matches": results,
+            "total_matches": len(results),
+            "threat_level": threat_level,
+            "engine": "YARA 4.5",
+        }
+    except Exception as e:
+        return {"error": str(e), "matches": [], "total_matches": 0, "threat_level": "unknown"}
+
+
 def analyze(path, original_filename=None):
     if original_filename is None:
         original_filename = os.path.basename(path)
@@ -1352,6 +1585,9 @@ def _analyze_binary(path):
 
     # 18. Swift Metadata Extraction
     result["swift_metadata"] = extract_swift_metadata(path)
+
+    # 19. YARA Threat Scan
+    result["yara_scan"] = yara_scan(path)
 
     return result
 
