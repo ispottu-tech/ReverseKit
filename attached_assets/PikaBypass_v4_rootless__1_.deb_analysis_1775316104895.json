@@ -1,0 +1,61 @@
+{
+  "_meta": {
+    "tool": "ReverseKit v2.0",
+    "generated": "2026-04-04T15:20:20.963Z",
+    "engines": [
+      "lief 0.17.6",
+      "capstone 5.0",
+      "radare2 5.9.8",
+      "ROPgadget 7.7",
+      "pwntools 4.15",
+      "Ghidra 11.3.2",
+      "RetDec 5.0"
+    ]
+  },
+  "filename": "PikaBypass_v4_rootless (1).deb",
+  "file_info": "/tmp/35f71ea910fb741c6821b512f55f7238: Debian binary package (format 2.0), with control.tar.zst, data compression zst",
+  "hashes": {
+    "md5": "766c00b0ab5ee6ed6213c62cec53ca69",
+    "sha1": "e1e6efe1a9d97599ef1a02149c57dc1656292b79",
+    "sha256": "1f08ee87f128984ec5b6b04638ef3c580c1648784e9dc952c25ef511acbd24d9",
+    "size": 2778
+  },
+  "macho": {
+    "error": "Cannot parse binary"
+  },
+  "security_properties": {},
+  "security_features": [],
+  "obfuscation": [],
+  "functions": [
+    {
+      "name": "fcn.00000000",
+      "size": 139,
+      "addr": "0x0"
+    }
+  ],
+  "symbols": [],
+  "imports": [],
+  "strings": [
+    "!<arch>",
+    "debian-binary   1773621271  0     0     100644  4         `",
+    "control.tar.zst 1773621271  0     0     100644  276       `",
+    "tdata.tar.zst    1773621271  0     0     100644  2309      `",
+    "k38Z,",
+    "X-NPL",
+    "T]VlT",
+    "r=.)ag",
+    "hv)xyB\"",
+    "@>:8A?",
+    "D\"AAa",
+    "E3/MfL",
+    "UzS/GaV",
+    "yDJM'B"
+  ],
+  "rop_gadgets": [],
+  "disassembly": "Archive : /tmp/35f71ea910fb741c6821b512f55f7238",
+  "capstone_disasm": "",
+  "pseudo_c": "// --- fcn.00000000 @ 0x0 ---\n// callconv: rax amd64 (rdi, rsi, rdx, rcx, r8, r9, xmm0, xmm1, xmm2, xmm3, xmm4);\nvoid fcn.00000000 (int64_t arg1, int64_t arg2, int64_t arg4) {\n    loc_0x00000000:\n        dword [rcx + riz*2] &= edi // arg4\n        if (((unsigned) v) < 0) goto 0x68 // unlikely\n        goto loc_0x00000005;\n    loc_0x00000068:\n        // CODE XREF from fcn.00000000 @ 0x3(x)\n        byte [rax] &= ah\n        byte [rax] ^= ah\n        byte [rax] &= ah\n        byte [rax] &= ah\n        dword [rax] ^= esi // arg2\n        byte [rsi] ^= dh // arg2\n        al ^= 0x34    // \"44  4         `\\n2.0\\ncontrol.tar.zst 1773621271  0     0     100644  276       `\\n(\\xb5/\\xfdd\"\n        // CODE XREF from fcn.00000000 @ +0xb8(x)\n        byte [rax] &= ah\n        // CODE XREF from fcn.00000000 @ +0x56(x)\n        dh ^= byte [rdi] // arg1\n        byte ss:[rax] &= ah\n        byte [rax] &= ah\n        // CODE XREF from fcn.00000000 @ +0xc8(x)\n        byte [rax] &= ah\n        byte [rax + 0xa] &= ah\n        byte [rbp + 0x64fd2f] -= dh\n        invalid\n        return rax;\n}\n\n",
+  "ghidra_source": "",
+  "retdec_source": "",
+  "objc_headers": ""
+}

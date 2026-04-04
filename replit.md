@@ -99,7 +99,7 @@ React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to 
 - API base: computed from `import.meta.env.BASE_URL`
 - Pages: `src/pages/` — each page is a self-contained component
   - `home.tsx` — Welcome page with tool cards, Quick Start guide, Integrated Analysis Engines listing
-  - `binary-analyzer.tsx` — Full static analysis UI with 10 tabs (Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Pseudo-C, Sections) + security properties panel + obfuscation detection
+  - `binary-analyzer.tsx` — Full static analysis UI with 13 tabs (Ghidra Source, RetDec Source, ObjC Headers, Pseudo-C, Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Sections) + security properties panel + obfuscation detection + CodeViewer component
   - `hex-viewer.tsx` — Upload any file, view hex bytes + ASCII + file info + magic bytes
   - `scripts.tsx` — Script Arsenal with localStorage persistence, built-in Frida scripts
   - `device.tsx` — Consolidated Device Manager: Frida connection, process browser, app spawner, sessions, class/method browser, hooks, script executor
@@ -109,11 +109,13 @@ React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to 
 
 - **Python script**: `artifacts/api-server/src/lib/analyze_binary.py`
   - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, llvm-nm, llvm-objdump, strings
+  - **Archive extraction**: Automatically extracts .dylib binaries from .deb (ar+tar+zst), .ipa (zip), and .zip archives before analysis
   - **Decompilers**: Ghidra 11.3.2 (headless), RetDec 5.0, radare2 pdc (all three produce C source code)
   - **Ghidra script**: `artifacts/api-server/src/lib/ghidra_decompile.py` — Jython postScript that runs inside Ghidra headless, decompiles up to 300 functions, writes output to a temp file
   - **ObjC Headers**: class-dump equivalent using lief — extracts @interface declarations, methods, properties, ivars
   - Detects: obfuscation (Hikari, OLLVM), anti-debug (ptrace, sysctl), jailbreak detection, Frida detection, SSL pinning, root detection, XOR string encryption
   - Outputs: hashes, Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties, ROP gadgets, Ghidra C source, RetDec C source, ObjC headers, radare2 pseudo-C
+- **CodeViewer component**: `artifacts/frida-analyzer/src/components/code-viewer.tsx` — Professional code viewer with Prism.js syntax highlighting, line numbers, search (Ctrl+F), copy, per-file download, macOS-style toolbar
 - **API routes** (`artifacts/api-server/src/routes/binary.ts`):
   - POST `/api/binary/analyze` — Full binary analysis with multer upload, 300s timeout, 50MB buffer
   - POST `/api/binary/hexdump` — Hex dump of uploaded file (offset/length params, max 64KB)

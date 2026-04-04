@@ -3,7 +3,7 @@ import {
   Upload, FileSearch, Shield, Code2, Hash, Library,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, X,
   Lock, Cpu, Zap, Eye, Bug, BarChart2, Layers, Key, Download,
-  FileCode, Binary, Braces
+  FileCode, Binary, Braces, Package
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -278,7 +278,7 @@ export default function BinaryAnalyzer() {
               <Upload className="w-10 h-10 text-muted-foreground" />
               <div>
                 <p className="font-semibold text-foreground">Drop binary here or click to upload</p>
-                <p className="text-sm text-muted-foreground mt-1">.dylib · .framework · .o · .a · .ipa · Mach-O · ELF</p>
+                <p className="text-sm text-muted-foreground mt-1">.dylib · .deb · .ipa · .framework · .o · .a · Mach-O · ELF</p>
               </div>
             </div>
           )}
@@ -318,6 +318,22 @@ export default function BinaryAnalyzer() {
                 </div>
               ))}
             </div>
+
+            {result.archive_info && (
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-start gap-3">
+                <Package className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 text-sm">
+                  <span className="font-semibold text-blue-300">
+                    {result.archive_info.archive_type?.toUpperCase()} Archive Extracted
+                  </span>
+                  <span className="text-blue-400/80 ml-2">
+                    {result.archive_info.extracted_binary
+                      ? `Found ${result.archive_info.extracted_binary} (${formatSize(result.archive_info.extracted_size || 0)}) inside ${result.archive_info.archive_name}`
+                      : result.archive_info.error || "No binary found in archive"}
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Export Button */}
             <div className="flex justify-end">

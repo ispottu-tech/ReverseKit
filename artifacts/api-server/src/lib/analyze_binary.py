@@ -19,6 +19,112 @@ GHIDRA_HEADLESS = "/nix/store/2pbav18pr4rn4v2ngimf29gjkv6l47l6-ghidra-11.3.2/bin
 RETDEC_BIN = "/nix/store/v6k7ayjdqaflpia7hcbjv3vh9dyz4ck6-retdec-5.0/bin/retdec-decompiler"
 GHIDRA_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghidra_decompile.py")
 
+BINARY_EXTENSIONS = {".dylib", ".so", ".a", ".o", ".framework"}
+MACHO_MAGICS = {b'\xfe\xed\xfa\xce', b'\xfe\xed\xfa\xcf', b'\xce\xfa\xed\xfe', b'\xcf\xfa\xed\xfe', b'\xca\xfe\xba\xbe'}
+
+
+def is_macho_or_elf(path):
+    try:
+        with open(path, "rb") as f:
+            magic = f.read(4)
+        if magic in MACHO_MAGICS:
+            return True
+        if magic[:4] == b'\x7fELF':
+            return True
+        return False
+    except Exception:
+        return False
+
+
+def extract_binary_from_deb(deb_path):
+    extract_dir = tempfile.mkdtemp(prefix="deb_extract_")
+    try:
+        subprocess.run(["ar", "x", deb_path], cwd=extract_dir, capture_output=True, timeout=30)
+
+        data_tar = None
+        for name in os.listdir(extract_dir):
+            if name.startswith("data.tar"):
+                data_tar = os.path.join(extract_dir, name)
+                break
+        if not data_tar:
+            return None, extract_dir
+
+        if data_tar.endswith(".zst"):
+            try:
+                import zstandard
+                decompressed = data_tar.replace(".zst", "")
+                with open(data_tar, "rb") as fin:
+                    dctx = zstandard.ZstdDecompressor()
+                    with open(decompressed, "wb") as fout:
+                        dctx.copy_stream(fin, fout)
+                data_tar = decompressed
+            except ImportError:
+                return None, extract_dir
+        elif data_tar.endswith(".xz"):
+            import lzma
+            decompressed = data_tar.replace(".xz", "")
+            with lzma.open(data_tar) as fin:
+                with open(decompressed, "wb") as fout:
+                    fout.write(fin.read())
+            data_tar = decompressed
+
+        import tarfile
+        data_dir = os.path.join(extract_dir, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        with tarfile.open(data_tar) as tf:
+            tf.extractall(data_dir, filter="data")
+
+        candidates = []
+        for root, dirs, files in os.walk(data_dir):
+            for fname in files:
+                fpath = os.path.join(root, fname)
+                _, ext = os.path.splitext(fname.lower())
+                if ext in BINARY_EXTENSIONS or is_macho_or_elf(fpath):
+                    fsize = os.path.getsize(fpath)
+                    candidates.append((fsize, fpath, fname))
+
+        if candidates:
+            candidates.sort(reverse=True)
+            return candidates[0][1], extract_dir
+
+        return None, extract_dir
+    except Exception:
+        return None, extract_dir
+
+
+def extract_binary_from_ipa(ipa_path):
+    extract_dir = tempfile.mkdtemp(prefix="ipa_extract_")
+    try:
+        import zipfile
+        with zipfile.ZipFile(ipa_path, 'r') as zf:
+            zf.extractall(extract_dir)
+
+        candidates = []
+        for root, dirs, files in os.walk(extract_dir):
+            for fname in files:
+                fpath = os.path.join(root, fname)
+                _, ext = os.path.splitext(fname.lower())
+                if ext in BINARY_EXTENSIONS or is_macho_or_elf(fpath):
+                    fsize = os.path.getsize(fpath)
+                    candidates.append((fsize, fpath, fname))
+
+        if candidates:
+            candidates.sort(reverse=True)
+            return candidates[0][1], extract_dir
+
+        return None, extract_dir
+    except Exception:
+        return None, extract_dir
+
+
+def extract_binary_from_archive(file_path, filename):
+    lower = filename.lower()
+    if lower.endswith(".deb"):
+        return extract_binary_from_deb(file_path)
+    elif lower.endswith(".ipa") or lower.endswith(".zip"):
+        return extract_binary_from_ipa(file_path)
+    return None, None
+
 def run_cmd(cmd, timeout=60):
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, errors="replace")
@@ -599,7 +705,66 @@ def detect_security_features(strings_list, imports_list, symbols_list):
 
     return features
 
-def analyze(path):
+def analyze(path, original_filename=None):
+    if original_filename is None:
+        original_filename = os.path.basename(path)
+
+    extract_dir = None
+    extracted_binary = None
+    archive_info = None
+
+    lower_name = original_filename.lower()
+    if lower_name.endswith((".deb", ".ipa", ".zip")):
+        extracted_binary, extract_dir = extract_binary_from_archive(path, original_filename)
+        if extracted_binary:
+            archive_info = {
+                "archive_type": "deb" if lower_name.endswith(".deb") else ("ipa" if lower_name.endswith(".ipa") else "zip"),
+                "archive_name": original_filename,
+                "extracted_binary": os.path.basename(extracted_binary),
+                "extracted_size": os.path.getsize(extracted_binary),
+            }
+            path = extracted_binary
+        else:
+            result = {
+                "file_info": get_file_info(path),
+                "hashes": get_hashes(path),
+                "archive_info": {
+                    "archive_type": lower_name.rsplit(".", 1)[-1],
+                    "archive_name": original_filename,
+                    "error": "No executable binary (.dylib, .so, Mach-O) found inside the archive. The package may contain only scripts or config files.",
+                },
+                "macho": {"error": "Archive file — not a direct binary"},
+                "strings": get_strings(path),
+                "symbols": [],
+                "imports": [],
+                "functions": [],
+                "pseudo_c": "",
+                "capstone_disasm": "",
+                "disassembly": "",
+                "rop_gadgets": [],
+                "obfuscation": [],
+                "security_features": [],
+                "security_properties": {},
+                "objc_headers": {"headers": "", "class_count": 0},
+                "ghidra": {"source": "", "error": "No binary found in archive"},
+                "retdec": {"source": "", "error": "No binary found in archive"},
+            }
+            if extract_dir:
+                shutil.rmtree(extract_dir, ignore_errors=True)
+            return result
+
+    try:
+        result = _analyze_binary(path)
+        if archive_info:
+            result["archive_info"] = archive_info
+            result["filename"] = archive_info["extracted_binary"]
+        return result
+    finally:
+        if extract_dir:
+            shutil.rmtree(extract_dir, ignore_errors=True)
+
+
+def _analyze_binary(path):
     result = {}
 
     # 1. File identification & hashes
@@ -666,12 +831,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     path = sys.argv[1]
+    original_filename = sys.argv[2] if len(sys.argv) > 2 else None
     if not os.path.exists(path):
         print(json.dumps({"error": f"File not found: {path}"}))
         sys.exit(1)
 
     try:
-        result = analyze(path)
+        result = analyze(path, original_filename)
         print(json.dumps(result, ensure_ascii=False, default=str))
     except Exception as e:
         print(json.dumps({"error": str(e)}))
