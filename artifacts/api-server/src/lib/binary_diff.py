@@ -132,13 +132,25 @@ def get_strings(path):
         return set()
 
 
-def get_symbols(path):
+def parse_binary(path):
+    """Parse binary once and cache the lief object"""
     try:
         import lief
         binary = lief.parse(path)
         if binary is None:
+            return None
+        if isinstance(binary, lief.MachO.FatBinary):
+            return binary[0]
+        return binary
+    except Exception:
+        return None
+
+
+def get_symbols(path, parsed=None):
+    try:
+        main = parsed or parse_binary(path)
+        if main is None:
             return set()
-        main = binary[0] if hasattr(binary, '__getitem__') else binary
         syms = set()
         try:
             for s in main.symbols:
@@ -150,13 +162,11 @@ def get_symbols(path):
         return set()
 
 
-def get_imports(path):
+def get_imports(path, parsed=None):
     try:
-        import lief
-        binary = lief.parse(path)
-        if binary is None:
+        main = parsed or parse_binary(path)
+        if main is None:
             return set()
-        main = binary[0] if hasattr(binary, '__getitem__') else binary
         imps = set()
         try:
             for lib in main.libraries:
@@ -168,37 +178,59 @@ def get_imports(path):
         return set()
 
 
-def get_classes(path):
+def get_classes(path, parsed=None, symbols=None):
+    """Extract ObjC classes and methods from symbols (works on all binaries)"""
     try:
-        import lief
-        binary = lief.parse(path)
-        if binary is None:
-            return {}
-        main = binary[0] if hasattr(binary, '__getitem__') else binary
+        import re
+        main = parsed or parse_binary(path)
+
         cls_map = {}
+
+        if symbols is None:
+            symbols = get_symbols(path, main)
+
+        for sym in symbols:
+            m = re.match(r'_OBJC_CLASS_\$_(.+)', sym)
+            if m:
+                cls_map.setdefault(m.group(1), set())
+
+        for sym in symbols:
+            m = re.match(r'[+-]\[(\w+)\s+(\w+[:\w]*)\]', sym)
+            if m:
+                cls_name = m.group(1)
+                method = m.group(2)
+                cls_map.setdefault(cls_name, set()).add(method)
+
+            m2 = re.match(r'_OBJC_\$_INSTANCE_METHODS_(.+)', sym)
+            if m2:
+                cls_map.setdefault(m2.group(1), set())
+
         try:
-            for cls in main.classes:
-                name = str(cls.name)
-                methods = []
-                try:
-                    methods = [str(m.name) for m in cls.methods]
-                except Exception:
-                    pass
-                cls_map[name] = set(methods)
+            if main and hasattr(main, 'classes'):
+                for cls in main.classes:
+                    name = str(cls.name)
+                    methods = set()
+                    try:
+                        methods = {str(m.name) for m in cls.methods}
+                    except Exception:
+                        pass
+                    if name in cls_map:
+                        cls_map[name].update(methods)
+                    else:
+                        cls_map[name] = methods
         except Exception:
             pass
+
         return cls_map
     except Exception:
         return {}
 
 
-def get_sections(path):
+def get_sections(path, parsed=None):
     try:
-        import lief
-        binary = lief.parse(path)
-        if binary is None:
+        main = parsed or parse_binary(path)
+        if main is None:
             return {}
-        main = binary[0] if hasattr(binary, '__getitem__') else binary
         secs = {}
         try:
             for sec in main.sections:
@@ -237,6 +269,9 @@ def diff_binaries(path1, path2, name1, name2):
     result["size_diff"] = size_diff
     result["size_diff_pct"] = round((size_diff / max(result["file1"]["size"], 1)) * 100, 2)
 
+    parsed1 = parse_binary(path1)
+    parsed2 = parse_binary(path2)
+
     strings1 = get_strings(path1)
     strings2 = get_strings(path2)
     added_strings = strings2 - strings1
@@ -250,8 +285,8 @@ def diff_binaries(path1, path2, name1, name2):
         "removed_count": len(removed_strings),
     }
 
-    syms1 = get_symbols(path1)
-    syms2 = get_symbols(path2)
+    syms1 = get_symbols(path1, parsed1)
+    syms2 = get_symbols(path2, parsed2)
     added_syms = syms2 - syms1
     removed_syms = syms1 - syms2
     result["symbols"] = {
@@ -263,16 +298,16 @@ def diff_binaries(path1, path2, name1, name2):
         "removed_count": len(removed_syms),
     }
 
-    imps1 = get_imports(path1)
-    imps2 = get_imports(path2)
+    imps1 = get_imports(path1, parsed1)
+    imps2 = get_imports(path2, parsed2)
     result["libraries"] = {
         "added": sorted(list(imps2 - imps1)),
         "removed": sorted(list(imps1 - imps2)),
         "common": sorted(list(imps1 & imps2)),
     }
 
-    cls1 = get_classes(path1)
-    cls2 = get_classes(path2)
+    cls1 = get_classes(path1, parsed1, syms1)
+    cls2 = get_classes(path2, parsed2, syms2)
     added_cls = set(cls2.keys()) - set(cls1.keys())
     removed_cls = set(cls1.keys()) - set(cls2.keys())
     common_cls = set(cls1.keys()) & set(cls2.keys())
@@ -296,8 +331,8 @@ def diff_binaries(path1, path2, name1, name2):
         "modified_count": len(modified_cls),
     }
 
-    secs1 = get_sections(path1)
-    secs2 = get_sections(path2)
+    secs1 = get_sections(path1, parsed1)
+    secs2 = get_sections(path2, parsed2)
     section_changes = []
     all_secs = set(list(secs1.keys()) + list(secs2.keys()))
     for s in sorted(all_secs):
