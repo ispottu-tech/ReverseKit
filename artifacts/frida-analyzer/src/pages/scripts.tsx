@@ -21,25 +21,120 @@ const STORAGE_KEY = "reversekit:scripts";
 const DEFAULT_SCRIPTS: SavedScript[] = [
   {
     id: "default-1",
-    name: "Enumerate ObjC Classes",
+    name: "App-Only Classes (Filter System)",
     category: "Enumeration",
     createdAt: 0,
-    code: `ObjC.schedule(ObjC.mainQueue, function () {
-  var classes = Object.keys(ObjC.classes);
-  classes.forEach(function(cls) {
-    console.log(cls);
+    code: `var dominated = ["NS","UI","CF","CA","CG","AV","CL","MK","SK","WK","GK",
+  "CT","CN","MP","PH","HK","IN","SF","AS","VS","MT","ML","AR","SC",
+  "LA","CB","CM","EK","NK","QL","UN","_"];
+ObjC.schedule(ObjC.mainQueue, function() {
+  var classes = Object.keys(ObjC.classes).filter(function(cls) {
+    return !dominated.some(function(p) { return cls.indexOf(p) === 0; });
   });
-  console.log("[*] Total:", classes.length);
+  classes.sort();
+  classes.forEach(function(cls) { console.log("[APP]", cls); });
+  console.log("\\n[*] App classes:", classes.length, "/ Total:", Object.keys(ObjC.classes).length);
 });`,
   },
   {
     id: "default-2",
+    name: "Find Login/Auth Classes",
+    category: "Enumeration",
+    createdAt: 0,
+    code: `var keywords = ["login","auth","sign","credential","token","session",
+  "password","oauth","sso","account","keychain","biometric","2fa","otp","mfa"];
+ObjC.schedule(ObjC.mainQueue, function() {
+  var classes = Object.keys(ObjC.classes);
+  var found = {};
+  classes.forEach(function(cls) {
+    var lower = cls.toLowerCase();
+    keywords.forEach(function(kw) {
+      if (lower.indexOf(kw) !== -1) {
+        if (!found[kw]) found[kw] = [];
+        found[kw].push(cls);
+      }
+    });
+  });
+  Object.keys(found).sort().forEach(function(kw) {
+    console.log("\\n--- " + kw.toUpperCase() + " ---");
+    found[kw].forEach(function(c) { console.log("  " + c); });
+  });
+});`,
+  },
+  {
+    id: "default-3",
+    name: "Find Payment/IAP Classes",
+    category: "Enumeration",
+    createdAt: 0,
+    code: `var keywords = ["pay","purchase","billing","subscription","store","receipt",
+  "transaction","price","checkout","cart","order","stripe","braintree","revenue"];
+ObjC.schedule(ObjC.mainQueue, function() {
+  var classes = Object.keys(ObjC.classes);
+  var found = [];
+  classes.forEach(function(cls) {
+    var lower = cls.toLowerCase();
+    if (keywords.some(function(kw) { return lower.indexOf(kw) !== -1; })) {
+      found.push(cls);
+    }
+  });
+  found.sort();
+  console.log("[*] Payment/IAP related classes (" + found.length + "):");
+  found.forEach(function(c) { console.log("  " + c); });
+});`,
+  },
+  {
+    id: "default-4",
+    name: "Find Crypto/Encryption Classes",
+    category: "Enumeration",
+    createdAt: 0,
+    code: `var keywords = ["crypt","cipher","aes","rsa","hmac","hash","sha","md5",
+  "encrypt","decrypt","key","salt","iv","pbkdf","ecdsa","signing"];
+ObjC.schedule(ObjC.mainQueue, function() {
+  var classes = Object.keys(ObjC.classes);
+  var found = [];
+  classes.forEach(function(cls) {
+    var lower = cls.toLowerCase();
+    if (keywords.some(function(kw) { return lower.indexOf(kw) !== -1; })) {
+      found.push(cls);
+    }
+  });
+  found.sort();
+  console.log("[*] Crypto/Encryption classes (" + found.length + "):");
+  found.forEach(function(c) { console.log("  " + c); });
+});`,
+  },
+  {
+    id: "default-5",
+    name: "Dump Class Methods + Properties",
+    category: "Enumeration",
+    createdAt: 0,
+    code: `var targetClass = "AppDelegate"; // <-- change this
+var cls = ObjC.classes[targetClass];
+if (!cls) { console.log("[!] Class not found: " + targetClass); }
+else {
+  console.log("=== " + targetClass + " ===");
+  console.log("\\n--- Instance Methods ---");
+  cls.$ownMethods.filter(function(m) { return m[0] === "-"; })
+    .sort().forEach(function(m) { console.log("  " + m); });
+  console.log("\\n--- Class Methods ---");
+  cls.$ownMethods.filter(function(m) { return m[0] === "+"; })
+    .sort().forEach(function(m) { console.log("  " + m); });
+  console.log("\\n--- Protocols ---");
+  cls.$protocols ? Object.keys(cls.$protocols)
+    .forEach(function(p) { console.log("  " + p); }) : console.log("  (none)");
+  console.log("\\n--- Super ---", cls.$superClass ? cls.$superClass.$className : "(none)");
+}`,
+  },
+  {
+    id: "default-6",
     name: "Trace All Methods of a Class",
     category: "Tracing",
     createdAt: 0,
     code: `var targetClass = "ViewController"; // <-- change this
 var resolver = new ApiResolver("objc");
-resolver.enumerateMatches("*[" + targetClass + " *]").forEach(function(match) {
+var matches = resolver.enumerateMatches("*[" + targetClass + " *]");
+console.log("[*] Hooking " + matches.length + " methods on " + targetClass);
+matches.forEach(function(match) {
   try {
     Interceptor.attach(match.address, {
       onEnter: function(args) {
@@ -50,38 +145,8 @@ resolver.enumerateMatches("*[" + targetClass + " *]").forEach(function(match) {
 });`,
   },
   {
-    id: "default-3",
-    name: "Bypass SSL Pinning (SecTrust)",
-    category: "SSL Bypass",
-    createdAt: 0,
-    code: `var SecTrustEvaluate = Module.findExportByName("Security", "SecTrustEvaluate");
-if (SecTrustEvaluate) {
-  Interceptor.replace(SecTrustEvaluate, new NativeCallback(function(trust, result) {
-    result.writeS32(1); // kSecTrustResultProceed
-    return 0;
-  }, 'int', ['pointer', 'pointer']));
-  console.log("[*] SecTrustEvaluate bypassed");
-}`,
-  },
-  {
-    id: "default-4",
-    name: "Hook NSURLSession Requests",
-    category: "Network",
-    createdAt: 0,
-    code: `var hook = ObjC.classes.NSURLSession["- dataTaskWithRequest:completionHandler:"];
-if (hook) {
-  Interceptor.attach(hook.implementation, {
-    onEnter: function(args) {
-      var req = new ObjC.Object(args[2]);
-      console.log("[NET]", req.URL().absoluteString());
-    }
-  });
-  console.log("[*] NSURLSession hooked");
-}`,
-  },
-  {
-    id: "default-5",
-    name: "Dump Method Arguments",
+    id: "default-7",
+    name: "Trace Method with Args & Return",
     category: "Tracing",
     createdAt: 0,
     code: `var className  = "NSString";
@@ -90,36 +155,243 @@ var hook = ObjC.classes[className][methodName];
 if (hook) {
   Interceptor.attach(hook.implementation, {
     onEnter: function(args) {
-      var str = new ObjC.Object(args[2]);
-      console.log("[ARG]", str.toString());
+      this.self = new ObjC.Object(args[0]);
+      var arg = new ObjC.Object(args[2]);
+      console.log("[>] " + className + " " + methodName);
+      console.log("    self:", this.self.toString().substring(0, 100));
+      console.log("    arg1:", arg.toString().substring(0, 100));
     },
     onLeave: function(ret) {
       var result = new ObjC.Object(ret);
-      console.log("[RET]", result.toString());
+      console.log("[<] return:", result.toString().substring(0, 100));
     }
   });
+  console.log("[*] Hooked " + className + " " + methodName);
 }`,
   },
   {
-    id: "default-6",
-    name: "Detect Jailbreak Checks",
+    id: "default-8",
+    name: "Monitor UserDefaults Read/Write",
+    category: "Tracing",
+    createdAt: 0,
+    code: `var UD = ObjC.classes.NSUserDefaults;
+["- objectForKey:", "- stringForKey:", "- boolForKey:", "- integerForKey:"].forEach(function(sel) {
+  var m = UD[sel];
+  if (m) Interceptor.attach(m.implementation, {
+    onEnter: function(args) {
+      this.key = new ObjC.Object(args[2]).toString();
+    },
+    onLeave: function(ret) {
+      try {
+        var val = new ObjC.Object(ret);
+        console.log("[READ]", this.key, "=", val.toString().substring(0, 200));
+      } catch(e) { console.log("[READ]", this.key, "= (primitive)"); }
+    }
+  });
+});
+var setObj = UD["- setObject:forKey:"];
+if (setObj) Interceptor.attach(setObj.implementation, {
+  onEnter: function(args) {
+    var val = new ObjC.Object(args[2]);
+    var key = new ObjC.Object(args[3]);
+    console.log("[WRITE]", key.toString(), "=", val.toString().substring(0, 200));
+  }
+});
+console.log("[*] UserDefaults monitored");`,
+  },
+  {
+    id: "default-9",
+    name: "Bypass SSL Pinning (All Methods)",
+    category: "SSL Bypass",
+    createdAt: 0,
+    code: `var methods = [
+  ["Security", "SecTrustEvaluate"],
+  ["Security", "SecTrustEvaluateWithError"],
+  ["Security", "SecTrustGetTrustResult"]
+];
+methods.forEach(function(m) {
+  var addr = Module.findExportByName(m[0], m[1]);
+  if (addr) {
+    Interceptor.replace(addr, new NativeCallback(function() {
+      console.log("[SSL] Bypassed " + m[1]);
+      return 0;
+    }, 'int', ['pointer', 'pointer']));
+  }
+});
+try {
+  var NSURLSession = ObjC.classes.NSURLSession;
+  var challenges = ["- URLSession:didReceiveChallenge:completionHandler:",
+    "- URLSession:task:didReceiveChallenge:completionHandler:"];
+  challenges.forEach(function(sel) {
+    var resolver = new ApiResolver("objc");
+    resolver.enumerateMatches("*[* " + sel.substring(2)).forEach(function(match) {
+      try {
+        Interceptor.attach(match.address, {
+          onEnter: function(args) { console.log("[SSL] Challenge from:", match.name); }
+        });
+      } catch(e) {}
+    });
+  });
+} catch(e) {}
+console.log("[*] SSL Pinning bypass (comprehensive)");`,
+  },
+  {
+    id: "default-10",
+    name: "Monitor All Network Requests",
+    category: "Network",
+    createdAt: 0,
+    code: `var NSURLSession = ObjC.classes.NSURLSession;
+["- dataTaskWithRequest:completionHandler:",
+ "- dataTaskWithURL:completionHandler:",
+ "- downloadTaskWithRequest:completionHandler:",
+ "- uploadTaskWithRequest:fromData:completionHandler:"].forEach(function(sel) {
+  var m = NSURLSession[sel];
+  if (m) {
+    Interceptor.attach(m.implementation, {
+      onEnter: function(args) {
+        try {
+          var obj = new ObjC.Object(args[2]);
+          var url = obj.URL ? obj.URL().absoluteString().toString() : obj.absoluteString().toString();
+          var method = obj.HTTPMethod ? obj.HTTPMethod().toString() : "GET";
+          console.log("[" + method + "]", url);
+          if (obj.allHTTPHeaderFields) {
+            var headers = obj.allHTTPHeaderFields();
+            if (headers) console.log("  Headers:", headers.toString().substring(0, 300));
+          }
+        } catch(e) {}
+      }
+    });
+  }
+});
+console.log("[*] All network requests monitored");`,
+  },
+  {
+    id: "default-11",
+    name: "Detect & Bypass Jailbreak Checks",
     category: "Anti-Detection",
     createdAt: 0,
-    code: `// Hook common jailbreak file checks
-var NSFileManager = ObjC.classes.NSFileManager;
-var hook = NSFileManager["- fileExistsAtPath:"];
-Interceptor.attach(hook.implementation, {
+    code: `var jbPaths = ["/Applications/Cydia", "/usr/sbin/sshd", "/bin/bash",
+  "/etc/apt", "/private/var/lib/apt", "/usr/bin/ssh", "/Library/MobileSubstrate",
+  "/var/lib/cydia", "/usr/libexec/cydia", "/.installed_zydia"];
+var fm = ObjC.classes.NSFileManager["- fileExistsAtPath:"];
+Interceptor.attach(fm.implementation, {
   onEnter: function(args) {
-    var path = new ObjC.Object(args[2]).toString();
-    if (path.indexOf("cydia") !== -1 || path.indexOf("substrate") !== -1) {
-      console.log("[JB-CHECK]", path);
-    }
+    this.path = new ObjC.Object(args[2]).toString();
   },
   onLeave: function(ret) {
-    // Force return NO to bypass
-    // ret.replace(0);
+    if (jbPaths.some(function(p) { return this.path.indexOf(p) !== -1; }.bind(this))
+        || this.path.indexOf("substrate") !== -1
+        || this.path.indexOf("cydia") !== -1) {
+      console.log("[JB-BYPASS]", this.path, "-> NO");
+      ret.replace(0);
+    }
   }
+});
+var canOpen = ObjC.classes.UIApplication["- canOpenURL:"];
+if (canOpen) {
+  Interceptor.attach(canOpen.implementation, {
+    onEnter: function(args) {
+      this.url = new ObjC.Object(args[2]).absoluteString().toString();
+    },
+    onLeave: function(ret) {
+      if (this.url.indexOf("cydia") !== -1) {
+        console.log("[JB-BYPASS] canOpenURL:", this.url, "-> NO");
+        ret.replace(0);
+      }
+    }
+  });
+}
+console.log("[*] Jailbreak detection bypassed");`,
+  },
+  {
+    id: "default-12",
+    name: "Detect Frida/Debug Checks",
+    category: "Anti-Detection",
+    createdAt: 0,
+    code: `var ptrace = Module.findExportByName(null, "ptrace");
+if (ptrace) {
+  Interceptor.attach(ptrace, {
+    onEnter: function(args) {
+      if (args[0].toInt32() === 31) { // PT_DENY_ATTACH
+        console.log("[ANTI-DBG] ptrace(PT_DENY_ATTACH) -> blocked");
+        args[0] = ptr(0);
+      }
+    }
+  });
+}
+var sysctl = Module.findExportByName(null, "sysctl");
+if (sysctl) {
+  Interceptor.attach(sysctl, {
+    onEnter: function(args) { this.args = args; },
+    onLeave: function(ret) {
+      console.log("[ANTI-DBG] sysctl called");
+    }
+  });
+}
+try {
+  var dlopen = Module.findExportByName(null, "dlopen");
+  if (dlopen) {
+    Interceptor.attach(dlopen, {
+      onEnter: function(args) {
+        var name = args[0].readUtf8String();
+        if (name && name.indexOf("frida") !== -1) {
+          console.log("[FRIDA-DET] dlopen:", name, "-> blocked");
+          args[0] = ptr(0);
+        }
+      }
+    });
+  }
+} catch(e) {}
+console.log("[*] Anti-debug/anti-frida protections bypassed");`,
+  },
+  {
+    id: "default-13",
+    name: "Find ViewControllers (UI Map)",
+    category: "Enumeration",
+    createdAt: 0,
+    code: `ObjC.schedule(ObjC.mainQueue, function() {
+  var vcs = Object.keys(ObjC.classes).filter(function(cls) {
+    try {
+      var c = ObjC.classes[cls];
+      var chain = [];
+      var sup = c;
+      while (sup && chain.length < 10) {
+        chain.push(sup.$className);
+        sup = sup.$superClass;
+      }
+      return chain.indexOf("UIViewController") !== -1;
+    } catch(e) { return false; }
+  });
+  var dominated = ["UI","_","NS"];
+  var appVCs = vcs.filter(function(v) {
+    return !dominated.some(function(p) { return v.indexOf(p) === 0; });
+  });
+  appVCs.sort();
+  console.log("[*] App ViewControllers (" + appVCs.length + "):\\n");
+  appVCs.forEach(function(vc) {
+    var methods = ObjC.classes[vc].$ownMethods.length;
+    console.log("  " + vc + " (" + methods + " methods)");
+  });
 });`,
+  },
+  {
+    id: "default-14",
+    name: "Monitor Screen Transitions",
+    category: "Tracing",
+    createdAt: 0,
+    code: `var UIViewController = ObjC.classes.UIViewController;
+Interceptor.attach(UIViewController["- viewDidAppear:"].implementation, {
+  onEnter: function(args) {
+    var vc = new ObjC.Object(args[0]);
+    var cls = vc.$className;
+    if (cls.indexOf("UI") !== 0 && cls.indexOf("_") !== 0) {
+      var title = "";
+      try { title = vc.title() ? vc.title().toString() : ""; } catch(e) {}
+      console.log("[SCREEN]", cls + (title ? ' ("' + title + '")' : ""));
+    }
+  }
+});
+console.log("[*] Monitoring screen transitions (app VCs only)");`,
   },
 ];
 
@@ -138,7 +410,7 @@ function saveScripts(scripts: SavedScript[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(scripts));
 }
 
-const CATEGORIES = ["All", "Enumeration", "Tracing", "SSL Bypass", "Network", "Anti-Detection", "Custom"];
+const CATEGORIES = ["All", "Enumeration", "Tracing", "Network", "SSL Bypass", "Anti-Detection", "Custom"];
 
 export default function Scripts() {
   const [scripts, setScripts] = useState<SavedScript[]>(loadScripts);
