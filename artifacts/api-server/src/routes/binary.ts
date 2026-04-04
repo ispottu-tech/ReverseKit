@@ -131,6 +131,69 @@ router.post("/binary/fileinfo", upload.single("file"), async (req, res) => {
   }
 });
 
+router.post("/binary/hexsearch", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const tmpPath = req.file.path;
+  const query = (req.body.query || "").trim();
+  const mode = req.body.mode || "hex";
+  const maxResults = Math.min(parseInt(req.body.maxResults || "100", 10), 500);
+
+  if (!query) {
+    try { fs.unlinkSync(tmpPath); } catch {}
+    return res.status(400).json({ error: "No search query" });
+  }
+
+  try {
+    const data = fs.readFileSync(tmpPath);
+    let needle: Buffer;
+
+    if (mode === "hex") {
+      const cleaned = query.replace(/0x/gi, "").replace(/[\s,]/g, "");
+      if (!/^[0-9a-fA-F]+$/.test(cleaned) || cleaned.length < 2 || cleaned.length % 2 !== 0) {
+        return res.status(400).json({ error: "Invalid hex pattern. Use pairs like: CA FE BA BE" });
+      }
+      needle = Buffer.from(cleaned, "hex");
+    } else {
+      needle = Buffer.from(query, "utf-8");
+    }
+
+    if (needle.length === 0) {
+      return res.status(400).json({ error: "Empty search pattern" });
+    }
+
+    const matches: number[] = [];
+    let pos = 0;
+    let hasMore = false;
+    while (pos <= data.length - needle.length) {
+      const idx = data.indexOf(needle, pos);
+      if (idx === -1) break;
+      if (matches.length >= maxResults) {
+        hasMore = true;
+        break;
+      }
+      matches.push(idx);
+      pos = idx + 1;
+    }
+
+    res.json({
+      query,
+      mode,
+      needleLength: needle.length,
+      totalMatches: matches.length,
+      matches,
+      truncated: hasMore,
+    });
+  } catch (err: unknown) {
+    const error = err as { message?: string };
+    res.status(500).json({ error: error.message || String(err) });
+  } finally {
+    try { fs.unlinkSync(tmpPath); } catch {}
+  }
+});
+
 const diffUpload = multer({
   dest: os.tmpdir(),
   limits: { fileSize: 100 * 1024 * 1024 },
