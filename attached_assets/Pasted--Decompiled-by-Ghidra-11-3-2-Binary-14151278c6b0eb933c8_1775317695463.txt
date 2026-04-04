@@ -1,0 +1,413 @@
+// Decompiled by Ghidra 11.3.2
+// Binary: 14151278c6b0eb933c849d2aff234714.arm64
+// Architecture: AARCH64 / AARCH64:LE:64:AppleSilicon
+
+// Function: _blurrfull_init @ 00004000
+
+void _blurrfull_init(void)
+
+{
+  undefined8 uVar1;
+  long lVar2;
+  
+  uVar1 = _objc_msgSend(&_OBJC_CLASS___NSUserDefaults,"standardUserDefaults");
+  _objc_msgSend(uVar1,"setInteger:forKey:",1,&cf_vipState);
+  _objc_msgSend(uVar1,"setObject:forKey:",&cf_yearSvip,&cf_vip);
+  _objc_msgSend(uVar1,"setObject:forKey:",&cf_yearly_membership_pkg3,&cf_validSubscribeProductID);
+  _objc_msgSend(0x4202a05f1ff80000,uVar1,"setDouble:forKey:",&cf_vipExpireTime);
+  _objc_msgSend(uVar1,"setBool:forKey:",0,&cf_isVipTrialPeriod);
+  _objc_msgSend(uVar1,"setBool:forKey:",1,&cf_isExistSubscribeHistoryWithUser);
+  _objc_msgSend(uVar1,"setInteger:forKey:",99999,&cf_balanceJuice);
+  _objc_msgSend(uVar1,"setInteger:forKey:",99999,&cf_balanceExportCard);
+  _objc_msgSend(uVar1,"setInteger:forKey:",99999,&cf_balanceInvite);
+  _objc_msgSend(uVar1,"setBool:forKey:",0,&cf_consumeCoinTips);
+  _objc_msgSend(uVar1,"synchronize");
+  lVar2 = _objc_getClass("Alamofire.SessionDelegate");
+  if (lVar2 != 0) {
+    _MSHookMessageEx(lVar2,"URLSession:dataTask:didReceiveData:",_hook_didReceiveData,
+                     &_orig_didReceiveData);
+  }
+  lVar2 = _objc_getClass("Aries.MSUserDefaultHelper");
+  if (lVar2 != 0) {
+    _MSHookMessageEx(lVar2,"balanceJuice",_hook_balanceJuice,&_orig_balanceJuice);
+    _MSHookMessageEx(lVar2,"setBalanceJuice:",_hook_setBalanceJuice,&_orig_setBalanceJuice);
+    _MSHookMessageEx(lVar2,"juiceFromServer",_hook_juiceFromServer,&_orig_juiceFromServer);
+    _MSHookMessageEx(lVar2,"setJuiceFromServer:",_hook_setJuiceFromServer,&_orig_setJuiceFromServer)
+    ;
+    _MSHookMessageEx(lVar2,"isVip",_hook_isVip,&_orig_isVip);
+    _MSHookMessageEx(lVar2,"setIsVip:",_hook_setIsVip,&_orig_setIsVip);
+    _MSHookMessageEx(lVar2,"balanceExportCard",_hook_balanceExportCard,&_orig_balanceExportCard);
+    _MSHookMessageEx(lVar2,"balanceInvite",_hook_balanceInvite,&_orig_balanceInvite);
+    _MSHookMessageEx(lVar2,"consumeCoinTips",_hook_consumeCoinTips,&_orig_consumeCoinTips);
+  }
+  lVar2 = _objc_getClass("AFSecurityPolicy");
+  if (lVar2 != 0) {
+    _MSHookMessageEx(lVar2,"evaluateServerTrust:forDomain:",_hook_evaluateServerTrust,
+                     &_orig_evaluateServerTrust);
+  }
+  lVar2 = _objc_getClass("NSFileManager");
+  if (lVar2 != 0) {
+    _MSHookMessageEx(lVar2,"fileExistsAtPath:",_hook_fileExistsAtPath,&_orig_fileExistsAtPath);
+  }
+  lVar2 = _objc_getClass("UIApplication");
+  if (lVar2 != 0) {
+    _MSHookMessageEx(lVar2,"canOpenURL:",_hook_canOpenURL,&_orig_canOpenURL);
+  }
+  uVar1 = _dispatch_time(0,3000000000);
+  _dispatch_after(0,uVar1,PTR___dispatch_main_q_00008008,&___block_literal_global,0);
+  return;
+}
+
+// Function: _hook_didReceiveData @ 00004370
+
+void _hook_didReceiveData
+               (undefined8 param_1,undefined8 param_2,undefined8 param_3,long param_4,long param_5)
+
+{
+  char cVar1;
+  char cVar2;
+  int iVar3;
+  long lVar4;
+  long lVar5;
+  undefined8 uVar6;
+  cfstringStruct *local_180;
+  cfstringStruct *pcStack_178;
+  cfstringStruct *local_170;
+  cfstringStruct *pcStack_168;
+  cfstringStruct *local_160;
+  cfstringStruct *pcStack_158;
+  cfstringStruct *pcStack_150;
+  cfstringStruct *pcStack_148;
+  cfstringStruct *local_140;
+  cfstringStruct *pcStack_138;
+  cfstringStruct *pcStack_130;
+  cfstringStruct *pcStack_128;
+  cfstringStruct *local_120;
+  cfstringStruct *pcStack_118;
+  cfstringStruct *pcStack_110;
+  cfstringStruct *pcStack_108;
+  undefined8 local_100;
+  cfstringStruct *local_f8;
+  cfstringStruct *local_f0;
+  cfstringStruct *pcStack_e8;
+  undefined8 local_e0;
+  undefined8 local_d8;
+  cfstringStruct *pcStack_d0;
+  undefined8 local_c8;
+  undefined8 local_c0;
+  undefined8 local_b8;
+  undefined8 local_b0;
+  cfstringStruct *pcStack_a8;
+  cfstringStruct *local_a0;
+  undefined8 local_98;
+  undefined8 local_90;
+  undefined8 local_88;
+  long local_80;
+  
+  local_80 = *(long *)PTR____stack_chk_guard_00008038;
+  if ((param_4 == 0) || (param_5 == 0)) {
+    if (*(long *)PTR____stack_chk_guard_00008038 == local_80) {
+LAB_00004828:
+                    /* WARNING: Could not recover jumptable at 0x00004854. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*_orig_didReceiveData)(0,param_1,param_2,param_3,param_4,param_5);
+      return;
+    }
+    goto LAB_00004998;
+  }
+  iVar3 = _objc_msgSend(param_4,"respondsToSelector:","currentRequest");
+  if ((((iVar3 == 0) ||
+       (lVar4 = _objc_msgSend(param_4,"performSelector:","currentRequest"), lVar4 == 0)) ||
+      (lVar5 = _objc_msgSend(lVar4,"URL"), lVar5 == 0)) ||
+     (lVar5 = _objc_msgSend(lVar5,"absoluteString"), lVar5 == 0)) {
+    if (*(long *)PTR____stack_chk_guard_00008038 == local_80) goto LAB_00004828;
+    goto LAB_00004998;
+  }
+  uVar6 = _objc_msgSend(lVar4,"HTTPMethod");
+  iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_subscribe);
+  if ((((iVar3 == 0) && (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf__user_vip), iVar3 == 0))
+      && ((iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_membership), iVar3 == 0 &&
+          ((iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_report_receipt), iVar3 == 0 &&
+           (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_usercenter), iVar3 == 0)))))) &&
+     (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_user_info), iVar3 == 0)) {
+LAB_00004674:
+    cVar1 = _objc_msgSend(lVar5,"containsString:",&cf__juice);
+    cVar2 = _objc_msgSend(lVar5,"containsString:",&cf__coin);
+    if (cVar1 != '\0' || cVar2 != '\0') {
+      iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_consume);
+      if ((((iVar3 != 0) || (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_expend), iVar3 != 0))
+          || (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_deduct), iVar3 != 0)) ||
+         ((iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_spend), iVar3 != 0 ||
+          (((iVar3 = _objc_msgSend(uVar6,"isEqualToString:",&cf_POST), iVar3 != 0 &&
+            (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_config), iVar3 == 0)) &&
+           ((iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_log), iVar3 == 0 &&
+            (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_purchase), iVar3 == 0)))))))) {
+        local_100 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",0);
+        local_f8 = (cfstringStruct *)_objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",99999);
+        local_f0 = (cfstringStruct *)_objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",99999);
+        pcStack_178 = &cf_balance;
+        local_180 = &cf_errorCode;
+        local_170 = &cf_amount;
+        lVar4 = _objc_msgSend(&_OBJC_CLASS___NSDictionary,"dictionaryWithObjects:forKeys:count:",
+                              &local_100,&local_180,3);
+        if ((lVar4 != 0) &&
+           (lVar4 = _objc_msgSend(&_OBJC_CLASS___NSJSONSerialization,
+                                  "dataWithJSONObject:options:error:",lVar4,0,0), lVar4 != 0))
+        goto LAB_00004920;
+      }
+      iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_config);
+      if ((iVar3 == 0) &&
+         ((((iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_log), iVar3 == 0 &&
+            (iVar3 = _objc_msgSend(lVar5,"containsString:",&cf_purchase), iVar3 == 0)) &&
+           (lVar4 = _fakeJuiceResponse(), lVar4 != 0)) &&
+          (lVar4 = _objc_msgSend(&_OBJC_CLASS___NSJSONSerialization,
+                                 "dataWithJSONObject:options:error:",lVar4,0,0), lVar4 != 0))))
+      goto LAB_00004920;
+    }
+    lVar4 = param_5;
+  }
+  else {
+    local_100 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",1);
+    local_f8 = &cf_yearSvip;
+    local_f0 = &cf_svip;
+    pcStack_e8 = &cf_svip;
+    local_e0 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",1);
+    local_d8 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",1);
+    pcStack_d0 = &cf_yearly_membership_pkg3;
+    local_c8 = _objc_msgSend(0x4202a05f1ff80000,&_OBJC_CLASS___NSNumber,"numberWithDouble:");
+    local_c0 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",0);
+    local_b8 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",0);
+    local_b0 = _objc_msgSend(0x4202a05f1ff80000,&_OBJC_CLASS___NSNumber,"numberWithDouble:");
+    pcStack_a8 = &cf_lv3;
+    local_a0 = &cf_lv3;
+    local_98 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",1);
+    local_90 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",0);
+    local_88 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithBool:",0);
+    pcStack_138 = &cf_trialPeriod;
+    local_140 = &cf_isTrialPeriod;
+    pcStack_128 = &cf_creatorBadge;
+    pcStack_130 = &cf_expire;
+    pcStack_118 = &cf_goldbg;
+    local_120 = &cf_mentorBadge;
+    pcStack_108 = &cf_sandbox;
+    pcStack_110 = &cf_errorCode;
+    pcStack_178 = &cf_vip;
+    local_180 = &cf_vipState;
+    pcStack_168 = &cf_grade;
+    local_170 = &cf_stage;
+    pcStack_158 = &cf_svip;
+    local_160 = &cf_year;
+    pcStack_148 = &cf_vipExpireTime;
+    pcStack_150 = &cf_validSubscribeProductID;
+    lVar4 = _objc_msgSend(&_OBJC_CLASS___NSDictionary,"dictionaryWithObjects:forKeys:count:",
+                          &local_100,&local_180,0x10);
+    if ((lVar4 == 0) ||
+       (lVar4 = _objc_msgSend(&_OBJC_CLASS___NSJSONSerialization,"dataWithJSONObject:options:error:"
+                              ,lVar4,0,0), lVar4 == 0)) goto LAB_00004674;
+  }
+LAB_00004920:
+  (*_orig_didReceiveData)(param_1,param_2,param_3,param_4,lVar4);
+  if (*(long *)PTR____stack_chk_guard_00008038 == local_80) {
+    return;
+  }
+LAB_00004998:
+                    /* WARNING: Subroutine does not return */
+  ___stack_chk_fail();
+}
+
+// Function: _hook_balanceJuice @ 0000499c
+
+undefined8 _hook_balanceJuice(void)
+
+{
+  return 99999;
+}
+
+// Function: _hook_setBalanceJuice @ 000049a8
+
+void _hook_setBalanceJuice(undefined8 param_1,undefined8 param_2)
+
+{
+  if (_orig_setBalanceJuice != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x000049c0. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    (*_orig_setBalanceJuice)(0,param_1,param_2,99999);
+    return;
+  }
+  return;
+}
+
+// Function: _hook_juiceFromServer @ 000049cc
+
+undefined8 _hook_juiceFromServer(void)
+
+{
+  return 99999;
+}
+
+// Function: _hook_setJuiceFromServer @ 000049d8
+
+void _hook_setJuiceFromServer(undefined8 param_1,undefined8 param_2)
+
+{
+  if (_orig_setJuiceFromServer != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x000049f0. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    (*_orig_setJuiceFromServer)(0,param_1,param_2,99999);
+    return;
+  }
+  return;
+}
+
+// Function: _hook_isVip @ 000049fc
+
+undefined8 _hook_isVip(void)
+
+{
+  return 1;
+}
+
+// Function: _hook_setIsVip @ 00004a04
+
+void _hook_setIsVip(undefined8 param_1,undefined8 param_2)
+
+{
+  if (_orig_setIsVip != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00004a18. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    (*_orig_setIsVip)(0,param_1,param_2,1);
+    return;
+  }
+  return;
+}
+
+// Function: _hook_balanceExportCard @ 00004a24
+
+undefined8 _hook_balanceExportCard(void)
+
+{
+  return 99999;
+}
+
+// Function: _hook_balanceInvite @ 00004a30
+
+undefined8 _hook_balanceInvite(void)
+
+{
+  return 99999;
+}
+
+// Function: _hook_consumeCoinTips @ 00004a3c
+
+undefined8 _hook_consumeCoinTips(void)
+
+{
+  return 0;
+}
+
+// Function: _hook_evaluateServerTrust @ 00004a44
+
+undefined8 _hook_evaluateServerTrust(void)
+
+{
+  return 1;
+}
+
+// Function: _hook_fileExistsAtPath @ 00004a4c
+
+undefined8 _hook_fileExistsAtPath(undefined8 param_1,undefined8 param_2,long param_3)
+
+{
+  int iVar1;
+  undefined8 uVar2;
+  
+  if (param_3 != 0) {
+    iVar1 = _objc_msgSend(param_3,"containsString:",&cf_Cydia);
+    if ((((((iVar1 != 0) ||
+           (iVar1 = _objc_msgSend(param_3,"containsString:",&cf_MobileSubstrate), iVar1 != 0)) ||
+          (iVar1 = _objc_msgSend(param_3,"containsString:",&cf__bin_bash), iVar1 != 0)) ||
+         ((iVar1 = _objc_msgSend(param_3,"containsString:",&cf_sshd), iVar1 != 0 ||
+          (iVar1 = _objc_msgSend(param_3,"containsString:",&cf__etc_apt), iVar1 != 0)))) ||
+        ((iVar1 = _objc_msgSend(param_3,"containsString:",&cf_var_lib_apt), iVar1 != 0 ||
+         ((iVar1 = _objc_msgSend(param_3,"containsString:",&cf_var_lib_cydia), iVar1 != 0 ||
+          (iVar1 = _objc_msgSend(param_3,"containsString:",&cf_Sileo), iVar1 != 0)))))) ||
+       ((iVar1 = _objc_msgSend(param_3,"containsString:",&cf__var_jb), iVar1 != 0 ||
+        (iVar1 = _objc_msgSend(param_3,"containsString:",&cf_Zebra), iVar1 != 0)))) {
+      return 0;
+    }
+  }
+                    /* WARNING: Could not recover jumptable at 0x00004ba0. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  uVar2 = (*_orig_fileExistsAtPath)(0,param_1,param_2,param_3);
+  return uVar2;
+}
+
+// Function: _hook_canOpenURL @ 00004ba4
+
+undefined8 _hook_canOpenURL(undefined8 param_1,undefined8 param_2,long param_3)
+
+{
+  int iVar1;
+  long lVar2;
+  undefined8 uVar3;
+  
+  if ((param_3 != 0) && (lVar2 = _objc_msgSend(param_3,"absoluteString"), lVar2 != 0)) {
+    iVar1 = _objc_msgSend(lVar2,"containsString:",&cf_cydia);
+    if ((iVar1 != 0) ||
+       (((iVar1 = _objc_msgSend(lVar2,"containsString:",&cf_sileo), iVar1 != 0 ||
+         (iVar1 = _objc_msgSend(lVar2,"containsString:",&cf_zbra), iVar1 != 0)) ||
+        (iVar1 = _objc_msgSend(lVar2,"containsString:",&cf_filza), iVar1 != 0)))) {
+      return 0;
+    }
+  }
+                    /* WARNING: Could not recover jumptable at 0x00004c88. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  uVar3 = (*_orig_canOpenURL)(0,param_1,param_2,param_3);
+  return uVar3;
+}
+
+// Function: ___blurrfull_init_block_invoke @ 00004c8c
+
+void ___blurrfull_init_block_invoke(void)
+
+{
+  undefined8 uVar1;
+  long lVar2;
+  
+  uVar1 = _objc_msgSend(&_OBJC_CLASS___NSUserDefaults,"standardUserDefaults");
+  _objc_msgSend(uVar1,"setInteger:forKey:",99999,&cf_balanceJuice);
+  _objc_msgSend(uVar1,"setInteger:forKey:",99999,&cf_balanceExportCard);
+  _objc_msgSend(uVar1,"setBool:forKey:",1,&cf_isVip);
+  _objc_msgSend(uVar1,"synchronize");
+  if ((_orig_didReceiveData == 0) &&
+     (lVar2 = _objc_getClass("Alamofire.SessionDelegate"), lVar2 != 0)) {
+    _MSHookMessageEx(0,lVar2,"URLSession:dataTask:didReceiveData:",_hook_didReceiveData,
+                     &_orig_didReceiveData);
+    return;
+  }
+  return;
+}
+
+// Function: _fakeJuiceResponse @ 00004d6c
+
+void _fakeJuiceResponse(void)
+
+{
+  cfstringStruct *local_38;
+  undefined8 uStack_30;
+  long local_28;
+  
+  local_28 = *(long *)PTR____stack_chk_guard_00008038;
+  uStack_30 = _objc_msgSend(&_OBJC_CLASS___NSNumber,"numberWithInt:",99999);
+  local_38 = &cf_amount;
+  _objc_msgSend(&_OBJC_CLASS___NSDictionary,"dictionaryWithObjects:forKeys:count:",&uStack_30,
+                &local_38,1);
+  if (*(long *)PTR____stack_chk_guard_00008038 == local_28) {
+    return;
+  }
+                    /* WARNING: Subroutine does not return */
+  ___stack_chk_fail();
+}
+
+
+// Summary: 16 functions decompiled, 6 skipped (external/thunk), 0 errors
