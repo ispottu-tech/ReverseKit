@@ -1,10 +1,127 @@
 #!/usr/bin/env python3
-"""Binary Diff — compare two iOS binaries (versions, patches, etc.)"""
+"""Binary Diff — compare two iOS binaries (versions, patches, etc.)
+Supports: .dylib, .app executables, .ipa, .deb, .zip — auto-extracts binaries from archives"""
 import sys
 import json
 import os
 import hashlib
 import subprocess
+import tempfile
+import shutil
+import struct
+
+BINARY_EXTENSIONS = {".dylib", ".so", ".a", ".o", ".framework"}
+MACHO_MAGICS = {b'\xfe\xed\xfa\xce', b'\xfe\xed\xfa\xcf', b'\xce\xfa\xed\xfe', b'\xcf\xfa\xed\xfe', b'\xca\xfe\xba\xbe'}
+
+
+def is_macho(path):
+    try:
+        with open(path, "rb") as f:
+            magic = f.read(4)
+        return magic in MACHO_MAGICS
+    except Exception:
+        return False
+
+
+def extract_binary_from_ipa(archive_path):
+    extract_dir = tempfile.mkdtemp(prefix="diff_extract_")
+    try:
+        import zipfile
+        with zipfile.ZipFile(archive_path, 'r') as zf:
+            zf.extractall(extract_dir)
+
+        candidates = []
+        for root, dirs, files in os.walk(extract_dir):
+            for fname in files:
+                fpath = os.path.join(root, fname)
+                _, ext = os.path.splitext(fname.lower())
+                if ext in BINARY_EXTENSIONS or is_macho(fpath):
+                    fsize = os.path.getsize(fpath)
+                    candidates.append((fsize, fpath, fname))
+
+        if candidates:
+            candidates.sort(reverse=True)
+            return candidates[0][1], candidates[0][2], extract_dir
+
+        return None, None, extract_dir
+    except Exception:
+        return None, None, extract_dir
+
+
+def extract_binary_from_deb(deb_path):
+    extract_dir = tempfile.mkdtemp(prefix="diff_deb_")
+    try:
+        subprocess.run(["ar", "x", deb_path], cwd=extract_dir, capture_output=True, timeout=30)
+
+        data_tar = None
+        for name in os.listdir(extract_dir):
+            if name.startswith("data.tar"):
+                data_tar = os.path.join(extract_dir, name)
+                break
+        if not data_tar:
+            return None, None, extract_dir
+
+        if data_tar.endswith(".zst"):
+            try:
+                import zstandard
+                decompressed = data_tar.replace(".zst", "")
+                with open(data_tar, "rb") as fin:
+                    dctx = zstandard.ZstdDecompressor()
+                    with open(decompressed, "wb") as fout:
+                        dctx.copy_stream(fin, fout)
+                data_tar = decompressed
+            except ImportError:
+                return None, None, extract_dir
+        elif data_tar.endswith(".xz"):
+            import lzma
+            decompressed = data_tar.replace(".xz", "")
+            with lzma.open(data_tar) as fin:
+                with open(decompressed, "wb") as fout:
+                    fout.write(fin.read())
+            data_tar = decompressed
+
+        import tarfile
+        data_dir = os.path.join(extract_dir, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        with tarfile.open(data_tar) as tf:
+            tf.extractall(data_dir, filter="data")
+
+        candidates = []
+        for root, dirs, files in os.walk(data_dir):
+            for fname in files:
+                fpath = os.path.join(root, fname)
+                _, ext = os.path.splitext(fname.lower())
+                if ext in BINARY_EXTENSIONS or is_macho(fpath):
+                    fsize = os.path.getsize(fpath)
+                    candidates.append((fsize, fpath, fname))
+
+        if candidates:
+            candidates.sort(reverse=True)
+            return candidates[0][1], candidates[0][2], extract_dir
+
+        return None, None, extract_dir
+    except Exception:
+        return None, None, extract_dir
+
+
+def resolve_binary(path, original_name):
+    """If path is an archive (.ipa/.deb/.zip), extract the main binary. Otherwise return as-is."""
+    lower = original_name.lower()
+    temp_dir = None
+
+    if lower.endswith(".ipa") or lower.endswith(".zip"):
+        bin_path, bin_name, temp_dir = extract_binary_from_ipa(path)
+        if bin_path:
+            return bin_path, bin_name or original_name, temp_dir
+        return None, original_name, temp_dir
+
+    if lower.endswith(".deb"):
+        bin_path, bin_name, temp_dir = extract_binary_from_deb(path)
+        if bin_path:
+            return bin_path, bin_name or original_name, temp_dir
+        return None, original_name, temp_dir
+
+    return path, original_name, None
 
 
 def get_strings(path):
@@ -216,9 +333,36 @@ if __name__ == "__main__":
     n1 = sys.argv[3] if len(sys.argv) > 3 else os.path.basename(p1)
     n2 = sys.argv[4] if len(sys.argv) > 4 else os.path.basename(p2)
 
+    temp_dirs = []
     try:
-        result = diff_binaries(p1, p2, n1, n2)
+        bin1, real_name1, td1 = resolve_binary(p1, n1)
+        if td1:
+            temp_dirs.append(td1)
+        bin2, real_name2, td2 = resolve_binary(p2, n2)
+        if td2:
+            temp_dirs.append(td2)
+
+        if bin1 is None:
+            print(json.dumps({"error": f"Could not extract binary from {n1}. Supported: .dylib, .ipa, .deb, .zip, Mach-O executables"}))
+            sys.exit(1)
+        if bin2 is None:
+            print(json.dumps({"error": f"Could not extract binary from {n2}. Supported: .dylib, .ipa, .deb, .zip, Mach-O executables"}))
+            sys.exit(1)
+
+        result = diff_binaries(bin1, bin2, n1, n2)
+
+        if real_name1 != n1:
+            result["file1"]["extracted_binary"] = real_name1
+        if real_name2 != n2:
+            result["file2"]["extracted_binary"] = real_name2
+
         print(json.dumps(result, ensure_ascii=False, default=str))
     except Exception as e:
         print(json.dumps({"error": str(e)}))
         sys.exit(1)
+    finally:
+        for td in temp_dirs:
+            try:
+                shutil.rmtree(td, ignore_errors=True)
+            except Exception:
+                pass

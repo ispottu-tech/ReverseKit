@@ -78,6 +78,7 @@ export default function BinaryDiff() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Binary Diff</h1>
         <p className="text-sm text-muted-foreground mt-1">Compare two iOS binaries — find what changed between versions</p>
+        <p className="text-xs text-muted-foreground/60 mt-0.5">Supports: .dylib, .ipa, .deb, .zip, Mach-O executables — auto-extracts binaries from archives</p>
       </div>
 
       <div className="flex gap-4 items-stretch">
@@ -122,11 +123,17 @@ export default function BinaryDiff() {
                 <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
                   <div className="text-[10px] text-blue-400 uppercase font-semibold mb-1">Old</div>
                   <div className="text-sm font-mono truncate">{result.file1?.name}</div>
+                  {result.file1?.extracted_binary && (
+                    <div className="text-[10px] text-blue-300/60 font-mono truncate">Extracted: {result.file1.extracted_binary}</div>
+                  )}
                   <div className="text-xs text-muted-foreground">{(result.file1?.size / 1024).toFixed(1)} KB</div>
                 </div>
                 <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                   <div className="text-[10px] text-emerald-400 uppercase font-semibold mb-1">New</div>
                   <div className="text-sm font-mono truncate">{result.file2?.name}</div>
+                  {result.file2?.extracted_binary && (
+                    <div className="text-[10px] text-emerald-300/60 font-mono truncate">Extracted: {result.file2.extracted_binary}</div>
+                  )}
                   <div className="text-xs text-muted-foreground">{(result.file2?.size / 1024).toFixed(1)} KB</div>
                 </div>
               </div>
