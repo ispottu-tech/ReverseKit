@@ -1,0 +1,1274 @@
+{
+  "_meta": {
+    "tool": "ReverseKit v2.0",
+    "generated": "2026-04-04T15:37:17.977Z",
+    "engines": [
+      "lief 0.17.6",
+      "capstone 5.0",
+      "radare2 5.9.8",
+      "ROPgadget 7.7",
+      "pwntools 4.15",
+      "Ghidra 11.3.2",
+      "RetDec 5.0"
+    ]
+  },
+  "filename": "BlurrrFull (1).dylib",
+  "file_info": "/tmp/5636d4b7015c13f921b0d11af8be0982: Mach-O universal binary with 2 architectures: [arm64:\\012- Mach-O 64-bit arm64 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>] [\\012- arm64e (caps: 0x2):\\012- Mach-O 64-bit arm64e (caps: PAC00) dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>]",
+  "hashes": {
+    "md5": "31ea4a95a30e325cdf62e37f100236f6",
+    "sha1": "a5f47518a16c3433ca0b2391e4bf397f01e57271",
+    "sha256": "986edb1225a490a817c744408c1ac369328f79210efc787fe10197b4c69825cc",
+    "size": 167952
+  },
+  "macho": {
+    "type": "Thin Binary (ARM64)",
+    "architectures": [
+      {
+        "cpu": "ARM64",
+        "file_type": "DYLIB"
+      }
+    ],
+    "objc_classes": [],
+    "encrypted": false,
+    "encryption_details": [
+      {
+        "command": "EncryptionInfo",
+        "crypt_id": 0
+      }
+    ],
+    "linked_libraries": [
+      "/Library/MobileSubstrate/DynamicLibraries/BlurrrFull.dylib",
+      "/usr/lib/libobjc.A.dylib",
+      "/usr/lib/libSystem.B.dylib",
+      "/System/Library/Frameworks/Foundation.framework/Foundation",
+      "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+      "@executable_path/libsubstrate.dylib"
+    ],
+    "load_commands": [
+      "DynamicSymbolCommand",
+      "SegmentCommand",
+      "SymbolCommand",
+      "BuildVersion",
+      "DyldExportsTrie",
+      "LinkEdit",
+      "DyldChainedFixups",
+      "EncryptionInfo",
+      "UUIDCommand",
+      "DataInCode",
+      "DylibCommand",
+      "FunctionStarts"
+    ],
+    "sections": [
+      {
+        "name": "__TEXT,__text",
+        "size": 3612,
+        "offset": 16384
+      },
+      {
+        "name": "__TEXT,__stubs",
+        "size": 72,
+        "offset": 19996
+      },
+      {
+        "name": "__TEXT,__init_offsets",
+        "size": 4,
+        "offset": 20068
+      },
+      {
+        "name": "__TEXT,__literals",
+        "size": 8,
+        "offset": 20080
+      },
+      {
+        "name": "__TEXT,__objc_methname",
+        "size": 566,
+        "offset": 20088
+      },
+      {
+        "name": "__TEXT,__cstring",
+        "size": 674,
+        "offset": 20654
+      },
+      {
+        "name": "__TEXT,__unwind_info",
+        "size": 4168,
+        "offset": 21328
+      },
+      {
+        "name": "__DATA_CONST,__got",
+        "size": 64,
+        "offset": 32768
+      },
+      {
+        "name": "__DATA_CONST,__const",
+        "size": 216,
+        "offset": 32832
+      },
+      {
+        "name": "__DATA_CONST,__cfstring",
+        "size": 1856,
+        "offset": 33048
+      },
+      {
+        "name": "__DATA_CONST,__objc_imageinfo",
+        "size": 8,
+        "offset": 34904
+      },
+      {
+        "name": "__DATA,__objc_classrefs",
+        "size": 32,
+        "offset": 49152
+      },
+      {
+        "name": "__DATA,__objc_selrefs",
+        "size": 256,
+        "offset": 49184
+      },
+      {
+        "name": "__DATA,__bss",
+        "size": 104,
+        "offset": 0
+      }
+    ]
+  },
+  "security_properties": {
+    "pie": false,
+    "stack_canary": true,
+    "arc": false,
+    "flags": [
+      "NOUNDEFS",
+      "DYLDLINK",
+      "TWOLEVEL",
+      "NO_REEXPORTED_DYLIBS"
+    ]
+  },
+  "security_features": [
+    {
+      "feature": "SSL/TLS Pinning",
+      "evidence": [
+        "ssl"
+      ]
+    },
+    {
+      "feature": "Jailbreak Detection",
+      "evidence": [
+        "cydia",
+        "substrate",
+        "/bin/bash",
+        "sileo"
+      ]
+    },
+    {
+      "feature": "Network Requests",
+      "evidence": [
+        "http",
+        "alamofire"
+      ]
+    }
+  ],
+  "obfuscation": [
+    {
+      "type": "Jailbreak Detection",
+      "severity": "medium",
+      "evidence": [
+        "/bin/bash",
+        "cydia",
+        "substrate",
+        "sileo",
+        "/etc/apt"
+      ]
+    },
+    {
+      "type": "SSL Pinning",
+      "severity": "medium",
+      "evidence": [
+        "ssl"
+      ],
+      "bypass": "Use SSL Kill Switch or Frida ssl-pinning-bypass script"
+    }
+  ],
+  "functions": [
+    {
+      "name": "sym.imp.objc_getClass",
+      "size": 12,
+      "addr": "0x4e40"
+    },
+    {
+      "name": "sym.imp.objc_msgSend",
+      "size": 12,
+      "addr": "0x4e4c"
+    },
+    {
+      "name": "sym.imp.__stack_chk_fail",
+      "size": 12,
+      "addr": "0x4e58"
+    },
+    {
+      "name": "sym.imp.dispatch_after",
+      "size": 12,
+      "addr": "0x4e1c"
+    },
+    {
+      "name": "sym.imp.dispatch_time",
+      "size": 12,
+      "addr": "0x4e28"
+    },
+    {
+      "name": "sym.imp.MSHookMessageEx",
+      "size": 12,
+      "addr": "0x4e34"
+    },
+    {
+      "name": "sym._blurrfull_init",
+      "size": 880,
+      "addr": "0x4000"
+    },
+    {
+      "name": "sym._hook_didReceiveData",
+      "size": 1580,
+      "addr": "0x4370"
+    },
+    {
+      "name": "sym._hook_balanceJuice",
+      "size": 12,
+      "addr": "0x499c"
+    },
+    {
+      "name": "sym._hook_setBalanceJuice",
+      "size": 36,
+      "addr": "0x49a8"
+    },
+    {
+      "name": "sym._hook_juiceFromServer",
+      "size": 12,
+      "addr": "0x49cc"
+    },
+    {
+      "name": "sym._hook_setJuiceFromServer",
+      "size": 36,
+      "addr": "0x49d8"
+    },
+    {
+      "name": "sym._hook_isVip",
+      "size": 8,
+      "addr": "0x49fc"
+    },
+    {
+      "name": "sym._hook_setIsVip",
+      "size": 32,
+      "addr": "0x4a04"
+    },
+    {
+      "name": "sym._hook_balanceExportCard",
+      "size": 12,
+      "addr": "0x4a24"
+    },
+    {
+      "name": "sym._hook_balanceInvite",
+      "size": 12,
+      "addr": "0x4a30"
+    },
+    {
+      "name": "sym._hook_consumeCoinTips",
+      "size": 8,
+      "addr": "0x4a3c"
+    },
+    {
+      "name": "sym._hook_evaluateServerTrust",
+      "size": 8,
+      "addr": "0x4a44"
+    },
+    {
+      "name": "sym._hook_fileExistsAtPath",
+      "size": 344,
+      "addr": "0x4a4c"
+    },
+    {
+      "name": "sym._hook_canOpenURL",
+      "size": 232,
+      "addr": "0x4ba4"
+    },
+    {
+      "name": "sym._fakeJuiceResponse",
+      "size": 176,
+      "addr": "0x4d6c"
+    },
+    {
+      "name": "sym.___blurrfull_init_block_invoke",
+      "size": 224,
+      "addr": "0x4c8c"
+    }
+  ],
+  "symbols": [
+    {
+      "addr": "000000000000c000",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_"
+    },
+    {
+      "addr": "000000000000c008",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.115"
+    },
+    {
+      "addr": "000000000000c010",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.118"
+    },
+    {
+      "addr": "000000000000c018",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.119"
+    },
+    {
+      "addr": "000000000000c020",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_"
+    },
+    {
+      "addr": "000000000000c0f0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.108"
+    },
+    {
+      "addr": "000000000000c0f8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.117"
+    },
+    {
+      "addr": "000000000000c100",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.121"
+    },
+    {
+      "addr": "000000000000c108",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.125"
+    },
+    {
+      "addr": "000000000000c110",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.127"
+    },
+    {
+      "addr": "000000000000c118",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.153"
+    },
+    {
+      "addr": "000000000000c038",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.16"
+    },
+    {
+      "addr": "000000000000c028",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.2"
+    },
+    {
+      "addr": "000000000000c040",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.20"
+    },
+    {
+      "addr": "000000000000c048",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.32"
+    },
+    {
+      "addr": "000000000000c050",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.35"
+    },
+    {
+      "addr": "000000000000c058",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.38"
+    },
+    {
+      "addr": "000000000000c060",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.40"
+    },
+    {
+      "addr": "000000000000c068",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.42"
+    },
+    {
+      "addr": "000000000000c070",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.44"
+    },
+    {
+      "addr": "000000000000c078",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.46"
+    },
+    {
+      "addr": "000000000000c080",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.48"
+    },
+    {
+      "addr": "000000000000c088",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.50"
+    },
+    {
+      "addr": "000000000000c090",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.52"
+    },
+    {
+      "addr": "000000000000c098",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.54"
+    },
+    {
+      "addr": "000000000000c0a0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.57"
+    },
+    {
+      "addr": "000000000000c0a8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.60"
+    },
+    {
+      "addr": "000000000000c0b0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.63"
+    },
+    {
+      "addr": "000000000000c0b8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.68"
+    },
+    {
+      "addr": "000000000000c0c0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.70"
+    },
+    {
+      "addr": "000000000000c0c8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.72"
+    },
+    {
+      "addr": "000000000000c0d0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.74"
+    },
+    {
+      "addr": "000000000000c0d8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.76"
+    },
+    {
+      "addr": "000000000000c0e0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.78"
+    },
+    {
+      "addr": "000000000000c030",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.8"
+    },
+    {
+      "addr": "000000000000c0e8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.82"
+    },
+    {
+      "addr": "0000000000008040",
+      "type": "s",
+      "name": "___block_descriptor_32_e5_v8\u0001?0l"
+    },
+    {
+      "addr": "0000000000008060",
+      "type": "s",
+      "name": "___block_literal_global"
+    },
+    {
+      "addr": "0000000000004c8c",
+      "type": "t",
+      "name": "___blurrfull_init_block_invoke"
+    },
+    {
+      "addr": "0000000000004000",
+      "type": "t",
+      "name": "_blurrfull_init"
+    },
+    {
+      "addr": "0000000000004d6c",
+      "type": "t",
+      "name": "_fakeJuiceResponse"
+    },
+    {
+      "addr": "0000000000004a24",
+      "type": "t",
+      "name": "_hook_balanceExportCard"
+    },
+    {
+      "addr": "0000000000004a30",
+      "type": "t",
+      "name": "_hook_balanceInvite"
+    },
+    {
+      "addr": "000000000000499c",
+      "type": "t",
+      "name": "_hook_balanceJuice"
+    },
+    {
+      "addr": "0000000000004ba4",
+      "type": "t",
+      "name": "_hook_canOpenURL"
+    },
+    {
+      "addr": "0000000000004a3c",
+      "type": "t",
+      "name": "_hook_consumeCoinTips"
+    },
+    {
+      "addr": "0000000000004370",
+      "type": "t",
+      "name": "_hook_didReceiveData"
+    },
+    {
+      "addr": "0000000000004a44",
+      "type": "t",
+      "name": "_hook_evaluateServerTrust"
+    },
+    {
+      "addr": "0000000000004a4c",
+      "type": "t",
+      "name": "_hook_fileExistsAtPath"
+    },
+    {
+      "addr": "00000000000049fc",
+      "type": "t",
+      "name": "_hook_isVip"
+    },
+    {
+      "addr": "00000000000049cc",
+      "type": "t",
+      "name": "_hook_juiceFromServer"
+    },
+    {
+      "addr": "00000000000049a8",
+      "type": "t",
+      "name": "_hook_setBalanceJuice"
+    },
+    {
+      "addr": "0000000000004a04",
+      "type": "t",
+      "name": "_hook_setIsVip"
+    },
+    {
+      "addr": "00000000000049d8",
+      "type": "t",
+      "name": "_hook_setJuiceFromServer"
+    },
+    {
+      "addr": "000000000000c158",
+      "type": "b",
+      "name": "_orig_balanceExportCard"
+    },
+    {
+      "addr": "000000000000c160",
+      "type": "b",
+      "name": "_orig_balanceInvite"
+    },
+    {
+      "addr": "000000000000c128",
+      "type": "b",
+      "name": "_orig_balanceJuice"
+    },
+    {
+      "addr": "000000000000c180",
+      "type": "b",
+      "name": "_orig_canOpenURL"
+    },
+    {
+      "addr": "000000000000c168",
+      "type": "b",
+      "name": "_orig_consumeCoinTips"
+    },
+    {
+      "addr": "000000000000c120",
+      "type": "b",
+      "name": "_orig_didReceiveData"
+    },
+    {
+      "addr": "000000000000c170",
+      "type": "b",
+      "name": "_orig_evaluateServerTrust"
+    },
+    {
+      "addr": "000000000000c178",
+      "type": "b",
+      "name": "_orig_fileExistsAtPath"
+    },
+    {
+      "addr": "000000000000c148",
+      "type": "b",
+      "name": "_orig_isVip"
+    },
+    {
+      "addr": "000000000000c138",
+      "type": "b",
+      "name": "_orig_juiceFromServer"
+    },
+    {
+      "addr": "000000000000c130",
+      "type": "b",
+      "name": "_orig_setBalanceJuice"
+    },
+    {
+      "addr": "000000000000c150",
+      "type": "b",
+      "name": "_orig_setIsVip"
+    },
+    {
+      "addr": "000000000000c140",
+      "type": "b",
+      "name": "_orig_setJuiceFromServer"
+    }
+  ],
+  "imports": [
+    "CFConstantStringClassReference",
+    "MSHookMessageEx",
+    "NSConcreteGlobalBlock",
+    "OBJC_CLASS_$_NSDictionary",
+    "OBJC_CLASS_$_NSJSONSerialization",
+    "OBJC_CLASS_$_NSNumber",
+    "OBJC_CLASS_$_NSUserDefaults",
+    "dispatch_after",
+    "dispatch_main_q",
+    "dispatch_time",
+    "dyld_stub_binder",
+    "objc_getClass",
+    "objc_msgSend",
+    "stack_chk_fail",
+    "stack_chk_guard"
+  ],
+  "strings": [
+    "__TEXT",
+    "__text",
+    "__stubs",
+    "__init_offsets",
+    "__literals",
+    "__objc_methname",
+    "__cstring",
+    "__unwind_info",
+    "__DATA_CONST",
+    "__got",
+    "__const",
+    "__cfstring",
+    "__objc_imageinfo__DATA_CONST",
+    "__DATA",
+    "__objc_classrefs__DATA",
+    "__objc_selrefs",
+    "__bss",
+    "__LINKEDIT",
+    "/Library/MobileSubstrate/DynamicLibraries/BlurrrFull.dylib",
+    "/usr/lib/libobjc.A.dylib",
+    "/usr/lib/libSystem.B.dylib",
+    "/System/Library/Frameworks/Foundation.framework/Foundation",
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+    "@executable_path/libsubstrate.dylib",
+    "BstandardUserDefaults",
+    "setInteger:forKey:",
+    "setObject:forKey:",
+    "setDouble:forKey:",
+    "setBool:forKey:",
+    "synchronize",
+    "URLSession:dataTask:didReceiveData:",
+    "balanceJuice",
+    "setBalanceJuice:",
+    "juiceFromServer",
+    "setJuiceFromServer:",
+    "isVip",
+    "setIsVip:",
+    "balanceExportCard",
+    "balanceInvite",
+    "consumeCoinTips",
+    "evaluateServerTrust:forDomain:",
+    "fileExistsAtPath:",
+    "canOpenURL:",
+    "currentRequest",
+    "respondsToSelector:",
+    "performSelector:",
+    "absoluteString",
+    "HTTPMethod",
+    "containsString:",
+    "isEqualToString:",
+    "dataWithJSONObject:options:error:",
+    "numberWithInt:",
+    "numberWithBool:",
+    "numberWithDouble:",
+    "dictionaryWithObjects:forKeys:count:",
+    "vipState",
+    "yearSvip",
+    "yearly_membership_pkg3",
+    "validSubscribeProductID",
+    "vipExpireTime",
+    "isVipTrialPeriod",
+    "isExistSubscribeHistoryWithUser",
+    "Alamofire.SessionDelegate",
+    "Aries.MSUserDefaultHelper",
+    "AFSecurityPolicy",
+    "NSFileManager",
+    "UIApplication",
+    "v8@?0",
+    "subscribe",
+    "/user/vip",
+    "membership",
+    "report-receipt",
+    "usercenter",
+    "user/info",
+    "/juice",
+    "/coin",
+    "consume",
+    "expend",
+    "deduct",
+    "spend",
+    "config",
+    "purchase",
+    "stage",
+    "grade",
+    "isTrialPeriod",
+    "trialPeriod",
+    "expire",
+    "creatorBadge",
+    "mentorBadge",
+    "goldbg",
+    "errorCode",
+    "sandbox",
+    "balance",
+    "amount",
+    "Cydia",
+    "MobileSubstrate",
+    "/bin/bash",
+    "/etc/apt",
+    "var/lib/apt",
+    "var/lib/cydia",
+    "Sileo",
+    "/var/jb",
+    "Zebra",
+    "cydia",
+    "sileo",
+    "filza",
+    "_dispatch_after",
+    "__dispatch_main_q",
+    "_dispatch_time",
+    "_MSHookMessageEx",
+    "_objc_getClass",
+    "_objc_msgSend",
+    "___stack_chk_fail",
+    "___stack_chk_guard",
+    "_OBJC_CLASS_$_NSUserDefaults",
+    "_OBJC_CLASS_$_NSJSONSerialization",
+    "_OBJC_CLASS_$_NSDictionary",
+    "_OBJC_CLASS_$_NSNumber",
+    "___CFConstantStringClassReference",
+    "__NSConcreteGlobalBlock",
+    "_blurrfull_init",
+    "_OBJC_CLASSLIST_REFERENCES_$_",
+    "_OBJC_SELECTOR_REFERENCES_",
+    "_OBJC_SELECTOR_REFERENCES_.2",
+    "_OBJC_SELECTOR_REFERENCES_.8",
+    "_OBJC_SELECTOR_REFERENCES_.16",
+    "_OBJC_SELECTOR_REFERENCES_.20",
+    "_OBJC_SELECTOR_REFERENCES_.32",
+    "_OBJC_SELECTOR_REFERENCES_.35",
+    "_hook_didReceiveData",
+    "_orig_didReceiveData",
+    "_OBJC_SELECTOR_REFERENCES_.38",
+    "_hook_balanceJuice",
+    "_orig_balanceJuice",
+    "_OBJC_SELECTOR_REFERENCES_.40",
+    "_hook_setBalanceJuice",
+    "_orig_setBalanceJuice",
+    "_OBJC_SELECTOR_REFERENCES_.42",
+    "_hook_juiceFromServer",
+    "_orig_juiceFromServer",
+    "_OBJC_SELECTOR_REFERENCES_.44",
+    "_hook_setJuiceFromServer",
+    "_orig_setJuiceFromServer",
+    "_OBJC_SELECTOR_REFERENCES_.46",
+    "_hook_isVip",
+    "_orig_isVip",
+    "_OBJC_SELECTOR_REFERENCES_.48",
+    "_hook_setIsVip",
+    "_orig_setIsVip",
+    "_OBJC_SELECTOR_REFERENCES_.50",
+    "_hook_balanceExportCard",
+    "_orig_balanceExportCard",
+    "_OBJC_SELECTOR_REFERENCES_.52",
+    "_hook_balanceInvite",
+    "_orig_balanceInvite",
+    "_OBJC_SELECTOR_REFERENCES_.54",
+    "_hook_consumeCoinTips",
+    "_orig_consumeCoinTips",
+    "_OBJC_SELECTOR_REFERENCES_.57",
+    "_hook_evaluateServerTrust",
+    "_orig_evaluateServerTrust",
+    "_OBJC_SELECTOR_REFERENCES_.60",
+    "_hook_fileExistsAtPath",
+    "_orig_fileExistsAtPath",
+    "_OBJC_SELECTOR_REFERENCES_.63",
+    "_hook_canOpenURL",
+    "_orig_canOpenURL",
+    "___block_literal_global",
+    "_OBJC_SELECTOR_REFERENCES_.68",
+    "_OBJC_SELECTOR_REFERENCES_.70",
+    "_OBJC_SELECTOR_REFERENCES_.72",
+    "_OBJC_SELECTOR_REFERENCES_.74",
+    "_OBJC_SELECTOR_REFERENCES_.76",
+    "_OBJC_SELECTOR_REFERENCES_.78",
+    "_OBJC_SELECTOR_REFERENCES_.82",
+    "_OBJC_CLASSLIST_REFERENCES_$_.118",
+    "_OBJC_SELECTOR_REFERENCES_.121",
+    "_OBJC_SELECTOR_REFERENCES_.153",
+    "_OBJC_CLASSLIST_REFERENCES_$_.119",
+    "_OBJC_SELECTOR_REFERENCES_.125",
+    "_OBJC_SELECTOR_REFERENCES_.127",
+    "_OBJC_CLASSLIST_REFERENCES_$_.115",
+    "_OBJC_SELECTOR_REFERENCES_.117",
+    "_OBJC_SELECTOR_REFERENCES_.108",
+    "_fakeJuiceResponse",
+    "___blurrfull_init_block_invoke",
+    "dyld_stub_binder",
+    "___block_descriptor_32_e5_v8",
+    "__stub_helper",
+    "__mod_init_func",
+    "__la_symbol_ptr",
+    "__data",
+    "@__dispatch_main_q",
+    "@___stack_chk_guard",
+    "@dyld_stub_binder",
+    "@__NSConcreteGlobalBlock",
+    "@___CFConstantStringClassReference",
+    "@_OBJC_CLASS_$_NSUserDefaults",
+    "@_OBJC_CLASS_$_NSJSONSerialization",
+    "@_OBJC_CLASS_$_NSDictionary",
+    "@_OBJC_CLASS_$_NSNumber",
+    "@_dispatch_after",
+    "@_dispatch_time",
+    "@_MSHookMessageEx",
+    "@_objc_getClass",
+    "@_objc_msgSend",
+    "@___stack_chk_fail",
+    "__dyld_private"
+  ],
+  "rop_gadgets": [
+    {
+      "addr": "0x0000000000004848",
+      "gadget": "add sp, sp, #0x1a0 ; mov x8, #0 ; mov x9, #0 ; br x5"
+    },
+    {
+      "addr": "0x0000000000004958",
+      "gadget": "add sp, sp, #0x1a0 ; mov x8, #0 ; mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004e68",
+      "gadget": "add x17, x17, #0x150 ; stp x16, x17, [sp, #-0x10]! ; adrp x16, #0x8000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e28",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e34",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e40",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e4c",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e58",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16, #0x30] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e1c",
+      "gadget": "adrp x16, #0x8000 ; ldr x16, [x16] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e34",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e40",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e4c",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e58",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e28",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #8] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e1c",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004994",
+      "gadget": "b #0x4904 ; bl #0x4e58 ; mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x0000000000004998",
+      "gadget": "bl #0x4e58 ; mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x0000000000004920",
+      "gadget": "blr x8"
+    },
+    {
+      "addr": "0x0000000000004e24",
+      "gadget": "br x16"
+    },
+    {
+      "addr": "0x0000000000004e24",
+      "gadget": "br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e30",
+      "gadget": "br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e3c",
+      "gadget": "br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e48",
+      "gadget": "br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e54",
+      "gadget": "br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x30] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e30",
+      "gadget": "br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e3c",
+      "gadget": "br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e48",
+      "gadget": "br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e54",
+      "gadget": "br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e24",
+      "gadget": "br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #8] ; br x16"
+    },
+    {
+      "addr": "0x00000000000049c0",
+      "gadget": "br x3"
+    },
+    {
+      "addr": "0x00000000000049c0",
+      "gadget": "br x3 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049f0",
+      "gadget": "br x3 ; mov x8, #0 ; ret ; mov w0, #1 ; ret"
+    },
+    {
+      "addr": "0x0000000000004854",
+      "gadget": "br x5"
+    },
+    {
+      "addr": "0x00000000000049b0",
+      "gadget": "cbz x3, #0x49c4 ; mov w2, #0x869f ; movk w2, #1, lsl #16 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x00000000000049e0",
+      "gadget": "cbz x3, #0x49f4 ; mov w2, #0x869f ; movk w2, #1, lsl #16 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004a0c",
+      "gadget": "cbz x3, #0x4a1c ; mov w2, #1 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004d20",
+      "gadget": "cbz x8, #0x4d34 ; ldp x29, x30, [sp, #0x10] ; ldp x20, x19, [sp], #0x20 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004844",
+      "gadget": "ldp d9, d8, [sp, #0x130] ; add sp, sp, #0x1a0 ; mov x8, #0 ; mov x9, #0 ; br x5"
+    },
+    {
+      "addr": "0x0000000000004954",
+      "gadget": "ldp d9, d8, [sp, #0x130] ; add sp, sp, #0x1a0 ; mov x8, #0 ; mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004b94",
+      "gadget": "ldp x20, x19, [sp, #0x10] ; ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004b6c",
+      "gadget": "ldp x20, x19, [sp, #0x10] ; ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004c78",
+      "gadget": "ldp x20, x19, [sp, #0x20] ; ldp x22, x21, [sp, #0x10] ; ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004c4c",
+      "gadget": "ldp x20, x19, [sp, #0x20] ; ldp x22, x21, [sp, #0x10] ; ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004d28",
+      "gadget": "ldp x20, x19, [sp], #0x20 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004c7c",
+      "gadget": "ldp x22, x21, [sp, #0x10] ; ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004c50",
+      "gadget": "ldp x22, x21, [sp, #0x10] ; ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004b98",
+      "gadget": "ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004b70",
+      "gadget": "ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004c80",
+      "gadget": "ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004c54",
+      "gadget": "ldp x24, x23, [sp], #0x40 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004d24",
+      "gadget": "ldp x29, x30, [sp, #0x10] ; ldp x20, x19, [sp], #0x20 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004b90",
+      "gadget": "ldp x29, x30, [sp, #0x20] ; ldp x20, x19, [sp, #0x10] ; ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004b68",
+      "gadget": "ldp x29, x30, [sp, #0x20] ; ldp x20, x19, [sp, #0x10] ; ldp x22, x21, [sp], #0x30 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004e2c",
+      "gadget": "ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e2c",
+      "gadget": "ldr x16, [x16, #0x10] ; br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e38",
+      "gadget": "ldr x16, [x16, #0x10] ; br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e38",
+      "gadget": "ldr x16, [x16, #0x18] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e38",
+      "gadget": "ldr x16, [x16, #0x18] ; br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e44",
+      "gadget": "ldr x16, [x16, #0x18] ; br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e44",
+      "gadget": "ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e44",
+      "gadget": "ldr x16, [x16, #0x20] ; br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e50",
+      "gadget": "ldr x16, [x16, #0x20] ; br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e50",
+      "gadget": "ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e50",
+      "gadget": "ldr x16, [x16, #0x28] ; br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x30] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e5c",
+      "gadget": "ldr x16, [x16, #0x30] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e2c",
+      "gadget": "ldr x16, [x16, #8] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e2c",
+      "gadget": "ldr x16, [x16, #8] ; br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e20",
+      "gadget": "ldr x16, [x16] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e20",
+      "gadget": "ldr x16, [x16] ; br x16 ; adrp x16, #0x8000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004e20",
+      "gadget": "ldr x16, [x16] ; br x16 ; adrp x16, #0xc000 ; ldr x16, [x16, #8] ; br x16"
+    },
+    {
+      "addr": "0x0000000000004a08",
+      "gadget": "ldr x3, #0xc150 ; cbz x3, #0x4a1c ; mov w2, #1 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004a08",
+      "gadget": "ldr x3, [x8, #0x188] ; cbz x3, #0x4a1c ; mov w2, #1 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x000000000000491c",
+      "gadget": "ldr x4, [sp, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004a3c",
+      "gadget": "mov w0, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004a3c",
+      "gadget": "mov w0, #0 ; ret ; mov w0, #1 ; ret"
+    },
+    {
+      "addr": "0x000000000000499c",
+      "gadget": "mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x0000000000004a30",
+      "gadget": "mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret ; mov w0, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049fc",
+      "gadget": "mov w0, #1 ; ret"
+    },
+    {
+      "addr": "0x00000000000049b4",
+      "gadget": "mov w2, #0x869f ; movk w2, #1, lsl #16 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004a10",
+      "gadget": "mov w2, #1 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x0000000000004a10",
+      "gadget": "mov w2, #1 ; mov x8, #0 ; br x3 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004910",
+      "gadget": "mov x1, x21 ; mov x2, x20 ; mov x3, x19 ; ldr x4, [sp, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004914",
+      "gadget": "mov x2, x20 ; mov x3, x19 ; ldr x4, [sp, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004e04",
+      "gadget": "mov x3, #0 ; mov x4, #0 ; mov x8, #0 ; mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004918",
+      "gadget": "mov x3, x19 ; ldr x4, [sp, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004e08",
+      "gadget": "mov x4, #0 ; mov x8, #0 ; mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049bc",
+      "gadget": "mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x00000000000049bc",
+      "gadget": "mov x8, #0 ; br x3 ; mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x000000000000484c",
+      "gadget": "mov x8, #0 ; mov x9, #0 ; br x5"
+    },
+    {
+      "addr": "0x000000000000495c",
+      "gadget": "mov x8, #0 ; mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049c4",
+      "gadget": "mov x8, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049c4",
+      "gadget": "mov x8, #0 ; ret ; mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x00000000000049f4",
+      "gadget": "mov x8, #0 ; ret ; mov w0, #1 ; ret"
+    },
+    {
+      "addr": "0x0000000000004850",
+      "gadget": "mov x9, #0 ; br x5"
+    },
+    {
+      "addr": "0x0000000000004960",
+      "gadget": "mov x9, #0 ; ret"
+    },
+    {
+      "addr": "0x00000000000049a0",
+      "gadget": "movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x0000000000004a34",
+      "gadget": "movk w0, #1, lsl #16 ; ret ; mov w0, #0 ; ret"
+    },
+    {
+      "addr": "0x0000000000004a28",
+      "gadget": "movk w0, #1, lsl #16 ; ret ; mov w0, #0x869f ; movk w0, #1, lsl #16 ; ret"
+    },
+    {
+      "addr": "0x00000000000049b8",
+      "gadget": "movk w2, #1, lsl #16 ; mov x8, #0 ; br x3"
+    },
+    {
+      "addr": "0x00000000000049b8",
+      "gadget": "movk w2, #1, lsl #16 ; mov x8, #0 ; br x3 ; mov x8, #0 ; ret"
+    }
+  ],
+  "disassembly": "/tmp/5636d4b7015c13f921b0d11af8be0982:\n(__TEXT,__text) section\n_blurrfull_init:\n    4000:\tf6 57 bd a9\tstp\tx22, x21, [sp, #-0x30]!\n    4004:\tf4 4f 01 a9\tstp\tx20, x19, [sp, #0x10]\n    4008:\tfd 7b 02 a9\tstp\tx29, x30, [sp, #0x20]\n    400c:\tfd 83 00 91\tadd\tx29, sp, #0x20\n    4010:\t1f 20 03 d5\tnop\n    4014:\t60 ff 03 58\tldr\tx0, #0x7fec ; Objc class ref: bad class ref\n    4018:\t1f 20 03 d5\tnop\n    401c:\t21 00 04 58\tldr\tx1, #0x8004\n    4020:\t8b 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4024:\tf3 03 00 aa\tmov\tx19, x0\n    4028:\t1f 20 03 d5\tnop\n    402c:\tf4 ff 03 58\tldr\tx20, #0x7ffc\n    4030:\t43 07 02 10\tadr\tx3, #16616\n    4034:\t1f 20 03 d5\tnop\n    4038:\te1 03 14 aa\tmov\tx1, x20\n    403c:\t22 00 80 52\tmov\tw2, #0x1\n    4040:\t83 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4044:\t1f 20 03 d5\tnop\n    4048:\t55 ff 03 58\tldr\tx21, #0x7fe8\n    404c:\t62 07 02 10\tadr\tx2, #16620\n    4050:\t1f 20 03 d5\tnop\n    4054:\t23 08 02 10\tadr\tx3, #16644\n    4058:\t1f 20 03 d5\tnop\n    405c:\te0 03 13 aa\tmov\tx0, x19\n    4060:\te1 03 15 aa\tmov\tx1, x21\n    4064:\t7a 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4068:\t82 08 02 10\tadr\tx2, #16656\n    406c:\t1f 20 03 d5\tnop\n    4070:\t43 09 02 10\tadr\tx3, #16680\n    4074:\t1f 20 03 d5\tnop\n    4078:\te0 03 13 aa\tmov\tx0, x19\n    407c:\te1 03 15 aa\tmov\tx1, x21\n    4080:\t73 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4084:\t1f 20 03 d5\tnop\n    4088:\t81 fd 03 58\tldr\tx1, #0x7fb0\n    408c:\t62 09 02 10\tadr\tx2, #16684\n    4090:\t1f 20 03 d5\tnop\n    4094:\t1f 20 03 d5\tnop\n    4098:\tc0 6e 00 5c\tldr\td0, 0x4e70\n    409c:\te0 03 13 aa\tmov\tx0, x19\n    40a0:\t6b 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    40a4:\t1f 20 03 d5\tnop\n    40a8:\td5 fc 03 58\tldr\tx21, #0x7f98\n    40ac:\t63 09 02 10\tadr\tx3, #16684\n    40b0:\t1f 20 03 d5\tnop\n    40b4:\te0 03 13 aa\tmov\tx0, x19\n    40b8:\te1 03 15 aa\tmov\tx1, x21\n    40bc:\t02 00 80 52\tmov\tw2, #0x0\n    40c0:\t63 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    40c4:\ta3 09 02 10\tadr\tx3, #16692\n    40c8:\t1f 20 03 d5\tnop\n    40cc:\te0 03 13 aa\tmov\tx0, x19\n    40d0:\te1 03 15 aa\tmov\tx1, x21\n    40d4:\t22 00 80 52\tmov\tw2, #0x1\n    40d8:\t5d 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    40dc:\te3 09 02 10\tadr\tx3, #16700\n    40e0:\t1f 20 03 d5\tnop\n    40e4:\te0 03 13 aa\tmov\tx0, x19\n    40e8:\te1 03 14 aa\tmov\tx1, x20\n    40ec:\te2 d3 90 52\tmov\tw2, #0x869f\n    40f0:\t22 00 a0 72\tmovk\tw2, #0x1, lsl #16\n    40f4:\t56 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    40f8:\t03 0a 02 10\tadr\tx3, #16704\n    40fc:\t1f 20 03 d5\tnop\n    4100:\te0 03 13 aa\tmov\tx0, x19\n    4104:\te1 03 14 aa\tmov\tx1, x20\n    4108:\te2 d3 90 52\tmov\tw2, #0x869f\n    410c:\t22 00 a0 72\tmovk\tw2, #0x1, lsl #16\n    4110:\t4f 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4114:\t23 0a 02 10\tadr\tx3, #16708\n    4118:\t1f 20 03 d5\tnop\n    411c:\te0 03 13 aa\tmov\tx0, x19\n    4120:\te1 03 14 aa\tmov\tx1, x20\n    4124:\te2 d3 90 52\tmov\tw2, #0x869f\n    4128:\t22 00 a0 72\tmovk\tw2, #0x1, lsl #16\n    412c:\t48 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4130:\t43 0a 02 10\tadr\tx3, #16712\n    4134:\t1f 20 03 d5\tnop\n    4138:\te0 03 13 aa\tmov\tx0, x19\n    413c:\te1 03 15 aa\tmov\tx1, x21\n    4140:\t02 00 80 52\tmov\tw2, #0x0\n    4144:\t42 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4148:\t1f 20 03 d5\tnop\n    414c:\te1 f7 03 58\tldr\tx1, #0x7efc\n    4150:\te0 03 13 aa\tmov\tx0, x19\n    4154:\t3e 03 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    4158:\ta0 80 00 70\tadr\tx0, #4119 ; literal pool for: \"Alamofire.SessionDelegate\"\n    415c:\t1f 20 03 d5\tnop\n    4160:\t38 03 00 94\tbl\t0x4e40 ; symbol stub for: _objc_getClass\n    4164:\t00 01 00 b4\tcbz\tx0, 0x4184\n    4168:\t1f 20 03 d5\tnop\n    416c:\t21 f7 03 58\tldr\tx1, #0x7ee4\n    4170:\t02 10 00 10\tadr\tx2, #512\n    4174:\t1f 20 03 d5\tnop\n    4178:\t43 fd 03 10\tadr\tx3, #32680\n    417c:\t1f 20 03 d5\tnop\n    4180:\t2d 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4184:\t20 80 00 30\tadr\tx0, #4101 ; literal pool for: \"Aries.MSUserDefaultHelper\"\n    4188:\t1f 20 03 d5\tnop\n    418c:\t2d 03 00 94\tbl\t0x4e40 ; symbol stub for: _objc_getClass\n    4190:\t20 09 00 b4\tcbz\tx0, 0x42b4\n    4194:\t1f 20 03 d5\tnop\n    4198:\t01 f6 03 58\tldr\tx1, #0x7ec0\n    419c:\t02 40 00 10\tadr\tx2, #2048\n    41a0:\t1f 20 03 d5\tnop\n    41a4:\t23 fc 03 10\tadr\tx3, #32644\n    41a8:\t1f 20 03 d5\tnop\n    41ac:\tf3 03 00 aa\tmov\tx19, x0\n    41b0:\t21 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    41b4:\t1f 20 03 d5\tnop\n    41b8:\t41 f5 03 58\tldr\tx1, #0x7ea8\n    41bc:\t62 3f 00 10\tadr\tx2, #2028\n    41c0:\t1f 20 03 d5\tnop\n    41c4:\t63 fb 03 10\tadr\tx3, #32620\n    41c8:\t1f 20 03 d5\tnop\n    41cc:\te0 03 13 aa\tmov\tx0, x19\n    41d0:\t19 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    41d4:\t1f 20 03 d5\tnop\n    41d8:\t81 f4 03 58\tldr\tx1, #0x7e90\n    41dc:\t82 3f 00 10\tadr\tx2, #2032\n    41e0:\t1f 20 03 d5\tnop\n    41e4:\ta3 fa 03 10\tadr\tx3, #32596\n    41e8:\t1f 20 03 d5\tnop\n    41ec:\te0 03 13 aa\tmov\tx0, x19\n    41f0:\t11 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    41f4:\t1f 20 03 d5\tnop\n    41f8:\tc1 f3 03 58\tldr\tx1, #0x7e78\n    41fc:\te2 3e 00 10\tadr\tx2, #2012\n    4200:\t1f 20 03 d5\tnop\n    4204:\te3 f9 03 10\tadr\tx3, #32572\n    4208:\t1f 20 03 d5\tnop\n    420c:\te0 03 13 aa\tmov\tx0, x19\n    4210:\t09 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4214:\t1f 20 03 d5\tnop\n    4218:\t01 f3 03 58\tldr\tx1, #0x7e60\n    421c:\t02 3f 00 10\tadr\tx2, #2016\n    4220:\t1f 20 03 d5\tnop\n    4224:\t23 f9 03 10\tadr\tx3, #32548\n    4228:\t1f 20 03 d5\tnop\n    422c:\te0 03 13 aa\tmov\tx0, x19\n    4230:\t01 03 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4234:\t1f 20 03 d5\tnop\n    4238:\t41 f2 03 58\tldr\tx1, #0x7e48\n    423c:\t42 3e 00 10\tadr\tx2, #1992\n    4240:\t1f 20 03 d5\tnop\n    4244:\t63 f8 03 10\tadr\tx3, #32524\n    4248:\t1f 20 03 d5\tnop\n    424c:\te0 03 13 aa\tmov\tx0, x19\n    4250:\tf9 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4254:\t1f 20 03 d5\tnop\n    4258:\t81 f1 03 58\tldr\tx1, #0x7e30\n    425c:\t42 3e 00 10\tadr\tx2, #1992\n    4260:\t1f 20 03 d5\tnop\n    4264:\ta3 f7 03 10\tadr\tx3, #32500\n    4268:\t1f 20 03 d5\tnop\n    426c:\te0 03 13 aa\tmov\tx0, x19\n    4270:\tf1 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4274:\t1f 20 03 d5\tnop\n    4278:\tc1 f0 03 58\tldr\tx1, #0x7e18\n    427c:\ta2 3d 00 10\tadr\tx2, #1972\n    4280:\t1f 20 03 d5\tnop\n    4284:\te3 f6 03 10\tadr\tx3, #32476\n    4288:\t1f 20 03 d5\tnop\n    428c:\te0 03 13 aa\tmov\tx0, x19\n    4290:\te9 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4294:\t1f 20 03 d5\tnop\n    4298:\t01 f0 03 58\tldr\tx1, #0x7e00\n    429c:\t02 3d 00 10\tadr\tx2, #1952\n    42a0:\t1f 20 03 d5\tnop\n    42a4:\t23 f6 03 10\tadr\tx3, #32452\n    42a8:\t1f 20 03 d5\tnop\n    42ac:\te0 03 13 aa\tmov\tx0, x19\n    42b0:\te1 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    42b4:\t60 77 00 70\tadr\tx0, #3823 ; literal pool for: \"AFSecurityPolicy\"\n    42b8:\t1f 20 03 d5\tnop\n    42bc:\te1 02 00 94\tbl\t0x4e40 ; symbol stub for: _objc_getClass\n    42c0:\t00 01 00 b4\tcbz\tx0, 0x42e0\n    42c4:\t1f 20 03 d5\tnop\n    42c8:\tc1 ee 03 58\tldr\tx1, #0x7dd8\n    42cc:\tc2 3b 00 10\tadr\tx2, #1912\n    42d0:\t1f 20 03 d5\tnop\n    42d4:\te3 f4 03 10\tadr\tx3, #32412\n    42d8:\t1f 20 03 d5\tnop\n    42dc:\td6 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    42e0:\ta0 76 00 10\tadr\tx0, #3796 ; literal pool for: \"NSFileManager\"\n    42e4:\t1f 20 03 d5\tnop\n    42e8:\td6 02 00 94\tbl\t0x4e40 ; symbol stub for: _objc_getClass\n    42ec:\t00 01 00 b4\tcbz\tx0, 0x430c\n    42f0:\t1f 20 03 d5\tnop\n    42f4:\ta1 ed 03 58\tldr\tx1, #0x7db4\n    42f8:\ta2 3a 00 10\tadr\tx2, #1876\n    42fc:\t1f 20 03 d5\tnop\n    4300:\tc3 f3 03 10\tadr\tx3, #32376\n    4304:\t1f 20 03 d5\tnop\n    4308:\tcb 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    430c:\ta0 75 00 50\tadr\tx0, #3766 ; literal pool for: \"UIApplication\"\n    4310:\t1f 20 03 d5\tnop\n    4314:\tcb 02 00 94\tbl\t0x4e40 ; symbol stub for: _objc_getClass\n    4318:\t00 01 00 b4\tcbz\tx0, 0x4338\n    431c:\t1f 20 03 d5\tnop\n    4320:\t81 ec 03 58\tldr\tx1, #0x7d90\n    4324:\t02 44 00 10\tadr\tx2, #2176\n    4328:\t1f 20 03 d5\tnop\n    432c:\ta3 f2 03 10\tadr\tx3, #32340\n    4330:\t1f 20 03 d5\tnop\n    4334:\tc0 02 00 94\tbl\t0x4e34 ; symbol stub for: _MSHookMessageEx\n    4338:\t00 00 80 d2\tmov\tx0, #0x0\n    433c:\t01 c0 8b 52\tmov\tw1, #0x5e00\n    4340:\t01 5a b6 72\tmovk\tw1, #0xb2d0, lsl #16\n    4344:\tb9 02 00 94\tbl\t0x4e28 ; symbol stub for: _dispatch_time\n    4348:\t1f 20 03 d5\tnop\n    434c:\te1 e5 01 58\tldr\tx1, #0x3cbc ; literal pool symbol address: __dispatch_main_q\n    4350:\t82 e8 01 10\tadr\tx2, #15632\n    4354:\t1f 20 03 d5\tnop\n    4358:\tfd 7b 42 a9\tldp\tx29, x30, [sp, #0x20]\n    435c:\tf4 4f 41 a9\tldp\tx20, x19, [sp, #0x10]\n    4360:\tf6 57 c3 a8\tldp\tx22, x21, [sp], #0x30\n    4364:\t03 00 80 d2\tmov\tx3, #0x0\n    4368:\t08 00 80 d2\tmov\tx8, #0x0\n    436c:\tac 02 00 14\tb\t0x4e1c ; symbol stub for: _dispatch_after\n_hook_didReceiveData:\n    4370:\tff 83 06 d1\tsub\tsp, sp, #0x1a0\n    4374:\te9 23 13 6d\tstp\td9, d8, [sp, #0x130]\n    4378:\tfc 6f 14 a9\tstp\tx28, x27, [sp, #0x140]\n    437c:\tfa 67 15 a9\tstp\tx26, x25, [sp, #0x150]\n    4380:\tf8 5f 16 a9\tstp\tx24, x23, [sp, #0x160]\n    4384:\tf6 57 17 a9\tstp\tx22, x21, [sp, #0x170]\n    4388:\tf4 4f 18 a9\tstp\tx20, x19, [sp, #0x180]\n    438c:\tfd 7b 19 a9\tstp\tx29, x30, [sp, #0x190]\n    4390:\tfd 43 06 91\tadd\tx29, sp, #0x190\n    4394:\tf3 03 03 aa\tmov\tx19, x3\n    4398:\t1f 20 03 d5\tnop\n    439c:\te8 e4 01 58\tldr\tx8, #0x3c9c ; literal pool symbol address: ___stack_chk_guard\n    43a0:\t08 01 40 f9\tldr\tx8, [x8]\n    43a4:\ta8 03 19 f8\tstur\tx8, [x29, #-0x70]\n    43a8:\t63 21 00 b4\tcbz\tx3, 0x47d4\n    43ac:\t44 21 00 b4\tcbz\tx4, 0x47d4\n    43b0:\tf6 03 00 aa\tmov\tx22, x0\n    43b4:\te4 0f 00 f9\tstr\tx4, [sp, #0x18]\n    43b8:\tf5 03 01 aa\tmov\tx21, x1\n    43bc:\tf4 03 02 aa\tmov\tx20, x2\n    43c0:\t1f 20 03 d5\tnop\n    43c4:\tb8 e7 03 58\tldr\tx24, #0x7cf4\n    43c8:\t1f 20 03 d5\tnop\n    43cc:\ta1 e7 03 58\tldr\tx1, #0x7cf4\n    43d0:\te0 03 13 aa\tmov\tx0, x19\n    43d4:\te2 03 18 aa\tmov\tx2, x24\n    43d8:\t9d 02 00 94\tbl\t0x4e4c ; symbol stub for: _objc_msgSend\n    43dc:\te0 20 00 34\tcbz\tw0, 0x47f8\n    43e0:\t1f 20 03 d5\tnop\n    43e4:\t21 e7 03 58\tldr\tx1, #0x7ce4\n    43",
+  "capstone_disasm": "0x00004000:  stp        x22, x21, [sp, #-0x30]!\n0x00004004:  stp        x20, x19, [sp, #0x10]\n0x00004008:  stp        x29, x30, [sp, #0x20]\n0x0000400c:  add        x29, sp, #0x20\n0x00004010:  nop        \n0x00004014:  ldr        x0, #0xc000\n0x00004018:  nop        \n0x0000401c:  ldr        x1, #0xc020\n0x00004020:  bl         #0x4e4c\n0x00004024:  mov        x19, x0\n0x00004028:  nop        \n0x0000402c:  ldr        x20, #0xc028\n0x00004030:  adr        x3, #0x8118\n0x00004034:  nop        \n0x00004038:  mov        x1, x20\n0x0000403c:  mov        w2, #1\n0x00004040:  bl         #0x4e4c\n0x00004044:  nop        \n0x00004048:  ldr        x21, #0xc030\n0x0000404c:  adr        x2, #0x8138\n0x00004050:  nop        \n0x00004054:  adr        x3, #0x8158\n0x00004058:  nop        \n0x0000405c:  mov        x0, x19\n0x00004060:  mov        x1, x21\n0x00004064:  bl         #0x4e4c\n0x00004068:  adr        x2, #0x8178\n0x0000406c:  nop        \n0x00004070:  adr        x3, #0x8198\n0x00004074:  nop        \n0x00004078:  mov        x0, x19\n0x0000407c:  mov        x1, x21\n0x00004080:  bl         #0x4e4c\n0x00004084:  nop        \n0x00004088:  ldr        x1, #0xc038\n0x0000408c:  adr        x2, #0x81b8\n0x00004090:  nop        \n0x00004094:  nop        \n0x00004098:  ldr        d0, #0x4e70\n0x0000409c:  mov        x0, x19\n0x000040a0:  bl         #0x4e4c\n0x000040a4:  nop        \n0x000040a8:  ldr        x21, #0xc040\n0x000040ac:  adr        x3, #0x81d8\n0x000040b0:  nop        \n0x000040b4:  mov        x0, x19\n0x000040b8:  mov        x1, x21\n0x000040bc:  mov        w2, #0\n0x000040c0:  bl         #0x4e4c\n0x000040c4:  adr        x3, #0x81f8\n0x000040c8:  nop        \n0x000040cc:  mov        x0, x19\n0x000040d0:  mov        x1, x21\n0x000040d4:  mov        w2, #1\n0x000040d8:  bl         #0x4e4c\n0x000040dc:  adr        x3, #0x8218\n0x000040e0:  nop        \n0x000040e4:  mov        x0, x19\n0x000040e8:  mov        x1, x20\n0x000040ec:  mov        w2, #0x869f\n0x000040f0:  movk       w2, #1, lsl #16\n0x000040f4:  bl         #0x4e4c\n0x000040f8:  adr        x3, #0x8238\n0x000040fc:  nop        \n0x00004100:  mov        x0, x19\n0x00004104:  mov        x1, x20\n0x00004108:  mov        w2, #0x869f\n0x0000410c:  movk       w2, #1, lsl #16\n0x00004110:  bl         #0x4e4c\n0x00004114:  adr        x3, #0x8258\n0x00004118:  nop        \n0x0000411c:  mov        x0, x19\n0x00004120:  mov        x1, x20\n0x00004124:  mov        w2, #0x869f\n0x00004128:  movk       w2, #1, lsl #16\n0x0000412c:  bl         #0x4e4c\n0x00004130:  adr        x3, #0x8278\n0x00004134:  nop        \n0x00004138:  mov        x0, x19\n0x0000413c:  mov        x1, x21\n0x00004140:  mov        w2, #0\n0x00004144:  bl         #0x4e4c\n0x00004148:  nop        \n0x0000414c:  ldr        x1, #0xc048\n0x00004150:  mov        x0, x19\n0x00004154:  bl         #0x4e4c\n0x00004158:  adr        x0, #0x516f\n0x0000415c:  nop        \n0x00004160:  bl         #0x4e40\n0x00004164:  cbz        x0, #0x4184\n0x00004168:  nop        \n0x0000416c:  ldr        x1, #0xc050\n0x00004170:  adr        x2, #0x4370\n0x00004174:  nop        \n0x00004178:  adr        x3, #0xc120\n0x0000417c:  nop        \n0x00004180:  bl         #0x4e34\n0x00004184:  adr        x0, #0x5189\n0x00004188:  nop        \n0x0000418c:  bl         #0x4e40\n0x00004190:  cbz        x0, #0x42b4\n0x00004194:  nop        \n0x00004198:  ldr        x1, #0xc058\n0x0000419c:  adr        x2, #0x499c\n0x000041a0:  nop        \n0x000041a4:  adr        x3, #0xc128\n0x000041a8:  nop        \n0x000041ac:  mov        x19, x0\n0x000041b0:  bl         #0x4e34\n0x000041b4:  nop        \n0x000041b8:  ldr        x1, #0xc060\n0x000041bc:  adr        x2, #0x49a8\n0x000041c0:  nop        \n0x000041c4:  adr        x3, #0xc130\n0x000041c8:  nop        \n0x000041cc:  mov        x0, x19\n0x000041d0:  bl         #0x4e34\n0x000041d4:  nop        \n0x000041d8:  ldr        x1, #0xc068\n0x000041dc:  adr        x2, #0x49cc\n0x000041e0:  nop        \n0x000041e4:  adr        x3, #0xc138\n0x000041e8:  nop        \n0x000041ec:  mov        x0, x19\n0x000041f0:  bl         #0x4e34\n0x000041f4:  nop        \n0x000041f8:  ldr        x1, #0xc070\n0x000041fc:  adr        x2, #0x49d8\n0x00004200:  nop        \n0x00004204:  adr        x3, #0xc140\n0x00004208:  nop        \n0x0000420c:  mov        x0, x19\n0x00004210:  bl         #0x4e34\n0x00004214:  nop        \n0x00004218:  ldr        x1, #0xc078\n0x0000421c:  adr        x2, #0x49fc\n0x00004220:  nop        \n0x00004224:  adr        x3, #0xc148\n0x00004228:  nop        \n0x0000422c:  mov        x0, x19\n0x00004230:  bl         #0x4e34\n0x00004234:  nop        \n0x00004238:  ldr        x1, #0xc080\n0x0000423c:  adr        x2, #0x4a04\n0x00004240:  nop        \n0x00004244:  adr        x3, #0xc150\n0x00004248:  nop        \n0x0000424c:  mov        x0, x19\n0x00004250:  bl         #0x4e34\n0x00004254:  nop        \n0x00004258:  ldr        x1, #0xc088\n0x0000425c:  adr        x2, #0x4a24\n0x00004260:  nop        \n0x00004264:  adr        x3, #0xc158\n0x00004268:  nop        \n0x0000426c:  mov        x0, x19\n0x00004270:  bl         #0x4e34\n0x00004274:  nop        \n0x00004278:  ldr        x1, #0xc090\n0x0000427c:  adr        x2, #0x4a30\n0x00004280:  nop        \n0x00004284:  adr        x3, #0xc160\n0x00004288:  nop        \n0x0000428c:  mov        x0, x19\n0x00004290:  bl         #0x4e34\n0x00004294:  nop        \n0x00004298:  ldr        x1, #0xc098\n0x0000429c:  adr        x2, #0x4a3c\n0x000042a0:  nop        \n0x000042a4:  adr        x3, #0xc168\n0x000042a8:  nop        \n0x000042ac:  mov        x0, x19\n0x000042b0:  bl         #0x4e34\n0x000042b4:  adr        x0, #0x51a3\n0x000042b8:  nop        \n0x000042bc:  bl         #0x4e40\n0x000042c0:  cbz        x0, #0x42e0\n0x000042c4:  nop        \n0x000042c8:  ldr        x1, #0xc0a0\n0x000042cc:  adr        x2, #0x4a44\n0x000042d0:  nop        \n0x000042d4:  adr        x3, #0xc170\n0x000042d8:  nop        \n0x000042dc:  bl         #0x4e34\n0x000042e0:  adr        x0, #0x51b4\n0x000042e4:  nop        \n0x000042e8:  bl         #0x4e40\n0x000042ec:  cbz        x0, #0x430c\n0x000042f0:  nop        \n0x000042f4:  ldr        x1, #0xc0a8\n0x000042f8:  adr        x2, #0x4a4c\n0x000042fc:  nop        \n0x00004300:  adr        x3, #0xc178\n0x00004304:  nop        \n0x00004308:  bl         #0x4e34\n0x0000430c:  adr        x0, #0x51c2\n0x00004310:  nop        \n0x00004314:  bl         #0x4e40\n0x00004318:  cbz        x0, #0x4338\n0x0000431c:  nop        ",
+  "pseudo_c": "// --- sym.imp.objc_getClass @ 0x4e40 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym.imp.objc_getClass (int x0, int x1) {\n    loc_0x00004e40:\n        // XREFS: CALL 0x00004160  CALL 0x0000418c  CALL 0x000042bc\n        // XREFS: CALL 0x000042e8  CALL 0x00004314  CALL 0x00004d3c\n        x16 = reloc.dispatch_after // 0x8000\n        x16 = [x16 + 0x20] // [0x8020:4]=4 // reloc.objc_getClass\n        switch x16\n        return x0;\n}\n\n\n// --- sym.imp.objc_msgSend @ 0x4e4c ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid * objc_msgSend (void *instance, char *selector) {\n    loc_0x00004e4c:\n        // XREFS(76)\n        x16 = reloc.dispatch_after // 0x8000\n        x16 = [x16 + 0x28] // [0x8028:4]=5 // reloc.objc_msgSend\n        switch x16\n        return x0;\n}\n\n\n// --- sym.imp.__stack_chk_fail @ 0x4e58 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym.imp.__stack_chk_fail (int x0, int x1) {\n    loc_0x00004e58:\n        // CALL XREF from sym._hook_didReceiveData @ 0x4998(x)\n        // CALL XREF from sym._fakeJuiceResponse @ 0x4e18(x)\n        x16 = reloc.dispatch_after // 0x8000\n        x16 = [x16 + 0x30] // [0x8030:4]=6 // reloc.__stack_chk_fail\n        switch x16\n        return x0;\n}\n\n\n// --- sym.imp.dispatch_after @ 0x4e1c ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym.imp.dispatch_after (int x0, int x1) {\n    loc_0x00004e1c:\n        // CODE XREF from sym._blurrfull_init @ 0x436c(x)\n        x16 = reloc.dispatch_after // 0x8000 // [01] -r-x section size 72 named 1.__TEXT.__stubs\n        x16 = [x16]   // [0x8000:4]=0 // reloc.dispatch_after\n        [07] -rw- section size 64 named 7.__DATA_CONST.__got\n        switch x16\n        return x0;\n}\n\n\n// --- sym.imp.dispatch_time @ 0x4e28 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym.imp.dispatch_time (int x0, int x1) {\n    loc_0x00004e28:\n        // CALL XREF from sym._blurrfull_init @ 0x4344(x)\n        x16 = reloc.dispatch_after // 0x8000\n        x16 = [x16 + 0x10] // [0x8010:4]=2 // reloc.dispatch_time\n        switch x16\n        return x0;\n}\n\n\n// --- sym.imp.MSHookMessageEx @ 0x4e34 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym.imp.MSHookMessageEx (int x0, int x1) {\n    loc_0x00004e34:\n        // XREFS: CALL 0x00004180  CALL 0x000041b0  CALL 0x000041d0\n        // XREFS: CALL 0x000041f0  CALL 0x00004210  CALL 0x00004230\n        // XREFS: CALL 0x00004250  CALL 0x00004270  CALL 0x00004290\n        // XREFS: CALL 0x000042b0  CALL 0x000042dc  CALL 0x00004308\n        // XREFS: CALL 0x00004334  CODE 0x00004d68\n        x16 = reloc.dispatch_after // 0x8000\n        x16 = [x16 + 0x18] // [0x8018:4]=3 // reloc.MSHookMessageEx\n        switch x16\n        return x0;\n}\n\n\n// --- sym._blurrfull_init @ 0x4000 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nint sym._blurrfull_init (int x0, int x1) {\n    loc_0x00004000:\n        [sp - 0x30]! = (x22, 2) // [00] -r-x section size 3612 named 0.__TEXT.__text\n        [var_10h] = (x20, 2)\n        [var_20h] = (x29, 2)\n        x29 = sp + 0x20\n        x0 = 0xc000   // sym._OBJC_CLASSLIST_REFERENCES___ // [0xc000:8]=0x8010000000000008 // void *instance\n        x1 = 0xc020   // sym._OBJC_SELECTOR_REFERENCES_ // [0xc020:8]=0x10000000004e78 // \"xN\" // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x19 = x0\n        x20 = 0xc028  // sym._OBJC_SELECTOR_REFERENCES_.2 // [0xc028:8]=0x10000000004e8d\n        x3 = str.cstr.vipState // section.9.__DATA_CONST.__cfstring // 0x8118\n        x1 = x20      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x21 = 0xc030  // sym._OBJC_SELECTOR_REFERENCES_.8 // [0xc030:8]=0x10000000004ea0\n        x2 = str.cstr.yearSvip // 0x8138\n        x3 = 0x8158\n        x0 = x19      // void *instance\n        x1 = x21      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x2 = str.cstr.yearly_membership_pkg3 // 0x8178\n        x3 = str.cstr.validSubscribeProductID // 0x8198\n        x0 = x19      // void *instance\n        x1 = x21      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x1 = 0xc038   // sym._OBJC_SELECTOR_REFERENCES_.16 // [0xc038:8]=0x10000000004eb2 // char *selector\n        x2 = str.cstr.vipExpireTime // 0x81b8\n        d0 = 0x4e70   // section.3.__TEXT.__literals // [0x4e70:8]=0x4202a05f1ff80000\n        x0 = x19      // void *instance\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x21 = 0xc040  // sym._OBJC_SELECTOR_REFERENCES_.20 // [0xc040:8]=0x10000000004ec4\n        x3 = str.cstr.isVipTrialPeriod // 0x81d8\n        x0 = x19      // void *instance\n        x1 = x21      // char *selector\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x3 = str.cstr.isExistSubscribeHistoryWithUser // 0x81f8\n        x0 = x19      // void *instance\n        x1 = x21      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x3 = str.cstr.balanceJuice // 0x8218\n        x0 = x19      // void *instance\n        x1 = x20      // char *selector\n        w2 = 0x869f\n        w2 = 1 << 16\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x3 = str.cstr.balanceExportCard // 0x8238\n        x0 = x19      // void *instance\n        x1 = x20      // char *selector\n        w2 = 0x869f\n        w2 = 1 << 16\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x3 = str.cstr.balanceInvite // 0x8258\n        x0 = x19      // void *instance\n        x1 = x20      // char *selector\n        w2 = 0x869f\n        w2 = 1 << 16\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x3 = str.cstr.consumeCoinTips // 0x8278\n        x0 = x19      // void *instance\n        x1 = x21      // char *selector\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x1 = 0xc048   // sym._OBJC_SELECTOR_REFERENCES_.32 // [0xc048:8]=0x10000000004ed4 // char *selector\n        x0 = x19      // void *instance\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x0 = str.Alamofire.SessionDelegate // 0x516f\n        sym.imp.objc_getClass ()\n        if (!x0) goto 0x4184 // unlikely\n        goto loc_0x00004168;\n    loc_0x00004184:\n        // CODE XREF from sym._blurrfull_init @ 0x4164(x)\n        x0 = str.Aries.MSUserDefaultHelper // 0x5189\n        sym.imp.objc_getClass ()\n        if (!x0) goto 0x42b4 // unlikely\n        goto loc_0x00004194;\n    loc_0x000042b4:\n        // CODE XREF from sym._blurrfull_init @ 0x4190(x)\n        x0 = str.AFSecurityPolicy // 0x51a3\n        sym.imp.objc_getClass ()\n        if (!x0) goto 0x42e0 // unlikely\n        goto loc_0x000042c4;\n    loc_0x000042e0:\n        // CODE XREF from sym._blurrfull_init @ 0x42c0(x)\n        x0 = str.NSFileManager // 0x51b4\n        sym.imp.objc_getClass ()\n        if (!x0) goto 0x430c // unlikely\n        goto loc_0x000042f0;\n    loc_0x0000430c:\n        // CODE XREF from sym._blurrfull_init @ 0x42ec(x)\n        x0 = str.UIApplication // 0x51c2\n        sym.imp.objc_getClass ()\n        if (!x0) goto 0x4338 // unlikely\n        goto loc_0x0000431c;\n    loc_0x00004338:\n        // CODE XREF from sym._blurrfull_init @ 0x4318(x)\n        x0 = 0\n        w1 = 0x5e00\n        w1 = 0xb2d0 << 16\n        sym.imp.dispatch_time ()\n        x1 = 0x8008   // reloc._dispatch_main_q // [0x8008:8]=0x8010000000000001\n        x2 = sym.___block_literal_global // 0x8060\n        (x29, 2) = 3\n        (x20, 2) = 3\n        (x22, 2) = 3\n        x3 = 0\n        x8 = 0\n        goto sym.imp.dispatch_after\n        // chop\n        \n    loc_0x00004e1c:\n        // CODE XREF from sym._blurrfull_init @ 0x436c(x)\n        x16 = reloc.dispatch_after // 0x8000 // [01] -r-x section size 72 named 1.__TEXT.__stubs\n        x16 = [x16]   // [0x8000:4]=0 // reloc.dispatch_after\n        [07] -rw- section size 64 named 7.__DATA_CONST.__got\n        switch x16\n        return x0;\n    loc_0x00004194: // orphan\n         \n         x1 = 0xc058              // sym._OBJC_SELECTOR_REFERENCES_.38 // [0xc058:8]=0x10000000004f04\n         x2 = sym._hook_balanceJuice // sym.func.0000499c // 0x499c\n         \n         x3 = sym._orig_balanceJuice // 0xc128\n         \n         x19 = x0\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc060              // sym._OBJC_SELECTOR_REFERENCES_.40 // [0xc060:8]=0x10000000004f11\n         x2 = sym._hook_setBalanceJuice // sym.func.000049a8 // 0x49a8\n         \n         x3 = sym._orig_setBalanceJuice // 0xc130\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc068              // sym._OBJC_SELECTOR_REFERENCES_.42 // [0xc068:8]=0x10000000004f22 // \"\\\"O\"\n         x2 = sym._hook_juiceFromServer // sym.func.000049cc // 0x49cc\n         \n         x3 = sym._orig_juiceFromServer // 0xc138\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc070              // sym._OBJC_SELECTOR_REFERENCES_.44 // [0xc070:8]=0x10000000004f32 // \"2O\"\n         x2 = sym._hook_setJuiceFromServer // sym.func.000049d8 // 0x49d8\n         \n         x3 = sym._orig_setJuiceFromServer // 0xc140\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc078              // sym._OBJC_SELECTOR_REFERENCES_.46 // [0xc078:8]=0x10000000004f46 // \"FO\"\n         x2 = sym._hook_isVip     // sym.func.000049fc // 0x49fc\n         \n         x3 = sym._orig_isVip     // 0xc148\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc080              // sym._OBJC_SELECTOR_REFERENCES_.48 // [0xc080:8]=0x10000000004f4c // \"LO\"\n         x2 = sym._hook_setIsVip  // sym.func.00004a04 // 0x4a04\n         \n         x3 = sym._orig_setIsVip  // 0xc150\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc088              // sym._OBJC_SELECTOR_REFERENCES_.50 // [0xc088:8]=0x10000000004f56 // \"VO\"\n         x2 = sym._hook_balanceExportCard // sym.func.00004a24 // 0x4a24\n         \n         x3 = sym._orig_balanceExportCard // 0xc158\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc090              // sym._OBJC_SELECTOR_REFERENCES_.52 // [0xc090:8]=0x10000000004f68 // \"hO\"\n         x2 = sym._hook_balanceInvite // sym.func.00004a30 // 0x4a30\n         \n         x3 = sym._orig_balanceInvite // 0xc160\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n         \n         x1 = 0xc098              // sym._OBJC_SELECTOR_REFERENCES_.54 // [0xc098:8]=0x10000000004f76 // \"vO\"\n         x2 = sym._hook_consumeCoinTips // sym.func.00004a3c // 0x4a3c\n         \n         x3 = sym._orig_consumeCoinTips // 0xc168\n         \n         x0 = x19\n         sym.imp.MSHookMessageEx ()\n\n    loc_0x000042c4: // orphan\n         \n         x1 = 0xc0a0              // sym._OBJC_SELECTOR_REFERENCES_.57 // [0xc0a0:8]=0x10000000004f86\n         x2 = sym._hook_evaluateServerTrust // sym.func.00004a44 // 0x4a44\n         \n         x3 = sym._orig_evaluateServerTrust // 0xc170\n         \n         sym.imp.MSHookMessageEx ()\n\n    loc_0x000042f0: // orphan\n         \n         x1 = 0xc0a8              // sym._OBJC_SELECTOR_REFERENCES_.60 // [0xc0a8:8]=0x10000000004fa5\n         x2 = sym._hook_fileExistsAtPath // sym.func.00004a4c // 0x4a4c\n         \n         x3 = sym._orig_fileExistsAtPath // 0xc178\n         \n         sym.imp.MSHookMessageEx ()\n\n    loc_0x0000431c: // orphan\n         \n         x1 = 0xc0b0              // sym._OBJC_SELECTOR_REFERENCES_.63 // [0xc0b0:8]=0x10000000004fb7\n         x2 = sym._hook_canOpenURL // sym.func.00004ba4 // 0x4ba4\n         \n         x3 = sym._orig_canOpenURL // 0xc180\n         \n         sym.imp.MSHookMessageEx ()\n\n}\n\n\n// --- sym._hook_didReceiveData @ 0x4370 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym._hook_didReceiveData (int64_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, int64_t arg5, int64_t arg_1a0h) {\n    loc_0x00004370:\n        // ICOD XREF from sym._blurrfull_init @ 0x4170(x)\n        // ICOD XREF from sym.___blurrfull_init_block_invoke @ 0x4d4c(x)\n        sp = sp - 0x1a0\n        [var_130h] = (d9, 2)\n        [var_140h] = (x28, 2)\n        [var_150h] = (x26, 2)\n        [var_160h] = (x24, 2)\n        [var_170h] = (x22, 2)\n        [var_180h] = (x20, 2)\n        [var_190h] = (x29, 2)\n        x29 = sp + 0x190\n        x19 = x3      // arg4\n        x8 = 0x8038   // reloc.__stack_chk_guard // [0x8038:8]=0x8030000000000007\n        x8 = [x8]\n        [x29 -0x70] = x8\n        if (!x3) goto 0x47d4 // likely\n        goto loc_0x000043ac;\n    loc_0x000047d4:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x43a8(x), 0x43ac(x)\n        x5 = sym._orig_didReceiveData // [0xc120:8]=0\n        x8 = [x29 -0x70]\n        x9 = 0x8038   // reloc.__stack_chk_guard // [0x8038:8]=0x8030000000000007\n        x9 = [x9]\n        (a, b) = compare (x9, x8)\n        if (eq) goto 0x4828 // unlikely\n        goto loc_0x000047f4;\n    loc_0x00004828:\n        // CODE XREF from sym._hook_didReceiveData @ 0x47f0(x)\n        x3 = x19\n        (x29, 2) = 3\n        (x20, 2) = 3\n        (x22, 2) = 3\n        (x24, 2) = 3\n        (x26, 2) = 3\n        (x28, 2) = 3\n        (d9, 2) = 3\n        sp = sp + 0x1a0 // 0x178000\n        x8 = 0\n        x9 = 0\n        switch x5\n        goto loc_0x000043b0;\n        return x0;\n    loc_0x000043b0:\n        x22 = x0      // arg1\n        [arg_1a0hx18] = x4 // arg5\n        x21 = x1      // arg2\n        x20 = x2      // arg3\n        x24 = 0xc0b8  // sym._OBJC_SELECTOR_REFERENCES_.68 // [0xc0b8:8]=0x10000000004fc3\n        x1 = 0xc0c0   // sym._OBJC_SELECTOR_REFERENCES_.70 // [0xc0c0:8]=0x10000000004fd2 // char *selector\n        x0 = x19      // void *instance\n        x2 = x24\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n        if (!w0) goto 0x47f8 // likely\n        goto loc_0x000043e0;\n    loc_0x000047f8:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x43dc(x), 0x43f4(x), 0x4408(x), 0x4418(x)\n        x5 = sym._orig_didReceiveData // [0xc120:8]=0\n        x8 = [x29 -0x70]\n        x9 = 0x8038   // reloc.__stack_chk_guard // [0x8038:8]=0x8030000000000007\n        x9 = [x9]\n        (a, b) = compare (x9, x8)\n        x4 = [arg_1a0hx18]\n        if (eq) goto 0x4998 // likely\n        goto loc_0x0000481c;\n    loc_0x00004998:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x47f4(x), 0x4818(x), 0x4938(x)\n        sym.imp.__stack_chk_fail () // sym.func.0000499c // void __stack_chk_fail(void)\n        goto loc_0x000043f8;\n        return x0;\n    loc_0x000043f8:\n        x1 = 0xc0d0   // sym._OBJC_SELECTOR_REFERENCES_.74 // [0xc0d0:8]=0x10000000004ff7 // char *selector\n        x25 = x0\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n        if (!x0) goto 0x47f8 // likely\n        goto loc_0x0000440c;\n    loc_0x0000440c:\n        x1 = 0xc0d8   // sym._OBJC_SELECTOR_REFERENCES_.76 // [0xc0d8:8]=0x10000000004ffb // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n        if (!x0) goto 0x47f8 // likely\n        goto loc_0x0000441c;\n    loc_0x0000441c:\n        x24 = x0\n        x1 = 0xc0e0   // sym._OBJC_SELECTOR_REFERENCES_.78 // [0xc0e0:8]=0x1000000000500a // \"\\nP\" // char *selector\n        x0 = x25      // void *instance\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n        [var_8h] = x0\n        x28 = 0xc0e8  // sym._OBJC_SELECTOR_REFERENCES_.82 // [0xc0e8:8]=0x10000000005015\n        x2 = str.cstr.subscribe // 0x82b8\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n        x23 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        x26 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        x27 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        if (w0) goto 0x44d8 // unlikely\n        goto loc_0x00004460;\n    loc_0x000044d8:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x445c(x), 0x4474(x), 0x448c(x), 0x44a4(x), 0x44bc(x)\n        x8 = [x23 + 0x10] // [0xc010:4]=10 // \"\\n\"\n        [arg_1a0hx10] = x8\n        x23 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x27 = x24\n        x24 = x28\n        x28 = [x26 + 0x100] // [0xc100:4]=0x5058 str.numberWithInt: // \"XP\"\n        x1 = x28      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\\x06\")\n        x8 = str.cstr.yearSvip // 0x8138\n        x9 = str.cstr.svip // 0x84b8\n        [arg_1a0hxa0] = (x0, 2)\n        [arg_1a0hxb0] = (x9, 2)\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x26 = 0xc108  // sym._OBJC_SELECTOR_REFERENCES_.125 // [0xc108:8]=0x10000000005067 // \"gP\"\n        x1 = x26      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        [arg_1a0hxc0] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x26      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x8 = str.cstr.yearly_membership_pkg3 // 0x8178\n        [arg_1a0hxc8] = (x0, 2)\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x25 = 0xc110  // sym._OBJC_SELECTOR_REFERENCES_.127 // [0xc110:8]=0x10000000005077 // \"wP\"\n        d8 = 0x4e70   // section.3.__TEXT.__literals // [0x4e70:8]=0x4202a05f1ff80000\n        x1 = x25      // char *selector\n        d0 = d8\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        [arg_1a0hxd8] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x26      // char *selector\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        [arg_1a0hxe0] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x26      // char *selector\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        [arg_1a0hxe8] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x25      // char *selector\n        d0 = d8\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x8 = 0x84d8\n        [arg_1a0hxf0] = (x0, 2)\n        [arg_1a0hx100] = x8\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x26      // char *selector\n        w2 = 1\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        [arg_1a0hx108] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x28      // char *selector\n        x28 = x24\n        x24 = x27\n        x27 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\\x06\")\n        [arg_1a0hx110] = x0\n        x0 = [x23 + 0x18] // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n        x1 = x26      // char *selector\n        x26 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n        w2 = 0\n        sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n        x8 = 0x8080\n        [arg_1a0hx118] = x0\n        (q0, 2) = 3\n        [arg_1a0hx60] = (q0, 2)\n        (q0, 2) = 3\n        [arg_1a0hx80] = (q0, 2)\n        (q0, 2) = 3\n        [arg_1a0hx20] = (q0, 2)\n        (q0, 2) = 3\n        [arg_1a0hx40] = (q0, 2)\n        x1 = [x27 + 0x118] // [0x5089:4]=0x74636964 // \"dictionaryWithObjects:forKeys:count:\" // char *selector // (pstr 0x00005089) \"dictionaryWithObjects:forKeys:count:\" sym._OBJC_SELECTOR_REFERENCES_.153 // str.dictionaryWithObjects:forKeys:count:\n        x2 = sp + 0xa0\n        x3 = sp + 0x20\n        x0 = [arg_1a0hx10] // void *instance\n        w4 = 0x10\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, \"dictionaryWithObjects:forKeys:count:\")\n        if (!x0) goto 0x4674 // likely\n        goto loc_0x00004650;\n    loc_0x00004674:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x44d4(x), 0x464c(x)\n        x2 = str.cstr._juice // 0x8378\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        x25 = x0\n        x2 = str.cstr._coin // 0x8398\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        w8 = w25 | w0\n        (a, b) = compare (w8, 0xff)\n        if (eq) goto 0x4904 // likely\n        goto loc_0x000046ac;\n    loc_0x00004904:\n        // CODE XREFS from sym._hook_didReceiveData @ 0x46a8(x), 0x48d0(x), 0x48e8(x), 0x496c(x), 0x4994(x)\n        x8 = sym._orig_didReceiveData // [0xc120:8]=0\n        x0 = x22\n        x1 = x21\n        x2 = x20\n        x3 = x19\n        x4 = [arg_1a0hx18]\n        \n    loc_0x00004920:\n        // CODE XREF from sym._hook_didReceiveData @ 0x47d0(x)\n        blr x8        // 0x4924(0x0, 0x0, 0x0, 0x0)\n        x8 = [x29 -0x70]\n        x9 = 0x8038   // reloc.__stack_chk_guard // [0x8038:8]=0x8030000000000007\n        x9 = [x9]\n        (a, b) = compare (x9, x8)\n        if (eq) goto 0x4998 // likely\n        goto loc_0x0000493c;\n        goto loc_0x0000493c;\n        goto loc_0x000046c4;\n        goto loc_0x00004674;\n        goto loc_0x00004478;\n        return x0;\n    loc_0x00004478:\n        x2 = str.cstr.membership // 0x82f8\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        if (w0) goto 0x44d8 // unlikely\n        goto loc_0x00004490;\n    loc_0x00004490:\n        x2 = str.cstr.report_receipt // 0x8318\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        if (w0) goto 0x44d8 // unlikely\n        goto loc_0x000044a8;\n    loc_0x000044a8:\n        x2 = str.cstr.usercenter // 0x8338\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        if (w0) goto 0x44d8 // unlikely\n        goto loc_0x000044c0;\n    loc_0x000044c0:\n        x2 = str.cstr.user_info // 0x8358\n        x0 = x24      // void *instance\n        x1 = x28      // char *selector\n        sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n        if (!w0) goto 0x4674 // likely\n        goto loc_0x000044d8;\n        goto loc_0x000044d8;\n        return x0;\n    loc_0x000043e0: // orphan\n         \n         x1 = 0xc0c8              // sym._OBJC_SELECTOR_REFERENCES_.72 // [0xc0c8:8]=0x10000000004fe6 // char *selector\n         x0 = x19                 // void *instance\n         x2 = x24\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n         if (!x0) \n         goto loc_0x000047f8\n    loc_0x00004460: // orphan\n         x2 = str.cstr._user_vip  // 0x82d8\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x000044d8\n    loc_0x00004650: // orphan\n         x2 = x0\n         x0 = 0xc008              // sym._OBJC_CLASSLIST_REFERENCES___.115 // [0xc008:8]=0x8010000000000009 // \"\\t\" // void *instance\n         x1 = 0xc0f8              // sym._OBJC_SELECTOR_REFERENCES_.117 // [0xc0f8:8]=0x10000000005036 // \"6P\" // char *selector\n         x3 = 0\n         x4 = 0\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n         if (x0) \n         goto loc_0x000047b4\n    loc_0x000046ac: // orphan\n         x2 = str.cstr.consume    // 0x83b8\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x0000470c\n    loc_0x000046c4: // orphan\n         x2 = str.cstr.expend     // 0x83d8\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x0000470c\n    loc_0x000046dc: // orphan\n         x2 = str.cstr.deduct     // 0x83f8\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x0000470c\n    loc_0x000046f4: // orphan\n         x2 = str.cstr.spend      // 0x8418\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (!w0) \n         goto loc_0x00004858\n    loc_0x0000470c: // orphan\n         // CODE XREFS from sym._hook_didReceiveData @ 0x46c0(x), 0x46d8(x), 0x46f0(x), 0x48b8(x)\n         x25 = [x23 + 0x10]       // [0xc010:4]=10 // \"\\n\"\n         x23 = sym._OBJC_CLASSLIST_REFERENCES___ // 0xc000\n         x0 = [x23 + 0x18]        // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n         x26 = [x26 + 0x100]      // [0xc100:4]=0x5058 str.numberWithInt: // \"XP\"\n         x1 = x26                 // char *selector\n         w2 = 0\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\\x06\")\n         [arg_1a0hxa0] = x0\n         x0 = [x23 + 0x18]        // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n         x1 = x26                 // char *selector\n         w2 = 0x869f\n         w2 = 1 << 16\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\\x06\")\n         [arg_1a0hxa8] = x0\n         x0 = [x23 + 0x18]        // [0xc018:4]=11 // sym._OBJC_CLASSLIST_REFERENCES___.119 // void *instance\n         x1 = x26                 // char *selector\n         w2 = 0x869f\n         w2 = 1 << 16\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\\x06\")\n         x8 = 0x8100\n         [arg_1a0hxb0] = x0\n         q0 = [x8]\n         [arg_1a0hx20] = q0\n         x8 = [x8 + 0x10]\n         [arg_1a0hx30] = x8\n         x1 = [x27 + 0x118]       // [0x5089:4]=0x74636964 // \"dictionaryWithObjects:forKeys:count:\" // char *selector // \"__TEXT\"\n         x2 = sp + 0xa0\n         x3 = sp + 0x20\n         x0 = x25                 // void *instance\n         w4 = 3\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n         if (!x0) \n         goto loc_0x000048bc\n    loc_0x00004790: // orphan\n         x2 = x0\n         x0 = 0xc008              // sym._OBJC_CLASSLIST_REFERENCES___.115 // [0xc008:8]=0x8010000000000009 // \"\\t\" // void *instance\n         x1 = 0xc0f8              // sym._OBJC_SELECTOR_REFERENCES_.117 // [0xc0f8:8]=0x10000000005036 // \"6P\" // char *selector\n         x3 = 0\n         x4 = 0\n         sym.imp.objc_msgSend () // void *objc_msgSend(-1, \"\")\n         if (!x0) \n         goto loc_0x000048bc\n    loc_0x000047b4: // orphan\n         // CODE XREFS from sym._hook_didReceiveData @ 0x4670(x), 0x4990(x)\n         x4 = x0\n         x8 = sym._orig_didReceiveData // [0xc120:8]=0\n         x0 = x22\n         x1 = x21\n         x2 = x20\n         x3 = x19\n         \n         goto loc_0x00004920\n    loc_0x000047f4: // orphan\n         \n         goto loc_0x00004998\n    loc_0x0000481c: // orphan\n         x0 = x22\n         x1 = x21\n         x2 = x20\n\n    loc_0x00004858: // orphan\n         // CODE XREF from sym._hook_didReceiveData @ 0x4708(x)\n         x1 = 0xc0f0              // sym._OBJC_SELECTOR_REFERENCES_.108 // [0xc0f0:8]=0x10000000005025 // \"%P\" // char *selector\n         x2 = str.cstr.POST       // 0x8438\n         x0 = [var_8h]            // void *instance\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, \"\")\n         if (!w0) \n         goto loc_0x000048bc\n    loc_0x00004874: // orphan\n         x2 = str.cstr.config     // 0x8458\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x000048bc\n    loc_0x0000488c: // orphan\n         x2 = 0x8478\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x000048bc\n    loc_0x000048a4: // orphan\n         x2 = str.cstr.purchase   // 0x8498\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (!w0) \n         goto loc_0x0000470c\n    loc_0x000048bc: // orphan\n         // CODE XREFS from sym._hook_didReceiveData @ 0x478c(x), 0x47b0(x), 0x4870(x), 0x4888(x), 0x48a0(x)\n         x2 = str.cstr.config     // 0x8458\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x00004904\n    loc_0x000048d4: // orphan\n         x2 = 0x8478\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (w0) \n         goto loc_0x00004904\n    loc_0x000048ec: // orphan\n         x2 = str.cstr.purchase   // 0x8498\n         x0 = x24                 // void *instance\n         x1 = x28                 // char *selector\n         sym.imp.objc_msgSend () // void *objc_msgSend(0, 0)\n         if (!w0) \n         goto loc_0x00004968\n    loc_0x00004920: // orphan\n         // CODE XREF from sym._hook_didReceiveData @ 0x47d0(x)\n         blr x8                   // 0x4924(0x0, 0x0, 0x0, 0x0)\n         x8 = [x29 -0x70]\n         x9 = 0x8038       ",
+  "ghidra_source": "",
+  "retdec_source": "//\n// This file was generated by the Retargetable Decompiler\n// Website: https://retdec.com\n//\n\n#include <stdint.h>\n\n// ----------------- Float Types Definitions ------------------\n\ntypedef double float64_t;\ntypedef long double float128_t;\n\n// ------------------- Function Prototypes --------------------\n\nint64_t ___blurrfull_init_block_invoke(void);\nint64_t _blurrfull_init(void);\nint64_t _fakeJuiceResponse(void);\nint64_t _hook_balanceExportCard(void);\nint64_t _hook_balanceInvite(void);\nint64_t _hook_balanceJuice(void);\nint64_t _hook_canOpenURL(void);\nint64_t _hook_consumeCoinTips(void);\nint64_t _hook_didReceiveData(float64_t a1, float64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6, int64_t a7, int64_t a8, int64_t a9, int64_t a10, int64_t a11, int64_t a12, int64_t a13, int64_t a14);\nint64_t _hook_evaluateServerTrust(void);\nint64_t _hook_fileExistsAtPath(void);\nint64_t _hook_isVip(void);\nint64_t _hook_juiceFromServer(void);\nint64_t _hook_setBalanceJuice(void);\nint64_t _hook_setIsVip(void);\nint64_t _hook_setJuiceFromServer(void);\nint64_t function_4e1c(int64_t a1, int64_t a2, int64_t * a3, int64_t a4);\nint64_t function_4e28(int64_t a1, int32_t a2);\nint64_t function_4e34(int64_t a1, int64_t a2, int64_t a3, int64_t * a4);\nint64_t function_4e40(char * a1);\nint64_t function_4e4c(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5);\nint64_t function_4e58(int64_t a1);\nint64_t function_8010000000000000(void);\nint64_t function_8010000000000002(void);\nint64_t function_8010000000000003(void);\nint64_t function_8010000000000004(void);\nint64_t function_8010000000000005(void);\nint64_t function_8010000000000006(void);\n\n// --------------------- Global Variables ---------------------\n\nint32_t g1 = 0; // 0x10000\nint64_t g2 = -0x29a0fc3fad7fffe0; // 0x49fc\nint64_t g3 = -0x29a0fc3fad7fffe0; // 0x4a44\nint32_t g4 = 0; // 0x5e00\nint64_t g5 = -0x7fefffffffffffff; // 0x8008\nint64_t g6 = -0x7fcffffffffffff9; // 0x8038\nint64_t g7 = -0x7fdffffffffffff3; // 0x8060\nfloat128_t g8 = 2.22507385852352926455399423312435131e-308L; // 0x8080\nfloat128_t g9 = 2.22507385852416166858067102870089732e-308L; // 0x8100\nint64_t g10 = -0x7fdffffffffffff4; // 0x8118\nint64_t g11 = -0x7fdffffffffffff4; // 0x8138\nint64_t g12 = -0x7fdffffffffffff4; // 0x8158\nint64_t g13 = -0x7fdffffffffffff4; // 0x8178\nint64_t g14 = -0x7fdffffffffffff4; // 0x8198\nint64_t g15 = -0x7fdffffffffffff4; // 0x81b8\nint64_t g16 = -0x7fdffffffffffff4; // 0x81d8\nint64_t g17 = -0x7fdffffffffffff4; // 0x81f8\nint64_t g18 = -0x7fdffffffffffff4; // 0x8218\nint64_t g19 = -0x7fdffffffffffff4; // 0x8238\nint64_t g20 = -0x7fdffffffffffff4; // 0x8258\nint64_t g21 = -0x7fdffffffffffff4; // 0x8278\nint64_t g22 = -0x7fdffffffffffff4; // 0x8298\nint32_t g23 = 12; // 0x82b8\nint32_t g24 = 12; // 0x82d8\nint32_t g25 = 12; // 0x82f8\nint32_t g26 = 12; // 0x8318\nint32_t g27 = 12; // 0x8338\nint32_t g28 = 12; // 0x8358\nint32_t g29 = 12; // 0x8378\nint64_t g30 = -0x7fdffffffffffff4; // 0x8398\nint32_t g31 = 12; // 0x83b8\nint32_t g32 = 12; // 0x83d8\nint32_t g33 = 12; // 0x83f8\nint32_t g34 = 12; // 0x8418\nint32_t g35 = 12; // 0x8438\nint32_t g36 = 12; // 0x8458\nint32_t g37 = 12; // 0x8478\nint32_t g38 = 12; // 0x8498\nint64_t g39 = -0x7fdffffffffffff4; // 0x8678\nint32_t g40 = 12; // 0x8698\nint32_t g41 = 0x7c880; // 0x869f\nint32_t g42 = 12; // 0x86b8\nint32_t g43 = 12; // 0x86d8\nint32_t g44 = 12; // 0x86f8\nint32_t g45 = 12; // 0x8718\nint32_t g46 = 12; // 0x8738\nint32_t g47 = 12; // 0x8758\nint32_t g48 = 12; // 0x8778\nint32_t g49 = 12; // 0x8798\nint32_t g50 = 12; // 0x87b8\nint32_t g51 = 12; // 0x87d8\nint32_t g52 = 12; // 0x87f8\nint32_t g53 = 12; // 0x8818\nint32_t g54 = 12; // 0x8838\nint64_t g55 = -0x7feffffffffffff8; // 0xc000\nint64_t g56 = -0x7feffffffffffff7; // 0xc008\nint64_t g57 = -0x7feffffffffffff6; // 0xc010\nint64_t g58 = -0x7feffffffffffff5; // 0xc018\nint64_t g59 = 0; // 0xc120\nint64_t g60 = 0; // 0xc128\nint64_t g61 = 0; // 0xc130\nint64_t g62 = 0; // 0xc138\nint64_t g63 = 0; // 0xc140\nint64_t g64 = 0; // 0xc148\nint64_t g65 = 0; // 0xc150\nint64_t g66 = 0; // 0xc158\nint64_t g67 = 0; // 0xc160\nint64_t g68 = 0; // 0xc168\nint64_t g69 = 0; // 0xc170\nint64_t g70 = 0; // 0xc178\nint64_t g71 = 0; // 0xc180\n\n// ------------------------ Functions -------------------------\n\n// Address range: 0x4000 - 0x4370\nint64_t _blurrfull_init(void) {\n    // 0x4000\n    int64_t v1; // 0x4000\n    int64_t v2 = function_4e4c(g55, 0x4e78, v1, v1, v1); // 0x4020\n    function_4e4c(v2, 0x10000000004e8d, 1, (int64_t)&g10, v1);\n    function_4e4c(v2, 0x10000000004ea0, (int64_t)&g11, (int64_t)&g12, v1);\n    function_4e4c(v2, 0x10000000004ea0, (int64_t)&g13, (int64_t)&g14, v1);\n    function_4e4c(v2, 0x10000000004eb2, (int64_t)&g15, (int64_t)&g14, v1);\n    function_4e4c(v2, 0x10000000004ec4, 0, (int64_t)&g16, v1);\n    function_4e4c(v2, 0x10000000004ec4, 1, (int64_t)&g17, v1);\n    function_4e4c(v2, 0x10000000004e8d, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), (int64_t)&g18, v1);\n    function_4e4c(v2, 0x10000000004e8d, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), (int64_t)&g19, v1);\n    function_4e4c(v2, 0x10000000004e8d, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), (int64_t)&g20, v1);\n    function_4e4c(v2, 0x10000000004ec4, 0, (int64_t)&g21, v1);\n    function_4e4c(v2, 0x10000000004ed4, 0, (int64_t)&g21, v1);\n    int64_t v3 = function_4e40(\"Alamofire.SessionDelegate\"); // 0x4160\n    if (v3 != 0) {\n        // 0x4168\n        function_4e34(v3, 0x10000000004ee0, 0x4370, &g59);\n    }\n    int64_t v4 = function_4e40(\"Aries.MSUserDefaultHelper\"); // 0x418c\n    if (v4 != 0) {\n        // 0x4194\n        function_4e34(v4, 0x10000000004f04, 0x499c, &g60);\n        function_4e34(v4, 0x10000000004f11, 0x49a8, &g61);\n        function_4e34(v4, 0x4f22, 0x49cc, &g62);\n        function_4e34(v4, 0x4f32, 0x49d8, &g63);\n        function_4e34(v4, 0x4f46, (int64_t)&g2, &g64);\n        function_4e34(v4, 0x4f4c, 0x4a04, &g65);\n        function_4e34(v4, 0x4f56, 0x4a24, &g66);\n        function_4e34(v4, 0x4f68, 0x4a30, &g67);\n        function_4e34(v4, 0x4f76, 0x4a3c, &g68);\n    }\n    int64_t v5 = function_4e40(\"AFSecurityPolicy\"); // 0x42bc\n    if (v5 != 0) {\n        // 0x42c4\n        function_4e34(v5, 0x10000000004f86, (int64_t)&g3, &g69);\n    }\n    int64_t v6 = function_4e40(\"NSFileManager\"); // 0x42e8\n    if (v6 != 0) {\n        // 0x42f0\n        function_4e34(v6, 0x10000000004fa5, 0x4a4c, &g70);\n    }\n    int64_t v7 = function_4e40(\"UIApplication\"); // 0x4314\n    if (v7 != 0) {\n        // 0x431c\n        function_4e34(v7, 0x10000000004fb7, 0x4ba4, &g71);\n    }\n    int64_t v8 = function_4e28(0, (int32_t)&g4 & 0xffff | -0x4d300000); // 0x4344\n    return function_4e1c(v8, g5, &g7, 0);\n}\n\n// Address range: 0x4370 - 0x499c\nint64_t _hook_didReceiveData(float64_t a1, float64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6, int64_t a7, int64_t a8, int64_t a9, int64_t a10, int64_t a11, int64_t a12, int64_t a13, int64_t a14) {\n    // 0x4370\n    int64_t result; // 0x4370\n    int64_t v1 = result;\n    if (result == 0 || v1 == 0) {\n        // 0x4828\n        return result;\n    }\n    int64_t v2 = function_4e4c(v1, 0x10000000004fd2, 0x10000000004fc3, v1, result); // 0x43d8\n    int64_t v3 = v2; // 0x43dc\n    int64_t v4; // 0x4414\n    int64_t v5; // 0x442c\n    if ((int32_t)v2 == 0) {\n        goto lab_0x47f8;\n    } else {\n        int64_t v6 = function_4e4c(v1, 0x10000000004fe6, 0x10000000004fc3, v1, result); // 0x43f0\n        v3 = 0;\n        if (v6 == 0) {\n            goto lab_0x47f8;\n        } else {\n            int64_t v7 = function_4e4c(v6, 0x10000000004ff7, 0x10000000004fc3, v1, result); // 0x4404\n            v3 = 0;\n            if (v7 == 0) {\n                goto lab_0x47f8;\n            } else {\n                // 0x440c\n                v4 = function_4e4c(v7, 0x10000000004ffb, 0x10000000004fc3, v1, result);\n                v3 = 0;\n                if (v4 == 0) {\n                    goto lab_0x47f8;\n                } else {\n                    // 0x441c\n                    v5 = function_4e4c(v6, 0x500a, 0x10000000004fc3, v1, result);\n                    int64_t v8 = function_4e4c(v4, 0x10000000005015, (int64_t)&g23, v1, result); // 0x444c\n                    if ((int32_t)v8 == 0) {\n                        int64_t v9 = function_4e4c(v4, 0x10000000005015, (int64_t)&g24, v1, result); // 0x4470\n                        if ((int32_t)v9 == 0) {\n                            int64_t v10 = function_4e4c(v4, 0x10000000005015, (int64_t)&g25, v1, result); // 0x4488\n                            if ((int32_t)v10 == 0) {\n                                int64_t v11 = function_4e4c(v4, 0x10000000005015, (int64_t)&g26, v1, result); // 0x44a0\n                                if ((int32_t)v11 == 0) {\n                                    int64_t v12 = function_4e4c(v4, 0x10000000005015, (int64_t)&g27, v1, result); // 0x44b8\n                                    if ((int32_t)v12 == 0) {\n                                        int64_t v13 = function_4e4c(v4, 0x10000000005015, (int64_t)&g28, v1, result); // 0x44d0\n                                        if ((int32_t)v13 == 0) {\n                                            goto lab_0x4674;\n                                        } else {\n                                            goto lab_0x44d8;\n                                        }\n                                    } else {\n                                        goto lab_0x44d8;\n                                    }\n                                } else {\n                                    goto lab_0x44d8;\n                                }\n                            } else {\n                                goto lab_0x44d8;\n                            }\n                        } else {\n                            goto lab_0x44d8;\n                        }\n                    } else {\n                        goto lab_0x44d8;\n                    }\n                }\n            }\n        }\n    }\n  lab_0x47f8:\n    // 0x47f8\n    if (*(int64_t *)g6 != *(int64_t *)g6) {\n        // 0x4998\n        return function_4e58(v3);\n    }\n    // 0x4828\n    return result;\n  lab_0x44d8:;\n    int64_t v14 = function_4e4c(g58, 0x5058, 1, v1, result); // bp-256, 0x4510\n    function_4e4c(g58, 0x5067, 1, v1, result);\n    function_4e4c(g58, 0x5067, 1, v1, result);\n    function_4e4c(g58, 0x5077, 1, v1, result);\n    function_4e4c(g58, 0x5067, 0, v1, result);\n    function_4e4c(g58, 0x5067, 0, v1, result);\n    function_4e4c(g58, 0x5077, 0, v1, result);\n    function_4e4c(g58, 0x5067, 1, v1, result);\n    function_4e4c(g58, 0x5058, 0, v1, result);\n    function_4e4c(g58, 0x5067, 0, v1, result);\n    float128_t v15 = g8; // bp-384, 0x4628\n    int64_t v16 = &v15; // 0x463c\n    int64_t v17 = function_4e4c(g57, (int64_t)\"dictionaryWithObjects:forKeys:count:\", (int64_t)&v14, v16, 16); // 0x4648\n    int64_t v18 = v16; // 0x464c\n    int64_t v19 = 16; // 0x464c\n    if (v17 != 0) {\n        // 0x4650\n        v18 = 0;\n        v19 = 0;\n        if (function_4e4c(g56, 0x5036, v17, 0, 0) != 0) {\n            // 0x4828\n            return result;\n        }\n    }\n    goto lab_0x4674;\n  lab_0x4674:;\n    int64_t v20 = function_4e4c(v4, 0x10000000005015, (int64_t)&g29, v18, v19); // 0x4684\n    int64_t v21 = function_4e4c(v4, 0x10000000005015, (int64_t)&g30, v18, v19); // 0x469c\n    if ((v21 | v20) % 256 == 0) {\n        // 0x4828\n        return result;\n    }\n    int64_t v22 = function_4e4c(v4, 0x10000000005015, (int64_t)&g31, v18, v19); // 0x46bc\n    int64_t v23; // 0x4370\n    int64_t v24; // 0x4370\n    if ((int32_t)v22 == 0) {\n        int64_t v25 = function_4e4c(v4, 0x10000000005015, (int64_t)&g32, v18, v19); // 0x46d4\n        if ((int32_t)v25 == 0) {\n            int64_t v26 = function_4e4c(v4, 0x10000000005015, (int64_t)&g33, v18, v19); // 0x46ec\n            if ((int32_t)v26 == 0) {\n                int64_t v27 = function_4e4c(v4, 0x10000000005015, (int64_t)&g34, v18, v19); // 0x4704\n                if ((int32_t)v27 == 0) {\n                    int64_t v28 = function_4e4c(v5, 0x5025, (int64_t)&g35, v18, v19); // 0x486c\n                    v23 = v18;\n                    v24 = v19;\n                    if ((int32_t)v28 == 0) {\n                        goto lab_0x48bc;\n                    } else {\n                        int64_t v29 = function_4e4c(v4, 0x10000000005015, (int64_t)&g36, v18, v19); // 0x4884\n                        v23 = v18;\n                        v24 = v19;\n                        if ((int32_t)v29 == 0) {\n                            int64_t v30 = function_4e4c(v4, 0x10000000005015, (int64_t)&g37, v18, v19); // 0x489c\n                            v23 = v18;\n                            v24 = v19;\n                            if ((int32_t)v30 == 0) {\n                                int64_t v31 = function_4e4c(v4, 0x10000000005015, (int64_t)&g38, v18, v19); // 0x48b4\n                                v23 = v18;\n                                v24 = v19;\n                                if ((int32_t)v31 == 0) {\n                                    goto lab_0x470c;\n                                } else {\n                                    goto lab_0x48bc;\n                                }\n                            } else {\n                                goto lab_0x48bc;\n                            }\n                        } else {\n                            goto lab_0x48bc;\n                        }\n                    }\n                } else {\n                    goto lab_0x470c;\n                }\n            } else {\n                goto lab_0x470c;\n            }\n        } else {\n            goto lab_0x470c;\n        }\n    } else {\n        goto lab_0x470c;\n    }\n  lab_0x470c:\n    // 0x470c\n    v14 = function_4e4c(g58, 0x5058, 0, v18, v19);\n    function_4e4c(g58, 0x5058, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), v18, v19);\n    function_4e4c(g58, 0x5058, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), v18, v19);\n    v15 = g9;\n    int64_t v32 = &v15; // 0x477c\n    int64_t v33 = function_4e4c(g57, (int64_t)\"dictionaryWithObjects:forKeys:count:\", (int64_t)&v14, v32, 3); // 0x4788\n    v23 = v32;\n    v24 = 3;\n    if (v33 != 0) {\n        // 0x4790\n        v23 = 0;\n        v24 = 0;\n        if (function_4e4c(g56, 0x5036, v33, 0, 0) != 0) {\n            // 0x4828\n            return result;\n        }\n    }\n    goto lab_0x48bc;\n  lab_0x48bc:;\n    int64_t v34 = function_4e4c(v4, 0x10000000005015, (int64_t)&g36, v23, v24); // 0x48cc\n    if ((int32_t)v34 != 0) {\n        // 0x4828\n        return result;\n    }\n    int64_t v35 = function_4e4c(v4, 0x10000000005015, (int64_t)&g37, v23, v24); // 0x48e4\n    if ((int32_t)v35 != 0) {\n        // 0x4828\n        return result;\n    }\n    int64_t v36 = function_4e4c(v4, 0x10000000005015, (int64_t)&g38, v23, v24); // 0x48fc\n    if ((int32_t)v36 != 0) {\n        // 0x4828\n        return result;\n    }\n    int64_t v37 = _fakeJuiceResponse(); // 0x4968\n    if (v37 != 0) {\n        // 0x4970\n        function_4e4c(g56, 0x5036, v37, 0, 0);\n    }\n    // 0x4828\n    return result;\n}\n\n// Address range: 0x499c - 0x49a8\nint64_t _hook_balanceJuice(void) {\n    // 0x499c\n    return (uint32_t)((int32_t)&g41 & 0xffff | (int32_t)&g1);\n}\n\n// Address range: 0x49a8 - 0x49cc\nint64_t _hook_setBalanceJuice(void) {\n    // 0x49a8\n    int64_t result; // 0x49a8\n    return result;\n}\n\n// Address range: 0x49cc - 0x49d8\nint64_t _hook_juiceFromServer(void) {\n    // 0x49cc\n    return (uint32_t)((int32_t)&g41 & 0xffff | (int32_t)&g1);\n}\n\n// Address range: 0x49d8 - 0x49fc\nint64_t _hook_setJuiceFromServer(void) {\n    // 0x49d8\n    int64_t result; // 0x49d8\n    return result;\n}\n\n// Address range: 0x49fc - 0x4a04\nint64_t _hook_isVip(void) {\n    // 0x49fc\n    return 1;\n}\n\n// Address range: 0x4a04 - 0x4a24\nint64_t _hook_setIsVip(void) {\n    // 0x4a04\n    int64_t result; // 0x4a04\n    return result;\n}\n\n// Address range: 0x4a24 - 0x4a30\nint64_t _hook_balanceExportCard(void) {\n    // 0x4a24\n    return (uint32_t)((int32_t)&g41 & 0xffff | (int32_t)&g1);\n}\n\n// Address range: 0x4a30 - 0x4a3c\nint64_t _hook_balanceInvite(void) {\n    // 0x4a30\n    return (uint32_t)((int32_t)&g41 & 0xffff | (int32_t)&g1);\n}\n\n// Address range: 0x4a3c - 0x4a44\nint64_t _hook_consumeCoinTips(void) {\n    // 0x4a3c\n    return 0;\n}\n\n// Address range: 0x4a44 - 0x4a4c\nint64_t _hook_evaluateServerTrust(void) {\n    // 0x4a44\n    return 1;\n}\n\n// Address range: 0x4a4c - 0x4ba4\nint64_t _hook_fileExistsAtPath(void) {\n    // 0x4a4c\n    int64_t result; // 0x4a4c\n    int64_t v1; // 0x4a4c\n    if (v1 == 0) {\n        // 0x4b64\n        return result;\n    }\n    int64_t v2 = function_4e4c(v1, 0x10000000005015, (int64_t)&g40, v1, v1); // 0x4a84\n    if ((int32_t)v2 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v3 = function_4e4c(v1, 0x10000000005015, (int64_t)&g42, v1, v1); // 0x4a9c\n    if ((int32_t)v3 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v4 = function_4e4c(v1, 0x10000000005015, (int64_t)&g43, v1, v1); // 0x4ab4\n    if ((int32_t)v4 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v5 = function_4e4c(v1, 0x10000000005015, (int64_t)&g44, v1, v1); // 0x4acc\n    if ((int32_t)v5 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v6 = function_4e4c(v1, 0x10000000005015, (int64_t)&g45, v1, v1); // 0x4ae4\n    if ((int32_t)v6 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v7 = function_4e4c(v1, 0x10000000005015, (int64_t)&g46, v1, v1); // 0x4afc\n    if ((int32_t)v7 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v8 = function_4e4c(v1, 0x10000000005015, (int64_t)&g47, v1, v1); // 0x4b14\n    if ((int32_t)v8 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v9 = function_4e4c(v1, 0x10000000005015, (int64_t)&g48, v1, v1); // 0x4b2c\n    if ((int32_t)v9 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v10 = function_4e4c(v1, 0x10000000005015, (int64_t)&g49, v1, v1); // 0x4b44\n    if ((int32_t)v10 != 0) {\n        // 0x4b64\n        return 0;\n    }\n    int64_t v11 = function_4e4c(v1, 0x10000000005015, (int64_t)&g50, v1, v1); // 0x4b5c\n    result = 0;\n    if ((int32_t)v11 != 0) {\n        // 0x4b64\n        return result;\n    }\n    // 0x4b64\n    return result;\n}\n\n// Address range: 0x4ba4 - 0x4c8c\nint64_t _hook_canOpenURL(void) {\n    // 0x4ba4\n    int64_t v1; // 0x4ba4\n    int64_t v2 = v1;\n    int64_t result; // 0x4ba4\n    if (v2 == 0) {\n        // 0x4c44\n        return result;\n    }\n    int64_t v3 = function_4e4c(v2, 0x10000000004ffb, v2, v1, v1); // 0x4bd4\n    if (v3 == 0) {\n        // 0x4c44\n        return result;\n    }\n    int64_t v4 = function_4e4c(v3, 0x10000000005015, (int64_t)&g51, v1, v1); // 0x4bf4\n    if ((int32_t)v4 != 0) {\n        // 0x4c44\n        return 0;\n    }\n    int64_t v5 = function_4e4c(v3, 0x10000000005015, (int64_t)&g52, v1, v1); // 0x4c0c\n    if ((int32_t)v5 != 0) {\n        // 0x4c44\n        return 0;\n    }\n    int64_t v6 = function_4e4c(v3, 0x10000000005015, (int64_t)&g53, v1, v1); // 0x4c24\n    if ((int32_t)v6 != 0) {\n        // 0x4c44\n        return 0;\n    }\n    int64_t v7 = function_4e4c(v3, 0x10000000005015, (int64_t)&g54, v1, v1); // 0x4c3c\n    result = 0;\n    if ((int32_t)v7 != 0) {\n        // 0x4c44\n        return result;\n    }\n    // 0x4c44\n    return result;\n}\n\n// Address range: 0x4c8c - 0x4d6c\nint64_t ___blurrfull_init_block_invoke(void) {\n    // 0x4c8c\n    int64_t v1; // 0x4c8c\n    int64_t v2 = function_4e4c(g55, 0x4e78, v1, v1, v1); // 0x4ca8\n    function_4e4c(v2, 0x10000000004e8d, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), (int64_t)&g18, v1);\n    function_4e4c(v2, 0x10000000004e8d, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), (int64_t)&g19, v1);\n    function_4e4c(v2, 0x10000000004ec4, 1, (int64_t)&g22, v1);\n    int64_t result = function_4e4c(v2, 0x10000000004ed4, 1, (int64_t)&g22, v1); // 0x4d14\n    if (g59 != 0) {\n        // 0x4d24\n        return result;\n    }\n    int64_t v3 = function_4e40(\"Alamofire.SessionDelegate\"); // 0x4d3c\n    if (v3 == 0) {\n        // 0x4d24\n        return 0;\n    }\n    // 0x4d44\n    return function_4e34(v3, 0x10000000004ee0, 0x4370, &g59);\n}\n\n// Address range: 0x4d6c - 0x4e1c\nint64_t _fakeJuiceResponse(void) {\n    // 0x4d6c\n    int64_t v1; // 0x4d6c\n    int64_t v2 = function_4e4c(g58, 0x5058, (int64_t)((int32_t)&g41 & 0xffff | (int32_t)&g1), v1, v1); // 0x4dac\n    int64_t v3 = &g39; // bp-56, 0x4db8\n    int64_t v4 = v2; // bp-48, 0x4db8\n    int64_t result = function_4e4c(g57, (int64_t)\"dictionaryWithObjects:forKeys:count:\", (int64_t)&v4, (int64_t)&v3, 1); // 0x4dd4\n    if (*(int64_t *)g6 == *(int64_t *)g6) {\n        // 0x4df0\n        return result;\n    }\n    // 0x4e18\n    return function_4e58(result);\n}\n\n// Address range: 0x4e1c - 0x4e28\nint64_t function_4e1c(int64_t a1, int64_t a2, int64_t * a3, int64_t a4) {\n    // 0x4e1c\n    return function_8010000000000000();\n}\n\n// Address range: 0x4e28 - 0x4e34\nint64_t function_4e28(int64_t a1, int32_t a2) {\n    // 0x4e28\n    return function_8010000000000002();\n}\n\n// Address range: 0x4e34 - 0x4e40\nint64_t function_4e34(int64_t a1, int64_t a2, int64_t a3, int64_t * a4) {\n    // 0x4e34\n    return function_8010000000000003();\n}\n\n// Address range: 0x4e40 - 0x4e4c\nint64_t function_4e40(char * a1) {\n    // 0x4e40\n    return function_8010000000000004();\n}\n\n// Address range: 0x4e4c - 0x4e58\nint64_t function_4e4c(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5) {\n    // 0x4e4c\n    return function_8010000000000005();\n}\n\n// Address range: 0x4e58 - 0x4e64\nint64_t function_4e58(int64_t a1) {\n    // 0x4e58\n    return function_8010000000000006();\n}\n\n// Address range: 0x8010000000000000 - 0x8010000000000001\nint64_t function_8010000000000000(void) {\n    // 0x8010000000000000\n    int64_t result; // 0x8010000000000000\n    return result;\n}\n\n// Address range: 0x8010000000000002 - 0x8010000000000003\nint64_t function_8010000000000002(void) {\n    // 0x8010000000000002\n    int64_t result; // 0x8010000000000002\n    return result;\n}\n\n// Address range: 0x8010000000000003 - 0x8010000000000004\nint64_t function_8010000000000003(void) {\n    // 0x8010000000000003\n    int64_t result; // 0x8010000000000003\n    return result;\n}\n\n// Address range: 0x8010000000000004 - 0x8010000000000005\nint64_t function_8010000000000004(void) {\n    // 0x8010000000000004\n    int64_t result; // 0x8010000000000004\n    return result;\n}\n\n// Address range: 0x8010000000000005 - 0x8010000000000006\nint64_t function_8010000000000005(void) {\n    // 0x8010000000000005\n    int64_t result; // 0x8010000000000005\n    return result;\n}\n\n// Address range: 0x8010000000000006 - 0x8010000000000007\nint64_t function_8010000000000006(void) {\n    // 0x8010000000000006\n    int64_t result; // 0x8010000000000006\n    return result;\n}\n\n// --------------------- Meta-Information ---------------------\n\n// Detected functions: 28\n\n",
+  "objc_headers": "// No Objective-C class metadata found in this binary."
+}
