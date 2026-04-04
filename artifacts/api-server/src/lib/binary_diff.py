@@ -253,6 +253,227 @@ def file_hash(path):
     return h.hexdigest()
 
 
+def is_meaningful_string(s):
+    """Filter out binary garbage — keep only human-readable strings"""
+    import re
+    s = s.strip()
+    if len(s) < 4:
+        return False
+    printable = sum(1 for c in s if c.isalnum() or c in ' .,;:!?-_/()[]{}@#$%&*+=<>\'"')
+    ratio = printable / len(s)
+    if ratio < 0.7:
+        return False
+    if len(s) < 6 and not any(c.isalpha() for c in s):
+        return False
+    if re.match(r'^_?\$s\d', s) or re.match(r'^_?\$sSo', s):
+        return False
+    if s.count('E') > 3 and any(c.isdigit() for c in s) and 'EE' in s:
+        return False
+    if re.search(r'[A-Z]{2,}\d[A-Z]', s) and not any(c == ' ' for c in s):
+        return False
+    if s.startswith('!') and not any(c == ' ' for c in s):
+        return False
+    if re.match(r'^[A-Za-z0-9_]+EE[A-Za-z0-9_]*$', s):
+        return False
+    if sum(1 for c in s if c in '{}[]()') > len(s) * 0.3:
+        return False
+    mangled_indicators = ['ENS0_', 'EPNS', 'ERK', 'EEE', 'NSt3__', 'ERKNS',
+                          'ForkHandler', 'Handshaker', 'SliceFrom',
+                          'ObjectGroup', 'iP21grpc', 'pollset_size']
+    for m in mangled_indicators:
+        if m in s:
+            return False
+    if re.match(r'^[A-Za-z0-9_/:<>]+$', s) and len(s) > 20 and ' ' not in s:
+        upper_count = sum(1 for c in s if c.isupper())
+        if upper_count > len(s) * 0.3:
+            return False
+    if s.startswith('v') and re.match(r'^v\d+@', s):
+        return False
+    if re.match(r'^[yS]{1,3}S\d', s):
+        return False
+    return True
+
+
+def categorize_strings(added, removed):
+    """Categorize diff strings into meaningful groups for user understanding"""
+    import re
+
+    categories = {
+        "features": {"label": "New Features & UI", "added": [], "removed": [], "icon": "sparkles"},
+        "apis": {"label": "API & Network", "added": [], "removed": [], "icon": "globe"},
+        "services": {"label": "Services & SDKs", "added": [], "removed": [], "icon": "cpu"},
+        "errors": {"label": "Error Messages", "added": [], "removed": [], "icon": "alert"},
+        "localization": {"label": "Translations", "added": [], "removed": [], "icon": "languages"},
+        "security": {"label": "Security", "added": [], "removed": [], "icon": "shield"},
+        "ui_text": {"label": "User-Facing Text", "added": [], "removed": [], "icon": "text"},
+        "debug": {"label": "Debug & Logging", "added": [], "removed": [], "icon": "bug"},
+    }
+
+    url_pattern = re.compile(r'https?://|\.com|\.io|\.net|\.org|api\.|/v\d')
+    error_pattern = re.compile(r'error|fail|invalid|exception|crash|timeout', re.I)
+    service_pattern = re.compile(r'Google|Firebase|Stripe|Apple|AWS|Azure|Veo|Grok|Pixverse|OpenAI|GPT|Claude|Gemini|RevenueCat|AdMob', re.I)
+    debug_pattern = re.compile(r'debug|log|print|console|trace|STATUS CODE|SENDING|Response:', re.I)
+    security_pattern = re.compile(r'encrypt|decrypt|token|auth|password|keychain|certificate|SSL|TLS', re.I)
+    ui_pattern = re.compile(r'button|screen|view|page|menu|dialog|alert|picker|photo|video|image|camera', re.I)
+
+    def classify(s):
+        if url_pattern.search(s):
+            return "apis"
+        if service_pattern.search(s):
+            return "services"
+        if security_pattern.search(s):
+            return "security"
+        if error_pattern.search(s):
+            return "errors"
+        if debug_pattern.search(s):
+            return "debug"
+        if ui_pattern.search(s):
+            return "features"
+        ascii_count = sum(1 for c in s if ord(c) > 127 or c.isalpha())
+        if ascii_count > len(s) * 0.6 and len(s) > 10:
+            has_non_english = any(
+                ('\u00c0' <= c <= '\u024f') or
+                ('\u0600' <= c <= '\u06ff') or
+                ('\u4e00' <= c <= '\u9fff') or
+                ('\u3040' <= c <= '\u309f') or
+                ('\uac00' <= c <= '\ud7af')
+                for c in s
+            )
+            if has_non_english:
+                return "localization"
+            if len(s) > 15:
+                return "ui_text"
+        return None
+
+    uncategorized_added = []
+    uncategorized_removed = []
+
+    for s in sorted(added):
+        if not is_meaningful_string(s):
+            continue
+        cat = classify(s)
+        if cat and len(categories[cat]["added"]) < 30:
+            categories[cat]["added"].append(s.strip())
+        elif len(uncategorized_added) < 30:
+            uncategorized_added.append(s.strip())
+
+    for s in sorted(removed):
+        if not is_meaningful_string(s):
+            continue
+        cat = classify(s)
+        if cat and len(categories[cat]["removed"]) < 30:
+            categories[cat]["removed"].append(s.strip())
+        elif len(uncategorized_removed) < 30:
+            uncategorized_removed.append(s.strip())
+
+    result = {}
+    for key, data in categories.items():
+        if data["added"] or data["removed"]:
+            result[key] = data
+
+    if uncategorized_added or uncategorized_removed:
+        result["other"] = {
+            "label": "Other Changes",
+            "added": uncategorized_added,
+            "removed": uncategorized_removed,
+            "icon": "list",
+        }
+
+    return result
+
+
+def generate_insights(result):
+    """Generate human-readable insights from diff data"""
+    insights = []
+
+    if result.get("libraries", {}).get("added"):
+        seen_libs = set()
+        for lib in result["libraries"]["added"]:
+            name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "").replace("libswift", "")
+            if name in seen_libs:
+                continue
+            seen_libs.add(name)
+            insights.append({
+                "type": "feature",
+                "severity": "info",
+                "text": f"Added {name} framework — new functionality integrated",
+            })
+
+    if result.get("libraries", {}).get("removed"):
+        for lib in result["libraries"]["removed"]:
+            name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "")
+            insights.append({
+                "type": "removal",
+                "severity": "warning",
+                "text": f"Removed {name} — functionality dropped or replaced",
+            })
+
+    added_cls = result.get("classes", {}).get("added_count", 0)
+    removed_cls = result.get("classes", {}).get("removed_count", 0)
+    modified_cls = result.get("classes", {}).get("modified_count", 0)
+    if added_cls > 0:
+        insights.append({
+            "type": "feature",
+            "severity": "info",
+            "text": f"{added_cls} new class(es) added — new functionality",
+        })
+    if removed_cls > 0:
+        insights.append({
+            "type": "removal",
+            "severity": "warning",
+            "text": f"{removed_cls} class(es) removed — features deprecated",
+        })
+    if modified_cls > 5:
+        insights.append({
+            "type": "change",
+            "severity": "info",
+            "text": f"{modified_cls} classes modified — significant code refactoring",
+        })
+
+    cats = result.get("strings", {}).get("categories", {})
+    if "services" in cats:
+        services = cats["services"]
+        if services.get("added"):
+            insights.append({
+                "type": "feature",
+                "severity": "info",
+                "text": f"New services detected: {', '.join(services['added'][:3])}",
+            })
+
+    if "security" in cats and cats["security"].get("added"):
+        insights.append({
+            "type": "security",
+            "severity": "info",
+            "text": "New security-related strings added",
+        })
+
+    size_diff = result.get("size_diff", 0)
+    if abs(size_diff) > 1024 * 1024:
+        mb = abs(size_diff) / 1024 / 1024
+        insights.append({
+            "type": "size",
+            "severity": "info",
+            "text": f"Binary size {'increased' if size_diff > 0 else 'decreased'} by {mb:.1f} MB",
+        })
+
+    text_sec = None
+    for sec in result.get("sections", []):
+        if sec.get("name") == "__text" and sec.get("change") == "resized":
+            text_sec = sec
+            break
+    if text_sec:
+        diff = text_sec.get("diff", 0)
+        if abs(diff) > 10000:
+            kb = abs(diff) / 1024
+            insights.append({
+                "type": "code",
+                "severity": "info",
+                "text": f"Code section {'grew' if diff > 0 else 'shrank'} by {kb:.1f} KB — {'new code added' if diff > 0 else 'code removed/optimized'}",
+            })
+
+    return insights
+
+
 def diff_binaries(path1, path2, name1, name2):
     result = {
         "file1": {"name": name1, "size": os.path.getsize(path1), "sha256": file_hash(path1)},
@@ -276,6 +497,8 @@ def diff_binaries(path1, path2, name1, name2):
     strings2 = get_strings(path2)
     added_strings = strings2 - strings1
     removed_strings = strings1 - strings2
+
+    categorized = categorize_strings(added_strings, removed_strings)
     result["strings"] = {
         "file1_count": len(strings1),
         "file2_count": len(strings2),
@@ -283,6 +506,7 @@ def diff_binaries(path1, path2, name1, name2):
         "removed": sorted(list(removed_strings))[:100],
         "added_count": len(added_strings),
         "removed_count": len(removed_strings),
+        "categories": categorized,
     }
 
     syms1 = get_symbols(path1, parsed1)
@@ -355,6 +579,8 @@ def diff_binaries(path1, path2, name1, name2):
     if added_strings: changes.append(f"+{len(added_strings)} strings")
     if removed_strings: changes.append(f"-{len(removed_strings)} strings")
     result["summary"] = ", ".join(changes) if changes else "Minor binary differences"
+
+    result["insights"] = generate_insights(result)
 
     return result
 

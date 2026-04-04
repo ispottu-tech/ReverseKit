@@ -206,48 +206,92 @@ export default function BinaryDiff() {
                 </div>
               )}
 
-              {result.sections?.length > 0 && (
+              {/* Insights — Human-readable summary */}
+              {result.insights?.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Section Changes</h3>
-                  {result.sections.map((sec: any, i: number) => (
-                    <div key={i} className={cn(
-                      "flex items-center gap-3 text-xs font-mono p-2 rounded border",
-                      sec.change === "added" ? "bg-emerald-500/5 border-emerald-500/15" :
-                      sec.change === "removed" ? "bg-red-500/5 border-red-500/15" :
-                      "bg-amber-500/5 border-amber-500/15"
-                    )}>
-                      <span className={cn(
-                        sec.change === "added" ? "text-emerald-400" :
-                        sec.change === "removed" ? "text-red-400" : "text-amber-400"
-                      )}>{sec.name}</span>
-                      <span className="text-muted-foreground">
-                        {sec.change === "resized" ? `${sec.old_size} → ${sec.new_size} (${sec.diff > 0 ? "+" : ""}${sec.diff})` : sec.change}
-                      </span>
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px]">!</span>
+                    Key Insights
+                  </h3>
+                  <div className="space-y-1.5">
+                    {result.insights.map((insight: any, i: number) => (
+                      <div key={i} className={cn(
+                        "flex items-center gap-2 p-2.5 rounded-lg text-xs border",
+                        insight.severity === "warning" ? "bg-amber-500/5 border-amber-500/20 text-amber-300" :
+                        "bg-primary/5 border-primary/20 text-primary"
+                      )}>
+                        <span>{insight.type === "feature" ? "+" : insight.type === "removal" ? "-" : insight.type === "security" ? "!" : "~"}</span>
+                        <span>{insight.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Smart String Categories */}
+              {result.strings?.categories && Object.keys(result.strings.categories).length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-foreground">What Changed (Smart Analysis)</h3>
+                  {Object.entries(result.strings.categories).map(([key, cat]: [string, any]) => (
+                    <div key={key} className="p-3 rounded-lg bg-secondary/10 border border-border/20">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-semibold text-foreground">{cat.label}</span>
+                        {cat.added?.length > 0 && <span className="text-[10px] text-emerald-400">+{cat.added.length}</span>}
+                        {cat.removed?.length > 0 && <span className="text-[10px] text-red-400">-{cat.removed.length}</span>}
+                      </div>
+                      <div className="space-y-0.5">
+                        {cat.added?.map((s: string, j: number) => (
+                          <div key={`a${j}`} className="text-[10px] font-mono text-emerald-400 break-all pl-2">+ {s}</div>
+                        ))}
+                        {cat.removed?.map((s: string, j: number) => (
+                          <div key={`r${j}`} className="text-[10px] font-mono text-red-400 break-all pl-2">- {s}</div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {result.strings?.added?.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">New Strings (top {Math.min(result.strings.added.length, 50)})</h3>
-                  <div className="max-h-[300px] overflow-y-auto space-y-0.5 p-2 rounded bg-secondary/10 border border-border/20">
-                    {result.strings.added.slice(0, 50).map((s: string, i: number) => (
-                      <div key={i} className="text-[10px] font-mono text-emerald-400 break-all">+ {s}</div>
+              {result.sections?.length > 0 && (
+                <details className="group">
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
+                    Section Changes ({result.sections.length})
+                  </summary>
+                  <div className="mt-2 space-y-1">
+                    {result.sections.map((sec: any, i: number) => (
+                      <div key={i} className={cn(
+                        "flex items-center gap-3 text-xs font-mono p-2 rounded border",
+                        sec.change === "added" ? "bg-emerald-500/5 border-emerald-500/15" :
+                        sec.change === "removed" ? "bg-red-500/5 border-red-500/15" :
+                        "bg-amber-500/5 border-amber-500/15"
+                      )}>
+                        <span className={cn(
+                          sec.change === "added" ? "text-emerald-400" :
+                          sec.change === "removed" ? "text-red-400" : "text-amber-400"
+                        )}>{sec.name}</span>
+                        <span className="text-muted-foreground">
+                          {sec.change === "resized" ? `${sec.old_size.toLocaleString()} → ${sec.new_size.toLocaleString()} (${sec.diff > 0 ? "+" : ""}${sec.diff.toLocaleString()})` : sec.change}
+                        </span>
+                      </div>
                     ))}
                   </div>
-                </div>
+                </details>
               )}
-
-              {result.strings?.removed?.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Removed Strings (top {Math.min(result.strings.removed.length, 50)})</h3>
-                  <div className="max-h-[300px] overflow-y-auto space-y-0.5 p-2 rounded bg-secondary/10 border border-border/20">
-                    {result.strings.removed.slice(0, 50).map((s: string, i: number) => (
-                      <div key={i} className="text-[10px] font-mono text-red-400 break-all">- {s}</div>
+              {/* Raw strings fallback */}
+              {(result.strings?.added_count > 0 || result.strings?.removed_count > 0) && (
+                <details className="group">
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
+                    All Changed Strings (raw: +{result.strings.added_count} / -{result.strings.removed_count})
+                  </summary>
+                  <div className="mt-2 max-h-[400px] overflow-y-auto space-y-0.5 p-2 rounded bg-secondary/10 border border-border/20">
+                    {result.strings.added?.slice(0, 80).map((s: string, i: number) => (
+                      <div key={`a${i}`} className="text-[10px] font-mono text-emerald-400 break-all">+ {s}</div>
+                    ))}
+                    {result.strings.removed?.slice(0, 80).map((s: string, i: number) => (
+                      <div key={`r${i}`} className="text-[10px] font-mono text-red-400 break-all">- {s}</div>
                     ))}
                   </div>
-                </div>
+                </details>
               )}
             </>
           )}
