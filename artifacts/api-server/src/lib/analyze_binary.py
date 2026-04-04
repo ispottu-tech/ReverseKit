@@ -864,6 +864,365 @@ def detect_security_features(strings_list, imports_list, symbols_list):
 
     return features
 
+def extract_entitlements(path):
+    """Extract entitlements and code signing info from Mach-O binary"""
+    try:
+        import lief
+        binary = lief.parse(path)
+        if binary is None:
+            return {"entitlements": "", "signing_info": {}}
+
+        main = binary[0] if isinstance(binary, lief.MachO.FatBinary) else binary
+
+        signing_info = {}
+        entitlements_xml = ""
+
+        try:
+            if hasattr(main, 'code_signature'):
+                cs = main.code_signature
+                if cs:
+                    signing_info["has_signature"] = True
+                    signing_info["data_size"] = cs.data_size if hasattr(cs, 'data_size') else 0
+        except Exception:
+            pass
+
+        try:
+            for cmd in main.commands:
+                cmd_str = str(type(cmd).__name__)
+                if "CodeSignature" in cmd_str:
+                    signing_info["has_code_signature"] = True
+                if "EncryptionInfo" in cmd_str:
+                    if hasattr(cmd, 'crypt_id'):
+                        signing_info["encrypted"] = cmd.crypt_id != 0
+                        signing_info["crypt_id"] = cmd.crypt_id
+        except Exception:
+            pass
+
+        try:
+            r = subprocess.run(
+                ["ldid", "-e", path],
+                capture_output=True, text=True, timeout=10, errors="replace"
+            )
+            if r.returncode == 0 and r.stdout.strip():
+                entitlements_xml = r.stdout.strip()
+        except Exception:
+            pass
+
+        if not entitlements_xml:
+            try:
+                with open(path, "rb") as f:
+                    data = f.read()
+                plist_start = data.find(b"<?xml")
+                if plist_start != -1:
+                    plist_end = data.find(b"</plist>", plist_start)
+                    if plist_end != -1 and (plist_end - plist_start) < 10000:
+                        candidate = data[plist_start:plist_end + 8].decode("utf-8", errors="replace")
+                        if "entitlements" in candidate.lower() or "application-identifier" in candidate.lower() or "aps-environment" in candidate.lower() or "com.apple" in candidate.lower():
+                            entitlements_xml = candidate
+
+            except Exception:
+                pass
+
+        entitlements_list = []
+        if entitlements_xml:
+            import re
+            keys = re.findall(r"<key>(.*?)</key>", entitlements_xml)
+            for k in keys:
+                entitlements_list.append(k)
+
+        return {
+            "entitlements_xml": entitlements_xml,
+            "entitlements_list": entitlements_list,
+            "signing_info": signing_info,
+        }
+    except Exception as e:
+        return {"error": str(e), "entitlements_xml": "", "entitlements_list": [], "signing_info": {}}
+
+
+def extract_urls_and_endpoints(path):
+    """Extract URLs, API endpoints, and domains from binary strings"""
+    try:
+        import re
+        with open(path, "rb") as f:
+            data = f.read()
+
+        text = data.decode("utf-8", errors="replace")
+
+        url_pattern = re.compile(r'https?://[^\s\x00"\'<>\)\]\}]{5,200}')
+        urls = list(set(url_pattern.findall(text)))
+
+        domain_pattern = re.compile(r'(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.){1,3}(?:com|net|org|io|dev|app|co|me|xyz|api|cloud|ai|edu|gov|info|biz|tv|us|uk|de|fr|jp|cn|ru|br|in|au|ca|nl|it|es|kr|se|no|fi|dk|pl|pt|at|ch|be|ie|nz|mx|ar|cl|sg|hk|tw|id|th|my|ph|vn|ae|sa|qa|eg|za|ke|ng|il)\b')
+        domains = list(set(domain_pattern.findall(text)))
+
+        api_pattern = re.compile(r'/(?:api|v[0-9]+|graphql|rest|ws|webhook|oauth|auth|login|signup|register|token|user|admin|dashboard|config|settings|data|upload|download|search|query|fetch|submit|create|update|delete|list|get|post|put|patch)/[^\s\x00"\'<>]{2,100}')
+        api_paths = list(set(api_pattern.findall(text)))
+
+        ip_pattern = re.compile(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b')
+        ips = list(set(ip_pattern.findall(text)))
+        ips = [ip for ip in ips if not ip.startswith("0.") and not ip.startswith("255.")]
+
+        deeplink_pattern = re.compile(r'[a-zA-Z][a-zA-Z0-9+.-]{1,20}://[^\s\x00"\'<>]{3,100}')
+        all_schemes = list(set(deeplink_pattern.findall(text)))
+        deeplinks = [s for s in all_schemes if not s.startswith("http")]
+
+        firebase_urls = [u for u in urls if "firebase" in u.lower() or "firebaseio" in u.lower() or "googleapis" in u.lower()]
+        s3_urls = [u for u in urls if "s3.amazonaws" in u.lower() or "cloudfront" in u.lower()]
+
+        categories = {}
+        if firebase_urls:
+            categories["Firebase/Google"] = firebase_urls[:10]
+        if s3_urls:
+            categories["AWS S3/CloudFront"] = s3_urls[:10]
+
+        return {
+            "urls": sorted(urls)[:50],
+            "domains": sorted(domains)[:30],
+            "api_paths": sorted(api_paths)[:30],
+            "ip_addresses": sorted(ips)[:20],
+            "deeplinks": sorted(deeplinks)[:10],
+            "cloud_services": categories,
+            "total_urls": len(urls),
+            "total_domains": len(domains),
+        }
+    except Exception as e:
+        return {"error": str(e), "urls": [], "domains": [], "api_paths": [], "ip_addresses": [], "deeplinks": []}
+
+
+KNOWN_PROTECTION_SIGNATURES = [
+    {"name": "Arxan/Digital.ai", "patterns": ["arxan", "dexguard", "digital.ai", "AppProtection"], "severity": "critical", "desc": "Commercial app protection — runtime integrity, anti-tamper, code obfuscation"},
+    {"name": "iXGuard", "patterns": ["ixguard", "guardsquare"], "severity": "critical", "desc": "iOS-specific protection by GuardSquare — control flow, string encryption, anti-debug"},
+    {"name": "Liapp", "patterns": ["liapp", "LIAPP"], "severity": "high", "desc": "Korean app protection SDK"},
+    {"name": "Denuvo", "patterns": ["denuvo", "irdeto"], "severity": "critical", "desc": "Anti-tamper protection for mobile apps"},
+    {"name": "Promon SHIELD", "patterns": ["promon", "shield"], "severity": "high", "desc": "Runtime Application Self-Protection (RASP)"},
+    {"name": "FairPlay DRM", "patterns": ["fairplay", "sinf", "SC_Info"], "severity": "medium", "desc": "Apple's built-in DRM for App Store binaries"},
+    {"name": "Themis Crypto", "patterns": ["themis", "objcthemis", "TSSession"], "severity": "low", "desc": "Crypto library for secure comms"},
+    {"name": "CydiaSubstrate Hooks", "patterns": ["MSHookMessageEx", "MSHookFunction", "substrate", "CydiaSubstrate"], "severity": "info", "desc": "Uses Cydia Substrate for method hooking (common in tweaks)"},
+    {"name": "Logos/Theos", "patterns": ["_logosLocalInit", "__logos_method", "_logos_orig", "logos_register"], "severity": "info", "desc": "Built with Theos/Logos framework (jailbreak tweak)"},
+    {"name": "fishhook", "patterns": ["fishhook", "rebind_symbols", "rebinding"], "severity": "medium", "desc": "Facebook's fishhook — rebinds C symbols at runtime"},
+    {"name": "Frida Gadget", "patterns": ["FridaGadget", "frida-gadget", "frida_gadget"], "severity": "high", "desc": "Frida Gadget embedded in binary for instrumentation"},
+    {"name": "Objection", "patterns": ["objection", "FridaGadget"], "severity": "medium", "desc": "Objection toolkit — runtime mobile exploration"},
+]
+
+ANTI_DEBUG_SIGNATURES = [
+    {"name": "ptrace DENY_ATTACH", "patterns": ["ptrace", "PT_DENY_ATTACH", "31"], "desc": "Classic anti-debug: prevents debugger attachment"},
+    {"name": "sysctl Process Check", "patterns": ["sysctl", "CTL_KERN", "KERN_PROC", "P_TRACED"], "desc": "Checks if process is being traced via sysctl"},
+    {"name": "Exception Port Check", "patterns": ["task_get_exception_ports", "EXC_MASK_ALL"], "desc": "Detects debugger via Mach exception ports"},
+    {"name": "getppid Check", "patterns": ["getppid"], "desc": "Checks parent PID (debuggers change ppid)"},
+    {"name": "isatty Check", "patterns": ["isatty"], "desc": "Checks if stdin/stdout are terminals (can indicate debugging)"},
+    {"name": "Timing-Based Detection", "patterns": ["mach_absolute_time", "clock_gettime"], "desc": "Measures execution time to detect breakpoints/stepping"},
+    {"name": "dyld Image Count", "patterns": ["_dyld_image_count", "_dyld_get_image_name"], "desc": "Checks loaded dylibs for injected libraries"},
+    {"name": "AMFI / Code Signing", "patterns": ["amfid", "csops", "CS_VALID", "CS_ENFORCEMENT"], "desc": "Checks code signing status at runtime"},
+]
+
+JB_DETECTION_SIGNATURES = [
+    {"name": "File-Based Detection", "paths": ["/Applications/Cydia.app", "/usr/sbin/sshd", "/bin/bash", "/etc/apt", "/var/jb", "/var/lib/dpkg", "/Library/MobileSubstrate", "/usr/bin/ssh"]},
+    {"name": "URL Scheme Detection", "paths": ["cydia://", "sileo://", "zbra://", "filza://"]},
+    {"name": "Sandbox Check", "paths": ["fork", "/private/var/tmp", "/private/var/mobile"]},
+    {"name": "Dylib Injection Check", "paths": ["DYLD_INSERT_LIBRARIES", "_dyld_image_count", "MobileSubstrate.dylib"]},
+    {"name": "Symbolic Link Check", "paths": ["lstat", "readlink", "/usr/lib/system"]},
+]
+
+
+def scan_protection_patterns(path, strings_list, symbols_list):
+    """Advanced pattern scanner — detect protection SDKs, anti-debug, and JB detection"""
+    try:
+        all_strings = " ".join(strings_list).lower() if strings_list else ""
+        sym_names = " ".join(s.get("name", "") for s in symbols_list).lower() if symbols_list else ""
+        combined = all_strings + " " + sym_names
+
+        with open(path, "rb") as f:
+            raw = f.read()
+        raw_text = raw.decode("utf-8", errors="replace").lower()
+
+        results = {
+            "protection_sdks": [],
+            "anti_debug": [],
+            "jb_detection": [],
+            "anti_tamper": [],
+            "total_findings": 0,
+            "risk_level": "low",
+        }
+
+        for sig in KNOWN_PROTECTION_SIGNATURES:
+            matched = [p for p in sig["patterns"] if p.lower() in combined or p.lower() in raw_text]
+            if matched:
+                results["protection_sdks"].append({
+                    "name": sig["name"],
+                    "severity": sig["severity"],
+                    "description": sig["desc"],
+                    "matched_patterns": matched,
+                })
+
+        for sig in ANTI_DEBUG_SIGNATURES:
+            matched = [p for p in sig["patterns"] if p.lower() in combined or p.lower() in raw_text]
+            if len(matched) >= 1:
+                results["anti_debug"].append({
+                    "name": sig["name"],
+                    "description": sig["desc"],
+                    "matched_patterns": matched,
+                })
+
+        for sig in JB_DETECTION_SIGNATURES:
+            matched = [p for p in sig["paths"] if p.lower() in combined or p.lower() in raw_text]
+            if matched:
+                results["jb_detection"].append({
+                    "category": sig["name"],
+                    "detected_checks": matched,
+                    "count": len(matched),
+                })
+
+        anti_tamper = []
+        tamper_checks = [
+            ("Checksum Validation", ["checksum", "crc32", "md5", "sha256", "integrity"]),
+            ("Code Signing Verification", ["SecCodeCheckValidity", "csops", "codesign"]),
+            ("Mach-O Header Check", ["_mh_execute_header", "machHeader", "LC_CODE_SIGNATURE"]),
+            ("Bundle ID Verification", ["CFBundleIdentifier", "bundleIdentifier"]),
+            ("Provisioning Profile", ["embedded.mobileprovision", "provisioning"]),
+        ]
+        for name, patterns in tamper_checks:
+            matched = [p for p in patterns if p.lower() in combined or p.lower() in raw_text]
+            if matched:
+                anti_tamper.append({"check": name, "patterns": matched})
+        results["anti_tamper"] = anti_tamper
+
+        total = len(results["protection_sdks"]) + len(results["anti_debug"]) + len(results["jb_detection"]) + len(results["anti_tamper"])
+        results["total_findings"] = total
+
+        if any(s["severity"] in ("critical", "high") for s in results["protection_sdks"]):
+            results["risk_level"] = "high"
+        elif len(results["anti_debug"]) >= 2 or total >= 5:
+            results["risk_level"] = "medium"
+        elif total > 0:
+            results["risk_level"] = "low"
+        else:
+            results["risk_level"] = "none"
+
+        return results
+    except Exception as e:
+        return {"error": str(e), "protection_sdks": [], "anti_debug": [], "jb_detection": [], "anti_tamper": [], "total_findings": 0}
+
+
+def extract_swift_metadata(path):
+    """Extract Swift type metadata, protocols, and conformances from Mach-O"""
+    try:
+        import lief
+        import re
+        binary = lief.parse(path)
+        if binary is None:
+            return {"swift_classes": [], "swift_protocols": [], "has_swift": False}
+
+        main = binary[0] if isinstance(binary, lief.MachO.FatBinary) else binary
+
+        has_swift = False
+        swift_sections = []
+        for section in main.sections:
+            sec_name = str(section.name)
+            if "swift" in sec_name.lower():
+                has_swift = True
+                swift_sections.append({"name": f"{section.segment_name},{sec_name}", "size": section.size})
+
+        with open(path, "rb") as f:
+            raw_data = f.read()
+        raw_text = raw_data.decode("utf-8", errors="replace")
+
+        swift_name_pattern = re.compile(r'_\$s(\d+)([A-Za-z_][A-Za-z0-9_]*)')
+        mangled_names = swift_name_pattern.findall(raw_text)
+
+        swift_classes = []
+        swift_structs = []
+        swift_enums = []
+        swift_protocols = []
+        class_names_seen = set()
+
+        symbols = []
+        try:
+            for sym in main.symbols:
+                name = str(sym.name) if hasattr(sym, 'name') else ""
+                symbols.append(name)
+                if "$s" in name and ("C" in name or "V" in name or "O" in name or "P" in name):
+                    has_swift = True
+        except Exception:
+            pass
+
+        type_desc_pattern = re.compile(r'_\$s\d+(\w+?)(?:CN|CMa|CACig|CMn|Cd)')
+        struct_desc_pattern = re.compile(r'_\$s\d+(\w+?)(?:VN|VMa|Vd)')
+        enum_desc_pattern = re.compile(r'_\$s\d+(\w+?)(?:ON|OMa|Od)')
+        proto_desc_pattern = re.compile(r'_\$s\d+(\w+?)(?:Mp|TL|Mc)')
+
+        for sym_name in symbols:
+            cm = type_desc_pattern.search(sym_name)
+            if cm and cm.group(1) not in class_names_seen:
+                class_names_seen.add(cm.group(1))
+                swift_classes.append(cm.group(1))
+
+            sm = struct_desc_pattern.search(sym_name)
+            if sm and sm.group(1) not in class_names_seen:
+                class_names_seen.add(sm.group(1))
+                swift_structs.append(sm.group(1))
+
+            em = enum_desc_pattern.search(sym_name)
+            if em and em.group(1) not in class_names_seen:
+                class_names_seen.add(em.group(1))
+                swift_enums.append(em.group(1))
+
+            pm = proto_desc_pattern.search(sym_name)
+            if pm and pm.group(1) not in class_names_seen:
+                class_names_seen.add(pm.group(1))
+                swift_protocols.append(pm.group(1))
+
+        swift_version = ""
+        ver_pattern = re.compile(r'swift[- ]?(\d+\.\d+(?:\.\d+)?)')
+        vm = ver_pattern.search(raw_text.lower())
+        if vm:
+            swift_version = vm.group(1)
+
+        header_lines = []
+        if has_swift:
+            header_lines.append("// Swift Metadata — extracted by ReverseKit")
+            header_lines.append(f"// Binary: {os.path.basename(path)}")
+            if swift_version:
+                header_lines.append(f"// Swift Version: {swift_version}")
+            header_lines.append("")
+
+            if swift_protocols:
+                header_lines.append("// MARK: - Protocols")
+                for p in sorted(swift_protocols)[:50]:
+                    header_lines.append(f"protocol {p} {{}}")
+                header_lines.append("")
+
+            if swift_classes:
+                header_lines.append("// MARK: - Classes")
+                for c in sorted(swift_classes)[:50]:
+                    header_lines.append(f"class {c} {{}}")
+                header_lines.append("")
+
+            if swift_structs:
+                header_lines.append("// MARK: - Structs")
+                for s in sorted(swift_structs)[:50]:
+                    header_lines.append(f"struct {s} {{}}")
+                header_lines.append("")
+
+            if swift_enums:
+                header_lines.append("// MARK: - Enums")
+                for e in sorted(swift_enums)[:50]:
+                    header_lines.append(f"enum {e} {{}}")
+                header_lines.append("")
+
+        return {
+            "has_swift": has_swift,
+            "swift_version": swift_version,
+            "swift_sections": swift_sections,
+            "swift_classes": swift_classes[:100],
+            "swift_structs": swift_structs[:100],
+            "swift_enums": swift_enums[:100],
+            "swift_protocols": swift_protocols[:100],
+            "swift_headers": "\n".join(header_lines),
+            "total_types": len(swift_classes) + len(swift_structs) + len(swift_enums) + len(swift_protocols),
+        }
+    except Exception as e:
+        return {"error": str(e), "has_swift": False, "swift_classes": [], "swift_protocols": [], "swift_headers": ""}
+
+
 def analyze(path, original_filename=None):
     if original_filename is None:
         original_filename = os.path.basename(path)
@@ -981,6 +1340,18 @@ def _analyze_binary(path):
 
     # 14. RetDec Decompilation (secondary decompiler)
     result["retdec"] = retdec_decompile(path)
+
+    # 15. Entitlements & Code Signing
+    result["entitlements"] = extract_entitlements(path)
+
+    # 16. URL & Endpoint Extraction
+    result["urls_endpoints"] = extract_urls_and_endpoints(path)
+
+    # 17. Advanced Pattern Scanner
+    result["pattern_scan"] = scan_protection_patterns(path, result["strings"], result["symbols"])
+
+    # 18. Swift Metadata Extraction
+    result["swift_metadata"] = extract_swift_metadata(path)
 
     return result
 

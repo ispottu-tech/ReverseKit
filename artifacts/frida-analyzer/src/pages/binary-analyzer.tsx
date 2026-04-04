@@ -510,6 +510,18 @@ export default function BinaryAnalyzer() {
                 <TabsTrigger value="imports">Imports ({result.imports?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="strings">Strings ({result.strings?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="libs">Libraries</TabsTrigger>
+                <TabsTrigger value="pattern-scan" className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-300">
+                  🛡 Protection ({result.pattern_scan?.total_findings ?? 0})
+                </TabsTrigger>
+                <TabsTrigger value="urls" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+                  🌐 URLs ({result.urls_endpoints?.total_urls ?? 0})
+                </TabsTrigger>
+                <TabsTrigger value="entitlements" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-300">
+                  📜 Entitlements
+                </TabsTrigger>
+                <TabsTrigger value="swift" className="data-[state=active]:bg-orange-500/20 data-[state=active]:text-orange-300">
+                  🔶 Swift
+                </TabsTrigger>
                 <TabsTrigger value="rop">ROP ({result.rop_gadgets?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="asm">Disasm</TabsTrigger>
                 <TabsTrigger value="sections">Sections</TabsTrigger>
@@ -810,6 +822,321 @@ export default function BinaryAnalyzer() {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm text-center py-8">No section info available</p>
+                )}
+              </TabsContent>
+
+              {/* Protection & Pattern Scanner */}
+              <TabsContent value="pattern-scan" className="mt-4">
+                {result.pattern_scan ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                        result.pattern_scan.risk_level === "high" ? "bg-red-500/20 text-red-400 border border-red-500/30" :
+                        result.pattern_scan.risk_level === "medium" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" :
+                        result.pattern_scan.risk_level === "low" ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" :
+                        "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      }`}>
+                        Risk: {result.pattern_scan.risk_level}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{result.pattern_scan.total_findings} findings</span>
+                    </div>
+
+                    {result.pattern_scan.protection_sdks?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-red-400 mb-2">Protection SDKs Detected</h4>
+                        <div className="space-y-2">
+                          {result.pattern_scan.protection_sdks.map((sdk: any, i: number) => (
+                            <div key={i} className="p-3 rounded-lg bg-red-500/5 border border-red-500/20">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sm text-red-300">{sdk.name}</span>
+                                <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold ${
+                                  sdk.severity === "critical" ? "bg-red-500/30 text-red-300" :
+                                  sdk.severity === "high" ? "bg-orange-500/30 text-orange-300" :
+                                  "bg-amber-500/30 text-amber-300"
+                                }`}>{sdk.severity}</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">{sdk.description}</p>
+                              <div className="flex gap-1 mt-1.5 flex-wrap">
+                                {sdk.matched_patterns.map((p: string, j: number) => (
+                                  <span key={j} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400">{p}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.pattern_scan.anti_debug?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-amber-400 mb-2">Anti-Debug Techniques</h4>
+                        <div className="space-y-2">
+                          {result.pattern_scan.anti_debug.map((ad: any, i: number) => (
+                            <div key={i} className="p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                              <span className="font-bold text-xs text-amber-300">{ad.name}</span>
+                              <p className="text-xs text-muted-foreground mt-0.5">{ad.description}</p>
+                              <div className="flex gap-1 mt-1 flex-wrap">
+                                {ad.matched_patterns.map((p: string, j: number) => (
+                                  <span key={j} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400">{p}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.pattern_scan.jb_detection?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-violet-400 mb-2">Jailbreak Detection</h4>
+                        <div className="space-y-2">
+                          {result.pattern_scan.jb_detection.map((jb: any, i: number) => (
+                            <div key={i} className="p-2.5 rounded-lg bg-violet-500/5 border border-violet-500/20">
+                              <span className="font-bold text-xs text-violet-300">{jb.category}</span>
+                              <span className="text-[10px] text-muted-foreground ml-2">({jb.count} checks)</span>
+                              <div className="flex gap-1 mt-1.5 flex-wrap">
+                                {jb.detected_checks.map((c: string, j: number) => (
+                                  <span key={j} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-400">{c}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.pattern_scan.anti_tamper?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-cyan-400 mb-2">Anti-Tamper Checks</h4>
+                        <div className="space-y-1.5">
+                          {result.pattern_scan.anti_tamper.map((at: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-cyan-500/5 border border-cyan-500/20 flex items-center gap-2">
+                              <span className="text-xs font-bold text-cyan-300">{at.check}</span>
+                              <div className="flex gap-1 flex-wrap">
+                                {at.patterns.map((p: string, j: number) => (
+                                  <span key={j} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{p}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.pattern_scan.total_findings === 0 && (
+                      <p className="text-muted-foreground text-sm text-center py-8">No known protection patterns detected</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">Pattern scan not available</p>
+                )}
+              </TabsContent>
+
+              {/* URLs & Endpoints */}
+              <TabsContent value="urls" className="mt-4">
+                {result.urls_endpoints ? (
+                  <div className="space-y-4">
+                    <div className="flex gap-3 flex-wrap">
+                      <span className="px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 text-xs border border-blue-500/20">
+                        {result.urls_endpoints.total_urls ?? 0} URLs
+                      </span>
+                      <span className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 text-xs border border-emerald-500/20">
+                        {result.urls_endpoints.total_domains ?? 0} Domains
+                      </span>
+                      {result.urls_endpoints.ip_addresses?.length > 0 && (
+                        <span className="px-2.5 py-1 rounded bg-red-500/10 text-red-400 text-xs border border-red-500/20">
+                          {result.urls_endpoints.ip_addresses.length} IPs
+                        </span>
+                      )}
+                    </div>
+
+                    {result.urls_endpoints.urls?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-blue-400 mb-2">URLs Found</h4>
+                        <div className="rounded-lg border border-border/50 overflow-hidden max-h-[300px] overflow-y-auto">
+                          {result.urls_endpoints.urls.map((url: string, i: number) => (
+                            <div key={i} className="px-3 py-1.5 text-xs font-mono text-blue-300 border-b border-border/20 hover:bg-secondary/20 break-all">{url}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.urls_endpoints.api_paths?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-emerald-400 mb-2">API Endpoints</h4>
+                        <div className="rounded-lg border border-border/50 overflow-hidden max-h-[200px] overflow-y-auto">
+                          {result.urls_endpoints.api_paths.map((p: string, i: number) => (
+                            <div key={i} className="px-3 py-1.5 text-xs font-mono text-emerald-300 border-b border-border/20 hover:bg-secondary/20">{p}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.urls_endpoints.domains?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-amber-400 mb-2">Domains</h4>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {result.urls_endpoints.domains.map((d: string, i: number) => (
+                            <span key={i} className="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">{d}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.urls_endpoints.ip_addresses?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-red-400 mb-2">IP Addresses</h4>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {result.urls_endpoints.ip_addresses.map((ip: string, i: number) => (
+                            <span key={i} className="text-xs font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">{ip}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.urls_endpoints.deeplinks?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-violet-400 mb-2">Deep Links / Custom Schemes</h4>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {result.urls_endpoints.deeplinks.map((dl: string, i: number) => (
+                            <span key={i} className="text-xs font-mono px-2 py-0.5 rounded bg-violet-500/10 text-violet-400 border border-violet-500/20">{dl}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {Object.keys(result.urls_endpoints.cloud_services || {}).length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-cyan-400 mb-2">Cloud Services</h4>
+                        {Object.entries(result.urls_endpoints.cloud_services).map(([service, urls]: [string, any]) => (
+                          <div key={service} className="mb-2">
+                            <span className="text-xs font-bold text-cyan-300">{service}</span>
+                            <div className="mt-1 space-y-0.5">
+                              {urls.map((u: string, i: number) => (
+                                <div key={i} className="text-[10px] font-mono text-muted-foreground break-all pl-2">{u}</div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">URL extraction not available</p>
+                )}
+              </TabsContent>
+
+              {/* Entitlements */}
+              <TabsContent value="entitlements" className="mt-4">
+                {result.entitlements ? (
+                  <div className="space-y-4">
+                    {result.entitlements.signing_info && Object.keys(result.entitlements.signing_info).length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-green-400 mb-2">Code Signing</h4>
+                        <div className="flex gap-2 flex-wrap">
+                          {result.entitlements.signing_info.has_code_signature && (
+                            <span className="px-2.5 py-1 rounded bg-green-500/10 text-green-400 text-xs border border-green-500/20">Signed</span>
+                          )}
+                          {result.entitlements.signing_info.encrypted !== undefined && (
+                            <span className={`px-2.5 py-1 rounded text-xs border ${
+                              result.entitlements.signing_info.encrypted 
+                                ? "bg-red-500/10 text-red-400 border-red-500/20" 
+                                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            }`}>{result.entitlements.signing_info.encrypted ? "Encrypted" : "Not Encrypted"}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.entitlements.entitlements_list?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-green-400 mb-2">Entitlements ({result.entitlements.entitlements_list.length})</h4>
+                        <div className="space-y-1">
+                          {result.entitlements.entitlements_list.map((ent: string, i: number) => (
+                            <div key={i} className="px-3 py-1.5 text-xs font-mono text-green-300 rounded bg-green-500/5 border border-green-500/10">{ent}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.entitlements.entitlements_xml && (
+                      <CodeViewer
+                        code={result.entitlements.entitlements_xml}
+                        language="xml"
+                        filename="entitlements.plist"
+                        engine="Entitlements Extractor"
+                        accentColor="green"
+                      />
+                    )}
+
+                    {!result.entitlements.entitlements_xml && result.entitlements.entitlements_list?.length === 0 && (
+                      <p className="text-muted-foreground text-sm text-center py-8">No entitlements found in this binary</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">Entitlements extraction not available</p>
+                )}
+              </TabsContent>
+
+              {/* Swift Metadata */}
+              <TabsContent value="swift" className="mt-4">
+                {result.swift_metadata ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        result.swift_metadata.has_swift 
+                          ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" 
+                          : "bg-secondary/30 text-muted-foreground border border-border/30"
+                      }`}>
+                        {result.swift_metadata.has_swift ? "Swift Binary" : "No Swift"}
+                      </span>
+                      {result.swift_metadata.swift_version && (
+                        <span className="text-xs text-muted-foreground">Swift {result.swift_metadata.swift_version}</span>
+                      )}
+                      {result.swift_metadata.total_types > 0 && (
+                        <span className="text-xs text-muted-foreground">{result.swift_metadata.total_types} types found</span>
+                      )}
+                    </div>
+
+                    {result.swift_metadata.swift_sections?.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-orange-400 mb-2">Swift Sections</h4>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {result.swift_metadata.swift_sections.map((sec: any, i: number) => (
+                            <span key={i} className="text-xs font-mono px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                              {sec.name} ({formatSize(sec.size)})
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.swift_metadata.swift_headers && (
+                      <CodeViewer
+                        code={result.swift_metadata.swift_headers}
+                        language="swift"
+                        filename={`${result.filename || "binary"}_swift_types.swift`}
+                        engine={`Swift Metadata — ${result.swift_metadata.total_types} types`}
+                        accentColor="orange"
+                        downloadLabel=".swift"
+                        onDownload={result.swift_metadata.swift_headers ? () => {
+                          const blob = new Blob([result.swift_metadata!.swift_headers!], { type: "text/x-swift" });
+                          const a = document.createElement("a");
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_swift.swift`;
+                          a.click();
+                        } : undefined}
+                      />
+                    )}
+
+                    {!result.swift_metadata.has_swift && (
+                      <p className="text-muted-foreground text-sm text-center py-8">
+                        This binary does not contain Swift metadata — likely pure Objective-C or C/C++
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">Swift metadata extraction not available</p>
                 )}
               </TabsContent>
             </Tabs>
