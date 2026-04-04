@@ -6,8 +6,8 @@ const tools = [
   {
     href: "/binary",
     title: "Binary Inspector",
-    desc: "Upload any iOS binary and get a full security & structure report — classes, functions, ROP gadgets, obfuscation detection, and pseudo-C decompilation.",
-    tags: ["lief", "radare2", "capstone", "ROPgadget"],
+    desc: "Upload any iOS binary and get full source code extraction — Ghidra + RetDec decompilation, ObjC headers, ROP gadgets, and security analysis.",
+    tags: ["Ghidra", "RetDec", "radare2", "lief"],
     gradient: "from-emerald-500/15 to-teal-500/5",
     border: "border-emerald-500/20 hover:border-emerald-500/40",
     accent: "text-emerald-400",
@@ -46,6 +46,8 @@ const tools = [
 ];
 
 const engines = [
+  { name: "Ghidra", ver: "11.3.2", role: "Decompiler" },
+  { name: "RetDec", ver: "5.0", role: "Decompiler" },
   { name: "radare2", ver: "5.9.8", role: "Disassembly" },
   { name: "lief", ver: "0.17.6", role: "Mach-O Parser" },
   { name: "capstone", ver: "5.0", role: "ARM64 Disasm" },
@@ -53,13 +55,12 @@ const engines = [
   { name: "pwntools", ver: "4.15", role: "Security" },
   { name: "frida", ver: "17.9", role: "Instrumentation" },
   { name: "objection", ver: "1.12", role: "Exploration" },
-  { name: "Ghidra", ver: "", role: "Decompiler" },
 ];
 
 const steps = [
   { n: "01", title: "Upload", desc: "Drop any .dylib, .framework, or Mach-O binary into the Binary Inspector." },
-  { n: "02", title: "Analyze", desc: "ReverseKit runs 7+ engines automatically — structure, security, obfuscation." },
-  { n: "03", title: "Export", desc: "Download the full analysis report as JSON for verification or documentation." },
+  { n: "02", title: "Analyze", desc: "ReverseKit runs 9+ engines automatically — decompilation, structure, security." },
+  { n: "03", title: "Export", desc: "Download decompiled C source, ObjC headers, or full JSON analysis report." },
 ];
 
 export default function Home() {

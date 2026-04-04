@@ -10,8 +10,14 @@ import os
 import struct
 import hashlib
 
+import tempfile
+import shutil
+
 PYTHON_BIN = sys.executable
 ROPGADGET_BIN = os.path.join(os.path.dirname(PYTHON_BIN), "ROPgadget")
+GHIDRA_HEADLESS = "/nix/store/2pbav18pr4rn4v2ngimf29gjkv6l47l6-ghidra-11.3.2/bin/ghidra-analyzeHeadless"
+RETDEC_BIN = "/nix/store/v6k7ayjdqaflpia7hcbjv3vh9dyz4ck6-retdec-5.0/bin/retdec-decompiler"
+GHIDRA_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghidra_decompile.py")
 
 def run_cmd(cmd, timeout=60):
     try:
@@ -286,6 +292,231 @@ def capstone_disasm(path):
     except Exception as e:
         return f"Error: {e}"
 
+def ghidra_decompile(path):
+    """Run Ghidra headless decompiler to produce C source code"""
+    try:
+        if not os.path.exists(GHIDRA_HEADLESS):
+            return {"error": "Ghidra not available", "source": ""}
+
+        tmp_dir = tempfile.mkdtemp(prefix="ghidra_")
+        output_file = os.path.join(tmp_dir, "decompiled.c")
+        project_dir = os.path.join(tmp_dir, "project")
+        os.makedirs(project_dir, exist_ok=True)
+
+        env = os.environ.copy()
+        env["REVERSEKIT_OUTPUT"] = output_file
+
+        cmd_analyze = [
+            GHIDRA_HEADLESS,
+            project_dir, "ReverseKit",
+            "-import", path,
+            "-postScript", GHIDRA_SCRIPT,
+            "-scriptPath", os.path.dirname(GHIDRA_SCRIPT),
+            "-deleteProject",
+        ]
+
+        r = subprocess.run(cmd_analyze, capture_output=True, text=True, timeout=120, env=env, errors="replace")
+
+        source = ""
+        func_count = 0
+        if os.path.exists(output_file):
+            with open(output_file, "r", errors="replace") as f:
+                source = f.read()
+            for line in r.stdout.splitlines():
+                if "REVERSEKIT_DECOMPILED:" in line:
+                    try:
+                        func_count = int(line.split(":")[1].split()[0])
+                    except Exception:
+                        pass
+
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+        return {
+            "source": source[:50000],
+            "functions_decompiled": func_count,
+            "engine": "Ghidra 11.3.2",
+        }
+    except subprocess.TimeoutExpired:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        return {"error": "Ghidra decompilation timed out (120s limit)", "source": ""}
+    except Exception as e:
+        return {"error": str(e), "source": ""}
+
+
+def retdec_decompile(path):
+    """Run RetDec decompiler to produce C source code"""
+    try:
+        if not os.path.exists(RETDEC_BIN):
+            return {"error": "RetDec not available", "source": ""}
+
+        tmp_dir = tempfile.mkdtemp(prefix="retdec_")
+        output_file = os.path.join(tmp_dir, "decompiled.c")
+
+        cmd = [
+            RETDEC_BIN,
+            path,
+            "-o", output_file,
+        ]
+
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120, errors="replace")
+
+        source = ""
+        if os.path.exists(output_file):
+            with open(output_file, "r", errors="replace") as f:
+                source = f.read()
+
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+        return {
+            "source": source[:50000],
+            "engine": "RetDec 5.0",
+        }
+    except subprocess.TimeoutExpired:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        return {"error": "RetDec decompilation timed out (120s limit)", "source": ""}
+    except Exception as e:
+        return {"error": str(e), "source": ""}
+
+
+def extract_objc_headers(path):
+    """Extract ObjC class headers (class-dump equivalent) using lief"""
+    try:
+        import lief
+        binary = lief.parse(path)
+        if binary is None:
+            return {"error": "Cannot parse binary", "headers": ""}
+
+        main = binary[0] if isinstance(binary, lief.MachO.FatBinary) else binary
+
+        lines = []
+        lines.append("// ObjC Headers — extracted by ReverseKit (lief)")
+        lines.append(f"// Binary: {os.path.basename(path)}")
+        lines.append("")
+
+        try:
+            classes = list(main.classes)
+        except Exception:
+            classes = []
+
+        if not classes:
+            return {"headers": "// No Objective-C class metadata found in this binary.", "class_count": 0}
+
+        for cls in classes[:100]:
+            cls_name = str(cls.name)
+
+            protocols = []
+            try:
+                protocols = [str(p) for p in cls.protocols]
+            except Exception:
+                pass
+
+            super_class = ""
+            try:
+                if hasattr(cls, 'super_class') and cls.super_class:
+                    super_class = str(cls.super_class.name) if hasattr(cls.super_class, 'name') else str(cls.super_class)
+            except Exception:
+                pass
+
+            proto_str = ""
+            if protocols:
+                proto_str = " <" + ", ".join(protocols) + ">"
+
+            if super_class:
+                lines.append(f"@interface {cls_name} : {super_class}{proto_str}")
+            else:
+                lines.append(f"@interface {cls_name}{proto_str}")
+
+            properties = []
+            try:
+                if hasattr(cls, 'properties'):
+                    for prop in cls.properties:
+                        prop_name = str(prop.name) if hasattr(prop, 'name') else str(prop)
+                        properties.append(prop_name)
+            except Exception:
+                pass
+
+            for prop_name in properties[:30]:
+                lines.append(f"@property (nonatomic) id {prop_name};")
+
+            ivars = []
+            try:
+                if hasattr(cls, 'instance_variables'):
+                    for iv in cls.instance_variables:
+                        iv_name = str(iv.name) if hasattr(iv, 'name') else str(iv)
+                        ivars.append(iv_name)
+            except Exception:
+                pass
+
+            if ivars:
+                lines.append("{")
+                for iv in ivars[:30]:
+                    lines.append(f"    id {iv};")
+                lines.append("}")
+
+            methods = []
+            try:
+                methods = list(cls.methods)
+            except Exception:
+                pass
+
+            for method in methods[:50]:
+                m_name = str(method.name)
+                is_class = getattr(method, 'is_class_method', False) if hasattr(method, 'is_class_method') else False
+                prefix = "+" if is_class else "-"
+                lines.append(f"{prefix} (id){m_name};")
+
+            lines.append("@end")
+            lines.append("")
+
+        return {
+            "headers": "\n".join(lines),
+            "class_count": len(classes),
+        }
+    except Exception as e:
+        return {"error": str(e), "headers": ""}
+
+
+def radare2_full_decompile(path):
+    """Enhanced r2 decompilation — decompile ALL functions with pdc"""
+    try:
+        import r2pipe
+        r2 = r2pipe.open(path, flags=["-2"])
+        r2.cmd("e bin.relocs.apply=true")
+        r2.cmd("aaa")
+
+        funcs = r2.cmdj("aflj") or []
+        func_list = [{"name": f.get("name",""), "size": f.get("size",0), "addr": hex(f.get("offset",0))} for f in funcs[:100]]
+
+        entries = r2.cmdj("iej") or []
+
+        all_pseudo_c = []
+        decompiled_count = 0
+        for fn in funcs[:50]:
+            name = fn.get("name", "")
+            offset = fn.get("offset", 0)
+            try:
+                r2.cmd(f"s {offset}")
+                pdc = r2.cmd("pdc") or ""
+                clean = "\n".join(l for l in pdc.splitlines() if not l.startswith(("INFO", "WARN", "ERROR")))
+                if clean.strip():
+                    all_pseudo_c.append(f"// --- {name} @ {hex(offset)} ---")
+                    all_pseudo_c.append(clean)
+                    all_pseudo_c.append("")
+                    decompiled_count += 1
+            except Exception:
+                pass
+
+        r2.quit()
+        return {
+            "functions": func_list,
+            "entrypoints": entries,
+            "pseudo_c": "\n".join(all_pseudo_c)[:30000],
+            "functions_decompiled": decompiled_count,
+        }
+    except Exception as e:
+        return {"error": str(e), "functions": [], "pseudo_c": "", "functions_decompiled": 0}
+
+
 def detect_obfuscation(strings_list, symbols, disasm):
     """Detect obfuscation techniques"""
     findings = []
@@ -388,11 +619,12 @@ def analyze(path):
     # 5. Security properties (PIE, Stack Canary, ARC)
     result["security_properties"] = get_checksec(path)
 
-    # 6. Radare2 deep analysis (functions + pseudo-C)
-    r2 = get_radare2_analysis(path)
+    # 6. Radare2 FULL decompilation (all functions)
+    r2 = radare2_full_decompile(path)
     result["functions"] = r2.get("functions", [])
     result["pseudo_c"] = r2.get("pseudo_c", "")
     result["r2_error"] = r2.get("error")
+    result["r2_functions_decompiled"] = r2.get("functions_decompiled", 0)
 
     # 7. Capstone direct ARM64 disassembly
     result["capstone_disasm"] = capstone_disasm(path)
@@ -416,6 +648,15 @@ def analyze(path):
         result["imports"],
         result["symbols"]
     )
+
+    # 12. ObjC Headers (class-dump equivalent)
+    result["objc_headers"] = extract_objc_headers(path)
+
+    # 13. Ghidra Decompilation (real C source code)
+    result["ghidra"] = ghidra_decompile(path)
+
+    # 14. RetDec Decompilation (secondary decompiler)
+    result["retdec"] = retdec_decompile(path)
 
     return result
 

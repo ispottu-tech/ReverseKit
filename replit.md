@@ -109,14 +109,19 @@ React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to 
 
 - **Python script**: `artifacts/api-server/src/lib/analyze_binary.py`
   - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, llvm-nm, llvm-objdump, strings
+  - **Decompilers**: Ghidra 11.3.2 (headless), RetDec 5.0, radare2 pdc (all three produce C source code)
+  - **Ghidra script**: `artifacts/api-server/src/lib/ghidra_decompile.py` — Jython postScript that runs inside Ghidra headless, decompiles up to 300 functions, writes output to a temp file
+  - **ObjC Headers**: class-dump equivalent using lief — extracts @interface declarations, methods, properties, ivars
   - Detects: obfuscation (Hikari, OLLVM), anti-debug (ptrace, sysctl), jailbreak detection, Frida detection, SSL pinning, root detection, XOR string encryption
-  - Outputs: hashes (MD5/SHA1/SHA256), Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties (PIE/NX/canary/ARC), ROP gadgets, pseudo-C decompilation
+  - Outputs: hashes, Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties, ROP gadgets, Ghidra C source, RetDec C source, ObjC headers, radare2 pseudo-C
 - **API routes** (`artifacts/api-server/src/routes/binary.ts`):
-  - POST `/api/binary/analyze` — Full binary analysis with multer upload, 120s timeout, 20MB buffer
+  - POST `/api/binary/analyze` — Full binary analysis with multer upload, 300s timeout, 50MB buffer
   - POST `/api/binary/hexdump` — Hex dump of uploaded file (offset/length params, max 64KB)
   - POST `/api/binary/fileinfo` — File type, size, magic bytes
 - **Python path**: `/home/runner/workspace/.pythonlibs/bin/python3`
 - **ROPgadget path**: `/home/runner/workspace/.pythonlibs/bin/ROPgadget`
+- **Ghidra path**: `/nix/store/2pbav18pr4rn4v2ngimf29gjkv6l47l6-ghidra-11.3.2/bin/ghidra-analyzeHeadless`
+- **RetDec path**: `/nix/store/v6k7ayjdqaflpia7hcbjv3vh9dyz4ck6-retdec-5.0/bin/retdec-decompiler`
 
 ### System Tools (replit.nix)
 

@@ -2,7 +2,8 @@ import { useState, useRef, useCallback } from "react";
 import {
   Upload, FileSearch, Shield, Code2, Hash, Library,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, X,
-  Lock, Cpu, Zap, Eye, Bug, BarChart2, Layers, Key, Download
+  Lock, Cpu, Zap, Eye, Bug, BarChart2, Layers, Key, Download,
+  FileCode, Binary, Braces
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,19 @@ interface SecurityFeature { feature: string; evidence: string[]; }
 interface FunctionInfo { name: string; addr: string; size: number; }
 interface Hashes { md5: string; sha1: string; sha256: string; size: number; }
 
+interface DecompilerResult {
+  source?: string;
+  error?: string;
+  engine?: string;
+  functions_decompiled?: number;
+}
+
+interface ObjcHeaders {
+  headers?: string;
+  class_count?: number;
+  error?: string;
+}
+
 interface AnalysisResult {
   filename?: string;
   file_info?: string;
@@ -66,6 +80,10 @@ interface AnalysisResult {
   security_features?: SecurityFeature[];
   obfuscation?: ObfuscationFinding[];
   r2_error?: string;
+  r2_functions_decompiled?: number;
+  ghidra?: DecompilerResult;
+  retdec?: DecompilerResult;
+  objc_headers?: ObjcHeaders;
   error?: string;
 }
 
@@ -137,8 +155,11 @@ export default function BinaryAnalyzer() {
       "Uploading binary…",
       "Parsing Mach-O structure (lief)…",
       "Extracting strings & symbols…",
-      "Running radare2 analysis…",
+      "Running radare2 full decompilation…",
       "Scanning ROP gadgets…",
+      "Extracting ObjC headers (class-dump)…",
+      "Running Ghidra decompiler…",
+      "Running RetDec decompiler…",
       "Detecting obfuscation & protections…",
     ];
     let si = 0;
@@ -146,7 +167,7 @@ export default function BinaryAnalyzer() {
     const interval = setInterval(() => {
       si = Math.min(si + 1, stages.length - 1);
       setProgress(stages[si]);
-    }, 4000);
+    }, 6000);
 
     const form = new FormData();
     form.append("file", file);
@@ -183,9 +204,9 @@ export default function BinaryAnalyzer() {
     if (!result) return;
     const report = {
       _meta: {
-        tool: "ReverseKit v1.0",
+        tool: "ReverseKit v2.0",
         generated: new Date().toISOString(),
-        engines: ["lief 0.17.6", "capstone 5.0", "radare2 5.9.8", "ROPgadget 7.7", "pwntools 4.15"],
+        engines: ["lief 0.17.6", "capstone 5.0", "radare2 5.9.8", "ROPgadget 7.7", "pwntools 4.15", "Ghidra 11.3.2", "RetDec 5.0"],
       },
       filename: result.filename,
       file_info: result.file_info,
@@ -203,6 +224,9 @@ export default function BinaryAnalyzer() {
       disassembly: result.disassembly,
       capstone_disasm: result.capstone_disasm,
       pseudo_c: result.pseudo_c,
+      ghidra_source: result.ghidra?.source,
+      retdec_source: result.retdec?.source,
+      objc_headers: result.objc_headers?.headers,
     };
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -223,7 +247,7 @@ export default function BinaryAnalyzer() {
         </div>
         <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Binary Inspector</h1>
         <p className="text-muted-foreground/60 text-xs mt-1 font-mono">
-          lief · capstone · radare2 · ROPgadget · pwntools
+          lief · capstone · radare2 · ROPgadget · pwntools · Ghidra · RetDec
         </p>
       </div>
 
@@ -245,7 +269,7 @@ export default function BinaryAnalyzer() {
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-10 h-10 text-primary animate-spin" />
               <p className="text-sm text-primary font-medium">{progress}</p>
-              <p className="text-xs text-muted-foreground">Full analysis may take 30–90 seconds…</p>
+              <p className="text-xs text-muted-foreground">Full analysis with Ghidra + RetDec decompilation may take 60–120 seconds…</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
@@ -450,19 +474,138 @@ export default function BinaryAnalyzer() {
             )}
 
             {/* Main Analysis Tabs */}
-            <Tabs defaultValue="functions">
+            <Tabs defaultValue="ghidra">
               <TabsList className="bg-secondary/30 border border-border/50 flex-wrap h-auto gap-1 p-1">
+                <TabsTrigger value="ghidra" className="data-[state=active]:bg-violet-500/20 data-[state=active]:text-violet-300">
+                  Ghidra Source
+                </TabsTrigger>
+                <TabsTrigger value="retdec" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300">
+                  RetDec Source
+                </TabsTrigger>
+                <TabsTrigger value="headers" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300">
+                  ObjC Headers ({result.objc_headers?.class_count ?? 0})
+                </TabsTrigger>
+                <TabsTrigger value="pseudoc">Radare2 Pseudo-C</TabsTrigger>
                 <TabsTrigger value="functions">Functions ({result.functions?.length ?? 0})</TabsTrigger>
-                <TabsTrigger value="objc">ObjC ({result.macho?.objc_classes?.length ?? 0})</TabsTrigger>
+                <TabsTrigger value="objc">ObjC Classes ({result.macho?.objc_classes?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="symbols">Symbols ({result.symbols?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="imports">Imports ({result.imports?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="strings">Strings ({result.strings?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="libs">Libraries</TabsTrigger>
                 <TabsTrigger value="rop">ROP ({result.rop_gadgets?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="asm">Disasm</TabsTrigger>
-                <TabsTrigger value="pseudoc">Pseudo-C</TabsTrigger>
                 <TabsTrigger value="sections">Sections</TabsTrigger>
               </TabsList>
+
+              {/* Ghidra Decompiled Source */}
+              <TabsContent value="ghidra" className="mt-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileCode className="w-4 h-4 text-violet-400" />
+                      <span className="text-sm font-semibold text-violet-300">Ghidra 11.3.2 Decompiled C</span>
+                      {result.ghidra?.functions_decompiled != null && (
+                        <Badge variant="outline" className="text-xs border-violet-500/30 text-violet-400">
+                          {result.ghidra.functions_decompiled} functions
+                        </Badge>
+                      )}
+                    </div>
+                    {result.ghidra?.source && (
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([result.ghidra!.source!], { type: "text/x-c" });
+                          const a = document.createElement("a");
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_ghidra.c`;
+                          a.click();
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-violet-500/10 border border-violet-500/30 text-violet-300 hover:bg-violet-500/20 transition-colors"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download .c
+                      </button>
+                    )}
+                  </div>
+                  {result.ghidra?.error && (
+                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
+                      {result.ghidra.error}
+                    </div>
+                  )}
+                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-violet-300/90 bg-black/50 rounded-lg p-4 border border-violet-500/20 leading-relaxed whitespace-pre-wrap">
+                    {result.ghidra?.source || "Ghidra decompilation produced no output — binary may not contain standard function prologues."}
+                  </pre>
+                </div>
+              </TabsContent>
+
+              {/* RetDec Decompiled Source */}
+              <TabsContent value="retdec" className="mt-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Braces className="w-4 h-4 text-cyan-400" />
+                      <span className="text-sm font-semibold text-cyan-300">RetDec 5.0 Decompiled C</span>
+                    </div>
+                    {result.retdec?.source && (
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([result.retdec!.source!], { type: "text/x-c" });
+                          const a = document.createElement("a");
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_retdec.c`;
+                          a.click();
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download .c
+                      </button>
+                    )}
+                  </div>
+                  {result.retdec?.error && (
+                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
+                      {result.retdec.error}
+                    </div>
+                  )}
+                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-cyan-300/90 bg-black/50 rounded-lg p-4 border border-cyan-500/20 leading-relaxed whitespace-pre-wrap">
+                    {result.retdec?.source || "RetDec decompilation produced no output."}
+                  </pre>
+                </div>
+              </TabsContent>
+
+              {/* ObjC Headers */}
+              <TabsContent value="headers" className="mt-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileCode className="w-4 h-4 text-amber-400" />
+                      <span className="text-sm font-semibold text-amber-300">ObjC Headers (class-dump)</span>
+                      {result.objc_headers?.class_count != null && (
+                        <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400">
+                          {result.objc_headers.class_count} classes
+                        </Badge>
+                      )}
+                    </div>
+                    {result.objc_headers?.headers && (
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([result.objc_headers!.headers!], { type: "text/plain" });
+                          const a = document.createElement("a");
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_headers.h`;
+                          a.click();
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition-colors"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download .h
+                      </button>
+                    )}
+                  </div>
+                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-amber-300/90 bg-black/50 rounded-lg p-4 border border-amber-500/20 leading-relaxed whitespace-pre-wrap">
+                    {result.objc_headers?.headers || "No Objective-C class metadata found."}
+                  </pre>
+                </div>
+              </TabsContent>
 
               {/* Functions */}
               <TabsContent value="functions" className="mt-4">
@@ -640,11 +783,22 @@ export default function BinaryAnalyzer() {
                 </div>
               </TabsContent>
 
-              {/* Pseudo-C */}
+              {/* Pseudo-C from radare2 */}
               <TabsContent value="pseudoc" className="mt-4">
-                <pre className="max-h-[600px] overflow-auto text-xs font-mono text-cyan-400/90 bg-black/40 rounded-lg p-4 border border-border/50 leading-relaxed whitespace-pre-wrap break-all">
-                  {result.pseudo_c || "No pseudo-C decompilation available"}
-                </pre>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Code2 className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm font-semibold text-emerald-300">Radare2 Pseudo-C (all functions)</span>
+                    {result.r2_functions_decompiled != null && (
+                      <Badge variant="outline" className="text-xs border-emerald-500/30 text-emerald-400">
+                        {result.r2_functions_decompiled} functions
+                      </Badge>
+                    )}
+                  </div>
+                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-emerald-400/90 bg-black/50 rounded-lg p-4 border border-emerald-500/20 leading-relaxed whitespace-pre-wrap break-all">
+                    {result.pseudo_c || "No pseudo-C decompilation available"}
+                  </pre>
+                </div>
               </TabsContent>
 
               {/* Sections */}

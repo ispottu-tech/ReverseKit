@@ -27,8 +27,8 @@ router.post("/binary/analyze", upload.single("file"), async (req, res) => {
   try {
     const pythonBin = process.env.PYTHON_BIN || "/home/runner/workspace/.pythonlibs/bin/python3";
     const { stdout, stderr } = await execFileAsync(pythonBin, [PYTHON_SCRIPT, tmpPath], {
-      timeout: 120000,
-      maxBuffer: 20 * 1024 * 1024,
+      timeout: 300000,
+      maxBuffer: 50 * 1024 * 1024,
       env: {
         ...process.env,
         PYTHONPATH: process.env.PYTHONPATH || "",
