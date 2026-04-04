@@ -1,0 +1,199 @@
+// Decompiled by Ghidra 11.3.2
+// Binary: PikaBypass.dylib
+// Architecture: AARCH64 / AARCH64:LE:64:AppleSilicon
+
+// Function: _init @ 00004000
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void _init(void)
+
+{
+  long lVar1;
+  long lVar2;
+  undefined8 uVar3;
+  long lVar4;
+  long lVar5;
+  long lVar6;
+  undefined8 uVar7;
+  undefined8 uVar8;
+  
+  _syslog(4,"[PikaBypass] LOADING...");
+  lVar1 = _objc_getClass("NSUserDefaults");
+  lVar2 = _objc_getClass("NSFileManager");
+  if ((lVar1 == 0) || (lVar2 == 0)) {
+    _syslog(3,"[PikaBypass] Classes not found!");
+  }
+  else {
+    uVar3 = _sel_registerName("boolForKey:");
+    lVar4 = _class_getInstanceMethod(lVar1,uVar3);
+    uVar3 = _sel_registerName("objectForKey:");
+    lVar5 = _class_getInstanceMethod(lVar1,uVar3);
+    uVar3 = _sel_registerName("setBool:forKey:");
+    lVar6 = _class_getInstanceMethod(lVar1,uVar3);
+    uVar3 = _sel_registerName("fileExistsAtPath:");
+    lVar2 = _class_getInstanceMethod(lVar2,uVar3);
+    if (lVar4 != 0) {
+      __orig_boolForKey = _method_getImplementation(lVar4);
+      _method_setImplementation(lVar4,_hook_boolForKey);
+      _syslog(4,"[PikaBypass] boolForKey: HOOKED");
+    }
+    if (lVar5 != 0) {
+      __orig_objectForKey = _method_getImplementation(lVar5);
+      _method_setImplementation(lVar5,_hook_objectForKey);
+      _syslog(4,"[PikaBypass] objectForKey: HOOKED");
+    }
+    if (lVar6 != 0) {
+      __orig_setBool = _method_getImplementation(lVar6);
+      _method_setImplementation(lVar6,_hook_setBool);
+      _syslog(4,"[PikaBypass] setBool:forKey: HOOKED");
+    }
+    if (lVar2 != 0) {
+      __orig_fileExistsAtPath = _method_getImplementation(lVar2);
+      _method_setImplementation(lVar2,_hook_fileExistsAtPath);
+      _syslog(4,"[PikaBypass] fileExistsAtPath: HOOKED");
+    }
+    uVar3 = _sel_registerName("standardUserDefaults");
+    uVar3 = _objc_msgSend(lVar1,uVar3);
+    uVar7 = _sel_registerName("setBool:forKey:");
+    uVar8 = _createNSString("isPremium");
+    _objc_msgSend(uVar3,uVar7,1,uVar8);
+    uVar7 = _sel_registerName("synchronize");
+    _objc_msgSend(uVar3,uVar7);
+    _syslog(4,s__PikaBypass__DONE_isPremium___YE_00004820);
+  }
+  return;
+}
+
+// Function: _hook_boolForKey @ 00004298
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+byte _hook_boolForKey(undefined8 param_1,undefined8 param_2,long param_3)
+
+{
+  ulong uVar1;
+  byte local_11;
+  
+  if ((param_3 == 0) || (uVar1 = _isEqualToString(param_3,"isPremium"), (uVar1 & 1) == 0)) {
+    local_11 = (*__orig_boolForKey)(param_1,param_2,param_3);
+    local_11 = local_11 & 1;
+  }
+  else {
+    local_11 = 1;
+  }
+  return local_11;
+}
+
+// Function: _hook_objectForKey @ 00004320
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined8 _hook_objectForKey(undefined8 param_1,undefined8 param_2,long param_3)
+
+{
+  ulong uVar1;
+  undefined8 uVar2;
+  undefined8 uVar3;
+  undefined8 local_18;
+  
+  if ((param_3 == 0) || (uVar1 = _isEqualToString(param_3,"isPremium"), (uVar1 & 1) == 0)) {
+    local_18 = (*__orig_objectForKey)(param_1,param_2,param_3);
+  }
+  else {
+    uVar2 = _objc_getClass("NSNumber");
+    uVar3 = _sel_registerName("numberWithBool:");
+    local_18 = _objc_msgSend(uVar2,uVar3,1);
+  }
+  return local_18;
+}
+
+// Function: _hook_setBool @ 000043c4
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void _hook_setBool(undefined8 param_1,undefined8 param_2,byte param_3,long param_4)
+
+{
+  ulong uVar1;
+  
+  if ((param_4 == 0) || (uVar1 = _isEqualToString(param_4,"isPremium"), (uVar1 & 1) == 0)) {
+    (*__orig_setBool)(param_1,param_2,param_3 & 1,param_4);
+  }
+  else {
+    (*__orig_setBool)(param_1,param_2,1,param_4);
+  }
+  return;
+}
+
+// Function: _hook_fileExistsAtPath @ 00004458
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+byte _hook_fileExistsAtPath(undefined8 param_1,undefined8 param_2,long param_3)
+
+{
+  long lVar1;
+  long lVar2;
+  byte local_11;
+  
+  if (((param_3 == 0) || (lVar1 = _toCString(param_3), lVar1 == 0)) ||
+     ((((lVar2 = _strstr(lVar1,"Cydia"), lVar2 == 0 &&
+        (((lVar2 = _strstr(lVar1,"substrate"), lVar2 == 0 &&
+          (lVar2 = _strstr(lVar1,"binpack"), lVar2 == 0)) &&
+         (lVar2 = _strstr(lVar1,"sshd"), lVar2 == 0)))) &&
+       (((lVar2 = _strstr(lVar1,"/bin/bash"), lVar2 == 0 &&
+         (lVar2 = _strstr(lVar1,"/etc/apt"), lVar2 == 0)) &&
+        (lVar2 = _strstr(lVar1,"cycript"), lVar2 == 0)))) &&
+      (lVar1 = _strstr(lVar1,"dpkg"), lVar1 == 0)))) {
+    local_11 = (*__orig_fileExistsAtPath)(param_1,param_2,param_3);
+    local_11 = local_11 & 1;
+  }
+  else {
+    local_11 = 0;
+  }
+  return local_11;
+}
+
+// Function: _createNSString @ 000045a4
+
+void _createNSString(undefined8 param_1)
+
+{
+  undefined8 uVar1;
+  undefined8 uVar2;
+  
+  uVar1 = _objc_getClass("NSString");
+  uVar2 = _sel_registerName("stringWithUTF8String:");
+  _objc_msgSend(uVar1,uVar2,param_1);
+  return;
+}
+
+// Function: _isEqualToString @ 000045f0
+
+void _isEqualToString(undefined8 param_1,undefined8 param_2)
+
+{
+  undefined8 uVar1;
+  undefined8 uVar2;
+  
+  uVar1 = _sel_registerName("isEqualToString:");
+  uVar2 = _createNSString(param_2);
+  _objc_msgSend(param_1,uVar1,uVar2);
+  return;
+}
+
+// Function: _toCString @ 0000463c
+
+void _toCString(undefined8 param_1)
+
+{
+  undefined8 uVar1;
+  
+  uVar1 = _sel_registerName("UTF8String");
+  _objc_msgSend(param_1,uVar1);
+  return;
+}
+
+
+// Summary: 8 functions decompiled, 8 skipped (external/thunk), 0 errors
