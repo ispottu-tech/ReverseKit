@@ -95,31 +95,37 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 
 React + Vite frontend for **ReverseKit** — iOS Analysis Platform. Connects to `api-server` at `/api`.
 
-- Entry: `src/App.tsx` — wouter router with pages: Home, Binary Inspector, Hex Viewer, Script Arsenal, Device Manager
+- Entry: `src/App.tsx` — wouter router with pages: Home, Binary Inspector, Binary Diff, Hex Viewer, Script Arsenal, Device Manager
 - API base: computed from `import.meta.env.BASE_URL`
 - Pages: `src/pages/` — each page is a self-contained component
   - `home.tsx` — Welcome page with tool cards, Quick Start guide, Integrated Analysis Engines listing
-  - `binary-analyzer.tsx` — Full static analysis UI with 13 tabs (Ghidra Source, RetDec Source, ObjC Headers, Pseudo-C, Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, ROP Gadgets, Disassembly, Sections) + security properties panel + obfuscation detection + CodeViewer component
+  - `binary-analyzer.tsx` — Full static analysis UI with 20 tabs (Ghidra Source, RetDec Source, ObjC Headers, Pseudo-C, Functions, ObjC Classes, Symbols, Imports, Strings, Libraries, Pattern Scan, URLs, Entitlements, Swift Metadata, YARA Scan, Class-dump, String Decrypt, ROP Gadgets, Disassembly, Sections) + security properties panel + obfuscation detection + CodeViewer component
+  - `binary-diff.tsx` — Binary Diff: compare two iOS binaries, shows changes in classes, methods, symbols, strings, libraries, sections
   - `hex-viewer.tsx` — Upload any file, view hex bytes + ASCII + file info + magic bytes
   - `scripts.tsx` — Script Arsenal with localStorage persistence, built-in Frida scripts
   - `device.tsx` — Consolidated Device Manager: Frida connection, process browser, app spawner, sessions, class/method browser, hooks, script executor
-- Layout: `src/components/layout.tsx` — dark sidebar with sections (Static Analysis, Tools, Dynamic Analysis) + Frida connection status
+- Layout: `src/components/layout.tsx` — dark sidebar with sections (Analysis, Toolkit) + Frida connection status
 
 ### Binary Analyzer Engine
 
 - **Python script**: `artifacts/api-server/src/lib/analyze_binary.py`
-  - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, llvm-nm, llvm-objdump, strings
+  - Tools: lief (Mach-O parsing), capstone (ARM64 disassembly), r2pipe (radare2), ROPgadget, pwntools checksec, YARA 4.5 (threat scanning), llvm-nm, llvm-objdump, strings
   - **Archive extraction**: Automatically extracts .dylib binaries from .deb (ar+tar+zst), .ipa (zip), and .zip archives before analysis
   - **Decompilers**: Ghidra 11.3.2 (headless), RetDec 5.0, radare2 pdc (all three produce C source code)
   - **Ghidra script**: `artifacts/api-server/src/lib/ghidra_decompile.py` — Jython postScript that runs inside Ghidra headless, decompiles up to 300 functions, writes output to a temp file
   - **ObjC Headers**: class-dump equivalent using lief — extracts @interface declarations, methods, properties, ivars
+  - **Enhanced Class-dump**: Full reconstruction with typed properties, method signatures, categories, forward declarations, protocol listing
+  - **YARA Scan**: 10 custom iOS rules — jailbreak detection, anti-debug, Frida detection, SSL pinning, encryption, Logos/Substrate tweaks, malware indicators, obfuscation, network exfiltration, privacy violations
+  - **String Decryption**: Detects Base64, XOR, hex-encoded, ROT13, high-entropy suspicious blobs
+  - **Binary Diff**: `artifacts/api-server/src/lib/binary_diff.py` — compares two binaries: classes, methods, symbols, strings, libraries, sections
   - Detects: obfuscation (Hikari, OLLVM), anti-debug (ptrace, sysctl), jailbreak detection, Frida detection, SSL pinning, root detection, XOR string encryption
-  - Outputs: hashes, Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties, ROP gadgets, Ghidra C source, RetDec C source, ObjC headers, radare2 pseudo-C
+  - Outputs: hashes, Mach-O structure, ObjC classes+methods, symbols, imports, sections, security properties, ROP gadgets, Ghidra C source, RetDec C source, ObjC headers, radare2 pseudo-C, YARA scan, class-dump, string decryption
 - **CodeViewer component**: `artifacts/frida-analyzer/src/components/code-viewer.tsx` — Professional code viewer with Prism.js syntax highlighting, line numbers, search (Ctrl+F), copy, per-file download, macOS-style toolbar
 - **API routes** (`artifacts/api-server/src/routes/binary.ts`):
   - POST `/api/binary/analyze` — Full binary analysis with multer upload, 300s timeout, 50MB buffer
   - POST `/api/binary/hexdump` — Hex dump of uploaded file (offset/length params, max 64KB)
   - POST `/api/binary/fileinfo` — File type, size, magic bytes
+  - POST `/api/binary/diff` — Compare two binaries (multipart: file1, file2), 60s timeout
 - **Python path**: `/home/runner/workspace/.pythonlibs/bin/python3`
 - **ROPgadget path**: `/home/runner/workspace/.pythonlibs/bin/ROPgadget`
 - **Ghidra path**: `/nix/store/2pbav18pr4rn4v2ngimf29gjkv6l47l6-ghidra-11.3.2/bin/ghidra-analyzeHeadless`
@@ -131,7 +137,7 @@ radare2 5.9.8, binutils, llvm (objdump/nm), python3, retdec, ghidra
 
 ### Python Packages (.pythonlibs)
 
-lief 0.17.6, capstone 5.0.7, keystone-engine, ROPgadget 7.7, pwntools 4.15.0, r2pipe, frida-tools 17.9, objection 1.12
+lief 0.17.6, capstone 5.0.7, keystone-engine, ROPgadget 7.7, pwntools 4.15.0, r2pipe, frida-tools 17.9, objection 1.12, yara-python 4.5.4, unicorn 2.0.1
 Note: angr has cffi/pycparser conflicts on Python 3.11 — not installed.
 
 ### `scripts` (`@workspace/scripts`)

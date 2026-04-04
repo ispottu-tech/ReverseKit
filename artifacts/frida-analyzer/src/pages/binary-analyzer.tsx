@@ -525,6 +525,12 @@ export default function BinaryAnalyzer() {
                 <TabsTrigger value="yara" className="data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-300">
                   🔬 YARA ({result.yara_scan?.total_matches ?? 0})
                 </TabsTrigger>
+                <TabsTrigger value="classdump" className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300">
+                  🏗 Class-dump
+                </TabsTrigger>
+                <TabsTrigger value="stringdecrypt" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-300">
+                  🔓 Decrypt ({result.string_decrypt?.total_found ?? 0})
+                </TabsTrigger>
                 <TabsTrigger value="rop">ROP ({result.rop_gadgets?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="asm">Disasm</TabsTrigger>
                 <TabsTrigger value="sections">Sections</TabsTrigger>
@@ -1210,6 +1216,158 @@ export default function BinaryAnalyzer() {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm text-center py-8">YARA scan not available</p>
+                )}
+              </TabsContent>
+
+              {/* Enhanced Class-dump */}
+              <TabsContent value="classdump" className="mt-4">
+                {result.class_dump ? (
+                  <div className="space-y-4">
+                    {result.class_dump.stats && (
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+                        {Object.entries(result.class_dump.stats).map(([key, val]: [string, any]) => (
+                          <div key={key} className="text-center p-2 rounded bg-indigo-500/5 border border-indigo-500/20">
+                            <div className="text-lg font-bold text-indigo-400">{val}</div>
+                            <div className="text-[10px] text-muted-foreground">{key.replace('total_', '')}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {result.class_dump.dump && (
+                      <CodeViewer
+                        code={result.class_dump.dump}
+                        language="objectivec"
+                        title="class-dump"
+                        downloadFilename={`${result.filename || 'binary'}_classdump.h`}
+                        maxHeight="500px"
+                      />
+                    )}
+
+                    {result.class_dump.protocols?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-muted-foreground mb-2">Protocols ({result.class_dump.protocols.length})</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {result.class_dump.protocols.map((p: string, i: number) => (
+                            <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/15">{p}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.class_dump.categories?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-muted-foreground mb-2">Categories ({result.class_dump.categories.length})</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {result.class_dump.categories.map((cat: any, i: number) => (
+                            <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/15">{cat.class} ({cat.category})</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.class_dump.error && (
+                      <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">{result.class_dump.error}</div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">Class-dump not available</p>
+                )}
+              </TabsContent>
+
+              {/* String Decryption */}
+              <TabsContent value="stringdecrypt" className="mt-4">
+                {result.string_decrypt ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xs text-muted-foreground">{result.string_decrypt.total_found} potential encrypted/encoded strings found</span>
+                    </div>
+
+                    {result.string_decrypt.base64_decoded?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-yellow-400 mb-2">Base64 Decoded ({result.string_decrypt.base64_decoded.length})</h4>
+                        <div className="space-y-1">
+                          {result.string_decrypt.base64_decoded.map((s: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-yellow-500/5 border border-yellow-500/15 text-xs font-mono">
+                              <span className="text-muted-foreground">{s.encoded.substring(0, 40)}...</span>
+                              <span className="mx-2 text-yellow-400">→</span>
+                              <span className="text-emerald-400">{s.decoded}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.string_decrypt.xor_candidates?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-red-400 mb-2">XOR Encrypted ({result.string_decrypt.xor_candidates.length})</h4>
+                        <div className="space-y-1">
+                          {result.string_decrypt.xor_candidates.map((s: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-red-500/5 border border-red-500/15 text-xs font-mono">
+                              <span className="text-muted-foreground">{s.encoded.substring(0, 40)}</span>
+                              <span className="mx-2 text-red-400">⊕ {s.xor_key} →</span>
+                              <span className="text-emerald-400">{s.decoded}</span>
+                              <span className="ml-2 text-[10px] text-muted-foreground">({s.keyword})</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.string_decrypt.hex_encoded?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-blue-400 mb-2">Hex Encoded ({result.string_decrypt.hex_encoded.length})</h4>
+                        <div className="space-y-1">
+                          {result.string_decrypt.hex_encoded.map((s: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-blue-500/5 border border-blue-500/15 text-xs font-mono">
+                              <span className="text-muted-foreground">{s.encoded.substring(0, 40)}</span>
+                              <span className="mx-2 text-blue-400">→</span>
+                              <span className="text-emerald-400">{s.decoded}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.string_decrypt.rot13_decoded?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-purple-400 mb-2">ROT13 Decoded ({result.string_decrypt.rot13_decoded.length})</h4>
+                        <div className="space-y-1">
+                          {result.string_decrypt.rot13_decoded.map((s: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-purple-500/5 border border-purple-500/15 text-xs font-mono">
+                              <span className="text-muted-foreground">{s.encoded.substring(0, 40)}</span>
+                              <span className="mx-2 text-purple-400">→</span>
+                              <span className="text-emerald-400">{s.decoded}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.string_decrypt.suspicious_blobs?.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-semibold text-amber-400 mb-2">High-Entropy Suspicious Blobs ({result.string_decrypt.suspicious_blobs.length})</h4>
+                        <div className="space-y-1">
+                          {result.string_decrypt.suspicious_blobs.map((s: any, i: number) => (
+                            <div key={i} className="p-2 rounded bg-amber-500/5 border border-amber-500/15 text-xs font-mono flex items-center gap-3">
+                              <span className="text-amber-400">{s.offset}</span>
+                              <span className="text-muted-foreground">{s.preview}</span>
+                              <span className="text-[10px] text-amber-300">entropy: {s.entropy}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.string_decrypt.total_found === 0 && (
+                      <div className="text-center py-8">
+                        <p className="text-emerald-400 font-semibold">No encrypted strings detected</p>
+                        <p className="text-muted-foreground text-xs mt-1">Checked Base64, XOR, Hex, ROT13, and high-entropy blobs</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm text-center py-8">String decryption analysis not available</p>
                 )}
               </TabsContent>
             </Tabs>

@@ -25,6 +25,8 @@ function NavIcon({ type, className }: { type: string; className?: string }) {
       return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={c}><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M3 15h18M9 3v18M15 3v18" strokeOpacity="0.25" /><text x="5.5" y="7.5" fontSize="4" fill="currentColor" stroke="none" fontFamily="monospace" fontWeight="bold">0F</text><text x="11" y="13.5" fontSize="4" fill="currentColor" stroke="none" fontFamily="monospace" fontWeight="bold">A3</text></svg>);
     case "scripts":
       return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={c}><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z" /><path d="M14 2v6h6" /><path d="M8 13l2 2-2 2M12 17h4" /></svg>);
+    case "diff":
+      return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={c}><path d="M4 6h7M4 10h7M4 14h7M4 18h7" strokeOpacity="0.4" /><path d="M13 6h7M13 10h7M13 14h7M13 18h7" /><path d="M12 3v18" strokeDasharray="2 2" strokeOpacity="0.5" /></svg>);
     case "device":
       return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={c}><rect x="5" y="2" width="14" height="20" rx="3" /><path d="M12 18h.01" strokeWidth="2.5" strokeLinecap="round" /><path d="M9 2h6" strokeOpacity="0.3" /></svg>);
     default:
@@ -47,6 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       label: "Analysis",
       items: [
         { href: "/binary", label: "Binary Inspector", icon: "binary" },
+        { href: "/diff", label: "Binary Diff", icon: "diff" },
         { href: "/hex", label: "Hex Viewer", icon: "hex" },
       ],
     },

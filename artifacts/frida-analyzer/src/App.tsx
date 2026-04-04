@@ -8,6 +8,7 @@ import BinaryAnalyzer from "@/pages/binary-analyzer";
 import HexViewer from "@/pages/hex-viewer";
 import Scripts from "@/pages/scripts";
 import Device from "@/pages/device";
+import BinaryDiff from "@/pages/binary-diff";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -18,6 +19,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/binary" component={BinaryAnalyzer} />
+        <Route path="/diff" component={BinaryDiff} />
         <Route path="/hex" component={HexViewer} />
         <Route path="/scripts" component={Scripts} />
         <Route path="/device" component={Device} />

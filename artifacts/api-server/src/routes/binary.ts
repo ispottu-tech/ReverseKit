@@ -131,4 +131,47 @@ router.post("/binary/fileinfo", upload.single("file"), async (req, res) => {
   }
 });
 
+const diffUpload = multer({
+  dest: os.tmpdir(),
+  limits: { fileSize: 100 * 1024 * 1024 },
+}).fields([
+  { name: "file1", maxCount: 1 },
+  { name: "file2", maxCount: 1 },
+]);
+
+router.post("/binary/diff", diffUpload, async (req, res) => {
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+  const file1 = files?.file1?.[0];
+  const file2 = files?.file2?.[0];
+
+  if (!file1 || !file2) {
+    if (file1) try { fs.unlinkSync(file1.path); } catch {}
+    if (file2) try { fs.unlinkSync(file2.path); } catch {}
+    return res.status(400).json({ error: "Two files required (file1, file2)" });
+  }
+
+  try {
+    const pythonBin = process.env.PYTHON_BIN || "/home/runner/workspace/.pythonlibs/bin/python3";
+    const diffScript = path.join(__dirname, "../src/lib/binary_diff.py");
+    const { stdout, stderr } = await execFileAsync(pythonBin, [diffScript, file1.path, file2.path, file1.originalname, file2.originalname], {
+      timeout: 60000,
+      maxBuffer: 20 * 1024 * 1024,
+    });
+
+    let result: Record<string, unknown>;
+    try {
+      result = JSON.parse(stdout);
+    } catch {
+      return res.status(500).json({ error: "Diff failed", details: stderr || stdout });
+    }
+    res.json(result);
+  } catch (err: unknown) {
+    const error = err as { stderr?: string; message?: string };
+    res.status(500).json({ error: error.stderr || error.message || String(err) });
+  } finally {
+    try { fs.unlinkSync(file1.path); } catch {}
+    try { fs.unlinkSync(file2.path); } catch {}
+  }
+});
+
 export default router;
