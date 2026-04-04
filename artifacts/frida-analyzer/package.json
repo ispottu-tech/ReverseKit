@@ -73,5 +73,9 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "@types/prismjs": "^1.26.6",
+    "prismjs": "^1.30.0"
   }
 }

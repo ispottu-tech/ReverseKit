@@ -8,6 +8,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CodeViewer from "@/components/code-viewer";
+import "@/styles/prism-reversekit.css";
 
 const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "").replace(/\/[^/]+$/, "") + "/api";
 
@@ -499,112 +501,69 @@ export default function BinaryAnalyzer() {
 
               {/* Ghidra Decompiled Source */}
               <TabsContent value="ghidra" className="mt-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileCode className="w-4 h-4 text-violet-400" />
-                      <span className="text-sm font-semibold text-violet-300">Ghidra 11.3.2 Decompiled C</span>
-                      {result.ghidra?.functions_decompiled != null && (
-                        <Badge variant="outline" className="text-xs border-violet-500/30 text-violet-400">
-                          {result.ghidra.functions_decompiled} functions
-                        </Badge>
-                      )}
-                    </div>
-                    {result.ghidra?.source && (
-                      <button
-                        onClick={() => {
-                          const blob = new Blob([result.ghidra!.source!], { type: "text/x-c" });
-                          const a = document.createElement("a");
-                          a.href = URL.createObjectURL(blob);
-                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_ghidra.c`;
-                          a.click();
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-violet-500/10 border border-violet-500/30 text-violet-300 hover:bg-violet-500/20 transition-colors"
-                      >
-                        <Download className="w-3 h-3" />
-                        Download .c
-                      </button>
-                    )}
+                {result.ghidra?.error && (
+                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs mb-3">
+                    {result.ghidra.error}
                   </div>
-                  {result.ghidra?.error && (
-                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
-                      {result.ghidra.error}
-                    </div>
-                  )}
-                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-violet-300/90 bg-black/50 rounded-lg p-4 border border-violet-500/20 leading-relaxed whitespace-pre-wrap">
-                    {result.ghidra?.source || "Ghidra decompilation produced no output — binary may not contain standard function prologues."}
-                  </pre>
-                </div>
+                )}
+                <CodeViewer
+                  code={result.ghidra?.source || "// Ghidra decompilation produced no output.\n// Binary may not contain standard function prologues."}
+                  language="c"
+                  filename={`${result.filename || "binary"}_ghidra.c`}
+                  engine={`Ghidra 11.3.2 — ${result.ghidra?.functions_decompiled ?? 0} functions`}
+                  accentColor="violet"
+                  downloadLabel=".c"
+                  onDownload={result.ghidra?.source ? () => {
+                    const blob = new Blob([result.ghidra!.source!], { type: "text/x-c" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_ghidra.c`;
+                    a.click();
+                  } : undefined}
+                />
               </TabsContent>
 
               {/* RetDec Decompiled Source */}
               <TabsContent value="retdec" className="mt-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Braces className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm font-semibold text-cyan-300">RetDec 5.0 Decompiled C</span>
-                    </div>
-                    {result.retdec?.source && (
-                      <button
-                        onClick={() => {
-                          const blob = new Blob([result.retdec!.source!], { type: "text/x-c" });
-                          const a = document.createElement("a");
-                          a.href = URL.createObjectURL(blob);
-                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_retdec.c`;
-                          a.click();
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-colors"
-                      >
-                        <Download className="w-3 h-3" />
-                        Download .c
-                      </button>
-                    )}
+                {result.retdec?.error && (
+                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs mb-3">
+                    {result.retdec.error}
                   </div>
-                  {result.retdec?.error && (
-                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
-                      {result.retdec.error}
-                    </div>
-                  )}
-                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-cyan-300/90 bg-black/50 rounded-lg p-4 border border-cyan-500/20 leading-relaxed whitespace-pre-wrap">
-                    {result.retdec?.source || "RetDec decompilation produced no output."}
-                  </pre>
-                </div>
+                )}
+                <CodeViewer
+                  code={result.retdec?.source || "// RetDec decompilation produced no output."}
+                  language="c"
+                  filename={`${result.filename || "binary"}_retdec.c`}
+                  engine="RetDec 5.0"
+                  accentColor="cyan"
+                  downloadLabel=".c"
+                  onDownload={result.retdec?.source ? () => {
+                    const blob = new Blob([result.retdec!.source!], { type: "text/x-c" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_retdec.c`;
+                    a.click();
+                  } : undefined}
+                />
               </TabsContent>
 
               {/* ObjC Headers */}
               <TabsContent value="headers" className="mt-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileCode className="w-4 h-4 text-amber-400" />
-                      <span className="text-sm font-semibold text-amber-300">ObjC Headers (class-dump)</span>
-                      {result.objc_headers?.class_count != null && (
-                        <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400">
-                          {result.objc_headers.class_count} classes
-                        </Badge>
-                      )}
-                    </div>
-                    {result.objc_headers?.headers && (
-                      <button
-                        onClick={() => {
-                          const blob = new Blob([result.objc_headers!.headers!], { type: "text/plain" });
-                          const a = document.createElement("a");
-                          a.href = URL.createObjectURL(blob);
-                          a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_headers.h`;
-                          a.click();
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition-colors"
-                      >
-                        <Download className="w-3 h-3" />
-                        Download .h
-                      </button>
-                    )}
-                  </div>
-                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-amber-300/90 bg-black/50 rounded-lg p-4 border border-amber-500/20 leading-relaxed whitespace-pre-wrap">
-                    {result.objc_headers?.headers || "No Objective-C class metadata found."}
-                  </pre>
-                </div>
+                <CodeViewer
+                  code={result.objc_headers?.headers || "// No Objective-C class metadata found in this binary."}
+                  language="objectivec"
+                  filename={`${result.filename || "binary"}_headers.h`}
+                  engine={`class-dump — ${result.objc_headers?.class_count ?? 0} classes`}
+                  accentColor="amber"
+                  downloadLabel=".h"
+                  onDownload={result.objc_headers?.headers ? () => {
+                    const blob = new Blob([result.objc_headers!.headers!], { type: "text/plain" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_headers.h`;
+                    a.click();
+                  } : undefined}
+                />
               </TabsContent>
 
               {/* Functions */}
@@ -785,20 +744,21 @@ export default function BinaryAnalyzer() {
 
               {/* Pseudo-C from radare2 */}
               <TabsContent value="pseudoc" className="mt-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Code2 className="w-4 h-4 text-emerald-400" />
-                    <span className="text-sm font-semibold text-emerald-300">Radare2 Pseudo-C (all functions)</span>
-                    {result.r2_functions_decompiled != null && (
-                      <Badge variant="outline" className="text-xs border-emerald-500/30 text-emerald-400">
-                        {result.r2_functions_decompiled} functions
-                      </Badge>
-                    )}
-                  </div>
-                  <pre className="max-h-[700px] overflow-auto text-xs font-mono text-emerald-400/90 bg-black/50 rounded-lg p-4 border border-emerald-500/20 leading-relaxed whitespace-pre-wrap break-all">
-                    {result.pseudo_c || "No pseudo-C decompilation available"}
-                  </pre>
-                </div>
+                <CodeViewer
+                  code={result.pseudo_c || "// No pseudo-C decompilation available"}
+                  language="c"
+                  filename={`${result.filename || "binary"}_r2_pseudoC.c`}
+                  engine={`radare2 5.9.8 — ${result.r2_functions_decompiled ?? 0} functions`}
+                  accentColor="emerald"
+                  downloadLabel=".c"
+                  onDownload={result.pseudo_c ? () => {
+                    const blob = new Blob([result.pseudo_c!], { type: "text/x-c" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `${(result.filename || "binary").replace(/[^a-zA-Z0-9._-]/g, "_")}_r2_pseudoC.c`;
+                    a.click();
+                  } : undefined}
+                />
               </TabsContent>
 
               {/* Sections */}
