@@ -398,8 +398,31 @@ def capstone_disasm(path):
     except Exception as e:
         return f"Error: {e}"
 
+def extract_thin_arm64(path):
+    """Extract arm64 thin slice from FAT/universal binary using llvm-lipo"""
+    try:
+        with open(path, "rb") as f:
+            magic = f.read(4)
+        if magic != b'\xca\xfe\xba\xbe':
+            return path, None
+
+        tmp_dir = tempfile.mkdtemp(prefix="lipo_")
+        thin_path = os.path.join(tmp_dir, os.path.basename(path) + ".arm64")
+        r = subprocess.run(
+            ["llvm-lipo", path, "-thin", "arm64", "-output", thin_path],
+            capture_output=True, text=True, timeout=30
+        )
+        if r.returncode == 0 and os.path.exists(thin_path):
+            return thin_path, tmp_dir
+
+        return path, None
+    except Exception:
+        return path, None
+
+
 def ghidra_decompile(path):
     """Run Ghidra headless decompiler to produce C source code"""
+    thin_path, lipo_dir = extract_thin_arm64(path)
     try:
         if not os.path.exists(GHIDRA_HEADLESS):
             return {"error": "Ghidra not available", "source": ""}
@@ -415,7 +438,7 @@ def ghidra_decompile(path):
         cmd_analyze = [
             GHIDRA_HEADLESS,
             project_dir, "ReverseKit",
-            "-import", path,
+            "-import", thin_path,
             "-postScript", GHIDRA_SCRIPT,
             "-scriptPath", os.path.dirname(GHIDRA_SCRIPT),
             "-deleteProject",
@@ -447,10 +470,14 @@ def ghidra_decompile(path):
         return {"error": "Ghidra decompilation timed out (120s limit)", "source": ""}
     except Exception as e:
         return {"error": str(e), "source": ""}
+    finally:
+        if lipo_dir:
+            shutil.rmtree(lipo_dir, ignore_errors=True)
 
 
 def retdec_decompile(path):
     """Run RetDec decompiler to produce C source code"""
+    thin_path, lipo_dir = extract_thin_arm64(path)
     try:
         if not os.path.exists(RETDEC_BIN):
             return {"error": "RetDec not available", "source": ""}
@@ -460,7 +487,7 @@ def retdec_decompile(path):
 
         cmd = [
             RETDEC_BIN,
-            path,
+            thin_path,
             "-o", output_file,
         ]
 
@@ -482,6 +509,9 @@ def retdec_decompile(path):
         return {"error": "RetDec decompilation timed out (120s limit)", "source": ""}
     except Exception as e:
         return {"error": str(e), "source": ""}
+    finally:
+        if lipo_dir:
+            shutil.rmtree(lipo_dir, ignore_errors=True)
 
 
 def extract_objc_headers(path):
