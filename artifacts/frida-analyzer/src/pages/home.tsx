@@ -1,59 +1,65 @@
 import { useLocation } from "wouter";
-import { ScanSearch, Binary, Crosshair, BookMarked, Smartphone, ArrowRight, Shield, Cpu, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ArrowRight, ChevronRight, Zap, Package } from "lucide-react";
 
 const tools = [
   {
     href: "/binary",
-    icon: ScanSearch,
     title: "Binary Inspector",
-    desc: "Upload any iOS binary (.dylib, .framework, Mach-O) and get a full security & structure report — classes, functions, ROP gadgets, obfuscation detection, and pseudo-C decompilation.",
+    desc: "Upload any iOS binary and get a full security & structure report — classes, functions, ROP gadgets, obfuscation detection, and pseudo-C decompilation.",
     tags: ["lief", "radare2", "capstone", "ROPgadget"],
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10 border-emerald-500/20",
-    ready: true,
+    gradient: "from-emerald-500/15 to-teal-500/5",
+    border: "border-emerald-500/20 hover:border-emerald-500/40",
+    accent: "text-emerald-400",
+    dotColor: "bg-emerald-400",
   },
   {
     href: "/hex",
-    icon: Binary,
     title: "Hex Viewer",
-    desc: "Upload any file and view its raw hex bytes, ASCII representation, and file header magic bytes. Useful for inspecting binary structures and finding hidden data.",
+    desc: "View raw hex bytes, ASCII representation, and file header magic bytes. Inspect binary structures and find hidden data patterns.",
     tags: ["hex dump", "magic bytes", "raw view"],
-    color: "text-blue-400",
-    bg: "bg-blue-500/10 border-blue-500/20",
-    ready: true,
+    gradient: "from-blue-500/15 to-indigo-500/5",
+    border: "border-blue-500/20 hover:border-blue-500/40",
+    accent: "text-blue-400",
+    dotColor: "bg-blue-400",
   },
   {
     href: "/scripts",
-    icon: BookMarked,
     title: "Script Arsenal",
-    desc: "A library of ready-to-use Frida scripts for SSL bypass, method tracing, jailbreak detection bypass, and more. Add your own scripts and they'll be saved in your browser.",
+    desc: "Ready-to-use Frida scripts for SSL bypass, method tracing, jailbreak detection bypass, and more. Save your own scripts locally.",
     tags: ["frida", "hooks", "bypass"],
-    color: "text-amber-400",
-    bg: "bg-amber-500/10 border-amber-500/20",
-    ready: true,
+    gradient: "from-amber-500/15 to-orange-500/5",
+    border: "border-amber-500/20 hover:border-amber-500/40",
+    accent: "text-amber-400",
+    dotColor: "bg-amber-400",
   },
   {
     href: "/device",
-    icon: Smartphone,
     title: "Device Manager",
-    desc: "Connect to a jailbroken iOS device running Frida Server. Browse processes, spawn apps, create hook sessions, and execute scripts in real-time on the target device.",
+    desc: "Connect to a jailbroken iOS device running Frida Server. Browse processes, spawn apps, hook methods, and execute scripts live.",
     tags: ["frida-server", "processes", "hooking"],
-    color: "text-violet-400",
-    bg: "bg-violet-500/10 border-violet-500/20",
-    ready: true,
+    gradient: "from-violet-500/15 to-purple-500/5",
+    border: "border-violet-500/20 hover:border-violet-500/40",
+    accent: "text-violet-400",
+    dotColor: "bg-violet-400",
   },
 ];
 
-const installedTools = [
-  { name: "radare2", version: "5.9.8", desc: "Disassembly & decompilation" },
-  { name: "lief", version: "0.17.6", desc: "Mach-O / ELF parser" },
-  { name: "capstone", version: "5.0", desc: "ARM64 disassembler" },
-  { name: "ROPgadget", version: "7.7", desc: "ROP chain finder" },
-  { name: "pwntools", version: "4.15", desc: "Binary security checks" },
-  { name: "frida-tools", version: "17.9", desc: "Dynamic instrumentation" },
-  { name: "objection", version: "1.12", desc: "Runtime exploration" },
-  { name: "Ghidra", version: "", desc: "NSA decompiler" },
+const engines = [
+  { name: "radare2", ver: "5.9.8", role: "Disassembly" },
+  { name: "lief", ver: "0.17.6", role: "Mach-O Parser" },
+  { name: "capstone", ver: "5.0", role: "ARM64 Disasm" },
+  { name: "ROPgadget", ver: "7.7", role: "Gadget Finder" },
+  { name: "pwntools", ver: "4.15", role: "Security" },
+  { name: "frida", ver: "17.9", role: "Instrumentation" },
+  { name: "objection", ver: "1.12", role: "Exploration" },
+  { name: "Ghidra", ver: "", role: "Decompiler" },
+];
+
+const steps = [
+  { n: "01", title: "Upload", desc: "Drop any .dylib, .framework, or Mach-O binary into the Binary Inspector." },
+  { n: "02", title: "Analyze", desc: "ReverseKit runs 7+ engines automatically — structure, security, obfuscation." },
+  { n: "03", title: "Export", desc: "Download the full analysis report as JSON for verification or documentation." },
 ];
 
 export default function Home() {
@@ -62,117 +68,92 @@ export default function Home() {
   return (
     <div className="flex-1 overflow-auto">
       {/* Hero */}
-      <div className="px-8 pt-10 pb-8 border-b border-border/40">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20">
-            <Crosshair className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">ReverseKit</h1>
-            <p className="text-muted-foreground text-sm">iOS Reverse Engineering & Binary Analysis Platform</p>
-          </div>
+      <div className="px-10 pt-12 pb-10">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-px flex-1 max-w-12 bg-primary/40" />
+          <span className="text-[11px] font-semibold tracking-[0.2em] text-primary/70 uppercase">iOS Analysis Platform</span>
         </div>
-        <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed mt-4">
-          A complete toolkit for analyzing iOS binaries, inspecting Mach-O files, finding security vulnerabilities,
-          and performing dynamic analysis with Frida. Upload a binary to get started — no device required for static analysis.
+        <h1 className="text-4xl font-extrabold tracking-tight leading-[1.1] mb-4">
+          Reverse Engineer<br />
+          <span className="bg-gradient-to-r from-primary to-emerald-300 bg-clip-text text-transparent">with Confidence.</span>
+        </h1>
+        <p className="text-muted-foreground text-[15px] max-w-lg leading-relaxed">
+          Analyze iOS binaries, inspect Mach-O files, find security vulnerabilities, and perform dynamic analysis — all from your browser.
         </p>
+        <button
+          onClick={() => setLocation("/binary")}
+          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
+        >
+          Start Analysis <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
-      <div className="px-8 py-8 space-y-10">
+      <div className="px-10 pb-12 space-y-12">
         {/* Tool Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {tools.map((tool) => (
+            <button
+              key={tool.href}
+              onClick={() => setLocation(tool.href)}
+              className={cn(
+                "text-left p-6 rounded-2xl border bg-gradient-to-br transition-all duration-300 group",
+                "hover:shadow-xl hover:shadow-black/10 hover:-translate-y-0.5",
+                tool.gradient,
+                tool.border
+              )}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className={cn("w-2 h-2 rounded-full", tool.dotColor)} />
+                <h3 className="font-bold text-foreground text-[17px] tracking-tight">{tool.title}</h3>
+                <ChevronRight className="w-4 h-4 text-muted-foreground/40 ml-auto group-hover:text-foreground/60 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <p className="text-[13px] text-muted-foreground leading-relaxed mb-4 pl-5">
+                {tool.desc}
+              </p>
+              <div className="flex flex-wrap gap-1.5 pl-5">
+                {tool.tags.map(tag => (
+                  <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-muted-foreground/60 border border-white/5">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* How it works */}
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            Available Tools
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {tools.map((tool) => (
-              <button
-                key={tool.href}
-                onClick={() => setLocation(tool.href)}
-                className={cn(
-                  "text-left p-5 rounded-xl border transition-all group",
-                  "hover:shadow-lg hover:scale-[1.01]",
-                  tool.bg
-                )}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg bg-black/20")}>
-                      <tool.icon className={cn("w-5 h-5", tool.color)} />
-                    </div>
-                    <h3 className="font-bold text-foreground text-lg">{tool.title}</h3>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mt-1" />
+          <div className="flex items-center gap-2 mb-6">
+            <Zap className="w-4 h-4 text-primary/60" />
+            <h2 className="text-xs font-semibold tracking-[0.15em] text-muted-foreground/60 uppercase">How it works</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {steps.map((step) => (
+              <div key={step.n} className="relative">
+                <span className="text-4xl font-black text-primary/8 absolute -top-2 -left-1 select-none">{step.n}</span>
+                <div className="relative pl-1 pt-6">
+                  <h3 className="font-bold text-foreground text-sm mb-1.5">{step.title}</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{step.desc}</p>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                  {tool.desc}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {tool.tags.map(tag => (
-                    <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/20 text-muted-foreground/80 border border-white/5">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Quick Start */}
-        <div className="rounded-xl border border-border/50 bg-card/30 p-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-            <Cpu className="w-4 h-4" />
-            Quick Start
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">1</span>
-                <span className="font-semibold text-foreground">Static Analysis</span>
-              </div>
-              <p className="text-muted-foreground text-xs leading-relaxed pl-8">
-                Open <span className="text-foreground font-medium">Binary Inspector</span> → upload a .dylib or Mach-O file → get a full security report with classes, functions, ROP gadgets, and decompiled code. No device needed.
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">2</span>
-                <span className="font-semibold text-foreground">Hex Inspection</span>
-              </div>
-              <p className="text-muted-foreground text-xs leading-relaxed pl-8">
-                Open <span className="text-foreground font-medium">Hex Viewer</span> → upload any file → browse raw bytes, find magic numbers, and inspect binary structures.
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">3</span>
-                <span className="font-semibold text-foreground">Dynamic Analysis</span>
-              </div>
-              <p className="text-muted-foreground text-xs leading-relaxed pl-8">
-                Open <span className="text-foreground font-medium">Device Manager</span> → enter your jailbroken device IP → connect → attach to processes and inject Frida scripts live.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Installed Tools */}
+        {/* Engines */}
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-            <Wrench className="w-4 h-4" />
-            Integrated Analysis Engines
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {installedTools.map(tool => (
-              <div key={tool.name} className="px-3 py-2.5 rounded-lg border border-border/40 bg-secondary/15">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-mono text-xs font-bold text-foreground">{tool.name}</span>
-                  {tool.version && (
-                    <span className="text-[10px] font-mono text-primary/70">{tool.version}</span>
-                  )}
+          <div className="flex items-center gap-2 mb-5">
+            <Package className="w-4 h-4 text-primary/60" />
+            <h2 className="text-xs font-semibold tracking-[0.15em] text-muted-foreground/60 uppercase">Integrated Engines</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {engines.map(e => (
+              <div key={e.name} className="px-4 py-3 rounded-xl border border-border/40 bg-card/40 hover:bg-card/70 transition-colors group">
+                <div className="flex items-baseline gap-2 mb-0.5">
+                  <span className="font-mono text-[13px] font-bold text-foreground">{e.name}</span>
+                  {e.ver && <span className="text-[10px] font-mono text-primary/50">{e.ver}</span>}
                 </div>
-                <p className="text-[11px] text-muted-foreground">{tool.desc}</p>
+                <p className="text-[11px] text-muted-foreground/60">{e.role}</p>
               </div>
             ))}
           </div>

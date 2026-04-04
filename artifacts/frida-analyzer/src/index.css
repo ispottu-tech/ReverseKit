@@ -62,67 +62,67 @@
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --foreground: 222 47% 11%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 173 100% 35%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 160 84% 39%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 173 100% 35%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 220 9% 46%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 160 84% 39%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 173 100% 35%;
-  --radius: 0.5rem;
-  --sidebar: 240 5.9% 95%;
-  --sidebar-foreground: 240 10% 3.9%;
-  --sidebar-border: 240 5.9% 90%;
-  --sidebar-primary: 173 100% 35%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 160 84% 39%;
+  --radius: 0.625rem;
+  --sidebar: 220 14% 96%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-primary: 160 84% 39%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 4.8% 90%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-ring: 173 100% 35%;
+  --sidebar-accent: 220 14% 90%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-ring: 160 84% 39%;
   
-  --app-font-sans: 'Inter', sans-serif;
-  --app-font-mono: 'Space Mono', monospace;
+  --app-font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 .dark {
-  --background: 230 25% 6%;
-  --foreground: 230 15% 90%;
-  --card: 230 25% 8%;
-  --card-foreground: 230 15% 90%;
-  --popover: 230 25% 8%;
-  --popover-foreground: 230 15% 90%;
-  --primary: 173 100% 45%;
-  --primary-foreground: 230 25% 6%;
-  --secondary: 230 25% 12%;
-  --secondary-foreground: 230 15% 90%;
-  --muted: 230 25% 12%;
-  --muted-foreground: 230 15% 60%;
-  --accent: 173 100% 45%;
-  --accent-foreground: 230 25% 6%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 230 15% 90%;
-  --border: 230 25% 12%;
-  --input: 230 25% 12%;
-  --ring: 173 100% 45%;
+  --background: 224 30% 5%;
+  --foreground: 210 20% 92%;
+  --card: 224 28% 7%;
+  --card-foreground: 210 20% 92%;
+  --popover: 224 28% 7%;
+  --popover-foreground: 210 20% 92%;
+  --primary: 160 84% 45%;
+  --primary-foreground: 224 30% 5%;
+  --secondary: 224 22% 11%;
+  --secondary-foreground: 210 20% 80%;
+  --muted: 224 22% 11%;
+  --muted-foreground: 215 16% 52%;
+  --accent: 160 84% 45%;
+  --accent-foreground: 224 30% 5%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 210 20% 92%;
+  --border: 224 20% 14%;
+  --input: 224 20% 14%;
+  --ring: 160 84% 45%;
   
-  --sidebar: 230 30% 4%;
-  --sidebar-foreground: 230 15% 90%;
-  --sidebar-border: 230 25% 10%;
-  --sidebar-primary: 173 100% 45%;
-  --sidebar-primary-foreground: 230 25% 6%;
-  --sidebar-accent: 230 25% 12%;
-  --sidebar-accent-foreground: 230 15% 90%;
-  --sidebar-ring: 173 100% 45%;
+  --sidebar: 224 35% 3.5%;
+  --sidebar-foreground: 210 20% 92%;
+  --sidebar-border: 224 25% 10%;
+  --sidebar-primary: 160 84% 45%;
+  --sidebar-primary-foreground: 224 30% 5%;
+  --sidebar-accent: 224 22% 10%;
+  --sidebar-accent-foreground: 210 20% 92%;
+  --sidebar-ring: 160 84% 45%;
 }
 
 @layer base {
@@ -133,4 +133,8 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+.glow-sm {
+  box-shadow: 0 0 15px -3px hsl(var(--primary) / 0.15);
 }

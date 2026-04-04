@@ -163,16 +163,13 @@ export default function HexViewer() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex-shrink-0 px-8 py-5 border-b border-border/50">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/10">
-            <Binary className="w-4 h-4 text-blue-400" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">Hex Viewer</h1>
-            <p className="text-muted-foreground text-xs mt-0.5">Upload any file to view its raw hex bytes and ASCII representation.</p>
-          </div>
+      <div className="flex-shrink-0 px-10 py-6 border-b border-border/40">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="h-px w-8 bg-blue-400/40" />
+          <span className="text-[10px] font-semibold tracking-[0.2em] text-blue-400/60 uppercase">Analysis</span>
         </div>
+        <h1 className="text-2xl font-extrabold tracking-tight">Hex Viewer</h1>
+        <p className="text-muted-foreground/60 text-xs mt-1">Upload any file to view raw hex bytes and ASCII representation.</p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-8 py-5 space-y-4">

@@ -197,18 +197,17 @@ export default function Scripts() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex-shrink-0 px-8 py-5 border-b border-border/50">
+      <div className="flex-shrink-0 px-10 py-6 border-b border-border/40">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <BookMarked className="w-4 h-4 text-primary" />
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-px w-8 bg-amber-400/40" />
+              <span className="text-[10px] font-semibold tracking-[0.2em] text-amber-400/60 uppercase">Toolkit</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">Script Arsenal</h1>
-              <p className="text-muted-foreground text-xs mt-0.5">Save and reuse Frida scripts. Stored locally in your browser.</p>
-            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight">Script Arsenal</h1>
+            <p className="text-muted-foreground/60 text-xs mt-1">Save and reuse Frida scripts. Stored locally in your browser.</p>
           </div>
-          <Button size="sm" onClick={() => setShowNew(v => !v)}>
+          <Button size="sm" onClick={() => setShowNew(v => !v)} className="rounded-lg">
             {showNew ? <X className="w-3.5 h-3.5 mr-2" /> : <Plus className="w-3.5 h-3.5 mr-2" />}
             {showNew ? "Cancel" : "Add Script"}
           </Button>

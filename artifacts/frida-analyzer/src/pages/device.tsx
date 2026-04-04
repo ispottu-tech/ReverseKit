@@ -93,21 +93,20 @@ export default function Device() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-border/50">
+      <div className="flex-shrink-0 px-10 py-6 border-b border-border/40">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-500/10">
-              <Smartphone className="w-4 h-4 text-violet-400" />
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-px w-8 bg-violet-400/40" />
+              <span className="text-[10px] font-semibold tracking-[0.2em] text-violet-400/60 uppercase">Dynamic Analysis</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">Device Manager</h1>
-              <p className="text-muted-foreground text-xs mt-0.5">
-                {isConnected
-                  ? <span>Connected to <span className="font-mono text-foreground">{status?.deviceName}</span> @ {status?.host}:{status?.port}</span>
-                  : "Connect to a jailbroken iOS device running Frida Server"
-                }
-              </p>
-            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight">Device Manager</h1>
+            <p className="text-muted-foreground/60 text-xs mt-1">
+              {isConnected
+                ? <span>Connected to <span className="font-mono text-foreground">{status?.deviceName}</span> @ {status?.host}:{status?.port}</span>
+                : "Connect to a jailbroken iOS device running Frida Server"
+              }
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono border", apiOnline ? "border-primary/30 text-primary bg-primary/10" : "border-border/40 text-muted-foreground")}>
