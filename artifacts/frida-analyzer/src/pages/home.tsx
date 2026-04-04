@@ -6,12 +6,22 @@ const tools = [
   {
     href: "/binary",
     title: "Binary Inspector",
-    desc: "Upload any iOS binary and get full source code extraction — Ghidra + RetDec decompilation, ObjC headers, ROP gadgets, and security analysis.",
-    tags: ["Ghidra", "RetDec", "radare2", "lief"],
+    desc: "Upload any iOS binary and get full source code extraction — Ghidra + RetDec decompilation, ObjC headers, YARA threat scanning, ROP gadgets, and 20 analysis tabs.",
+    tags: ["Ghidra", "RetDec", "radare2", "YARA", "lief"],
     gradient: "from-emerald-500/15 to-teal-500/5",
     border: "border-emerald-500/20 hover:border-emerald-500/40",
     accent: "text-emerald-400",
     dotColor: "bg-emerald-400",
+  },
+  {
+    href: "/diff",
+    title: "Binary Diff",
+    desc: "Compare two iOS binary versions — find new APIs, privacy changes, security regressions, and network footprint expansion with smart categorization.",
+    tags: ["security", "privacy", "network", "diff"],
+    gradient: "from-cyan-500/15 to-sky-500/5",
+    border: "border-cyan-500/20 hover:border-cyan-500/40",
+    accent: "text-cyan-400",
+    dotColor: "bg-cyan-400",
   },
   {
     href: "/hex",
@@ -49,18 +59,21 @@ const engines = [
   { name: "Ghidra", ver: "11.3.2", role: "Decompiler" },
   { name: "RetDec", ver: "5.0", role: "Decompiler" },
   { name: "radare2", ver: "5.9.8", role: "Disassembly" },
+  { name: "YARA", ver: "4.5", role: "Threat Scanner" },
   { name: "lief", ver: "0.17.6", role: "Mach-O Parser" },
   { name: "capstone", ver: "5.0", role: "ARM64 Disasm" },
   { name: "ROPgadget", ver: "7.7", role: "Gadget Finder" },
   { name: "pwntools", ver: "4.15", role: "Security" },
   { name: "frida", ver: "17.9", role: "Instrumentation" },
   { name: "objection", ver: "1.12", role: "Exploration" },
+  { name: "unicorn", ver: "2.0", role: "CPU Emulation" },
 ];
 
 const steps = [
-  { n: "01", title: "Upload", desc: "Drop any .dylib, .framework, or Mach-O binary into the Binary Inspector." },
-  { n: "02", title: "Analyze", desc: "ReverseKit runs 9+ engines automatically — decompilation, structure, security." },
-  { n: "03", title: "Export", desc: "Download decompiled C source, ObjC headers, or full JSON analysis report." },
+  { n: "01", title: "Upload", desc: "Drop any .dylib, .ipa, .deb, .zip, or Mach-O binary — archives are auto-extracted." },
+  { n: "02", title: "Analyze", desc: "21 analysis steps run automatically — decompilation, YARA scanning, class-dump, string decryption, security checks." },
+  { n: "03", title: "Compare", desc: "Use Binary Diff to compare versions — get security assessments, privacy impact, and network footprint changes." },
+  { n: "04", title: "Export", desc: "Download decompiled C source, ObjC headers, or copy results from any of the 20 analysis tabs." },
 ];
 
 export default function Home() {
@@ -128,7 +141,7 @@ export default function Home() {
             <Zap className="w-4 h-4 text-primary/60" />
             <h2 className="text-xs font-semibold tracking-[0.15em] text-muted-foreground/60 uppercase">How it works</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {steps.map((step) => (
               <div key={step.n} className="relative">
                 <span className="text-4xl font-black text-primary/8 absolute -top-2 -left-1 select-none">{step.n}</span>
@@ -147,7 +160,7 @@ export default function Home() {
             <Package className="w-4 h-4 text-primary/60" />
             <h2 className="text-xs font-semibold tracking-[0.15em] text-muted-foreground/60 uppercase">Integrated Engines</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
             {engines.map(e => (
               <div key={e.name} className="px-4 py-3 rounded-xl border border-border/40 bg-card/40 hover:bg-card/70 transition-colors group">
                 <div className="flex items-baseline gap-2 mb-0.5">
