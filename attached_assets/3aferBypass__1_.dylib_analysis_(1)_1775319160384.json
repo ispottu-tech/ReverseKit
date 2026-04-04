@@ -1,0 +1,1412 @@
+{
+  "_meta": {
+    "tool": "ReverseKit v2.0",
+    "generated": "2026-04-04T16:12:30.319Z",
+    "engines": [
+      "lief 0.17.6",
+      "capstone 5.0",
+      "radare2 5.9.8",
+      "ROPgadget 7.7",
+      "pwntools 4.15",
+      "Ghidra 11.3.2",
+      "RetDec 5.0"
+    ]
+  },
+  "filename": "3aferBypass (1).dylib",
+  "file_info": "/tmp/e06971afbcb37423481c6231f960161d: Mach-O 64-bit arm64 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>",
+  "hashes": {
+    "md5": "83e752205c5e77969afc49dd1ed20e65",
+    "sha1": "26195a7ef4befab750709bba630b8ea99d85589a",
+    "sha256": "7bec344660ee1547fc3dd79f2148a2be19ced437edd92b21f3ec62114f167791",
+    "size": 90016
+  },
+  "macho": {
+    "type": "Thin Binary (ARM64)",
+    "architectures": [
+      {
+        "cpu": "ARM64",
+        "file_type": "DYLIB"
+      }
+    ],
+    "objc_classes": [],
+    "encrypted": false,
+    "encryption_details": [
+      {
+        "command": "EncryptionInfo",
+        "crypt_id": 0
+      }
+    ],
+    "linked_libraries": [
+      "/home/runner/workspace/3afer_tweak/3aferBypass.dylib",
+      "/System/Library/Frameworks/Foundation.framework/Foundation",
+      "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+      "/usr/lib/libobjc.A.dylib",
+      "/System/Library/Frameworks/UIKit.framework/UIKit",
+      "/usr/lib/libSystem.B.dylib",
+      "/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"
+    ],
+    "load_commands": [
+      "DynamicSymbolCommand",
+      "SegmentCommand",
+      "SymbolCommand",
+      "BuildVersion",
+      "DyldExportsTrie",
+      "LinkEdit",
+      "DyldChainedFixups",
+      "CodeSignature",
+      "EncryptionInfo",
+      "UUIDCommand",
+      "DataInCode",
+      "DylibCommand",
+      "FunctionStarts"
+    ],
+    "has_code_signature": true,
+    "sections": [
+      {
+        "name": "__TEXT,__text",
+        "size": 10612,
+        "offset": 16384
+      },
+      {
+        "name": "__TEXT,__stubs",
+        "size": 180,
+        "offset": 26996
+      },
+      {
+        "name": "__TEXT,__init_offsets",
+        "size": 4,
+        "offset": 27176
+      },
+      {
+        "name": "__TEXT,__gcc_except_tab",
+        "size": 524,
+        "offset": 27180
+      },
+      {
+        "name": "__TEXT,__cstring",
+        "size": 702,
+        "offset": 27704
+      },
+      {
+        "name": "__TEXT,__objc_methname",
+        "size": 755,
+        "offset": 28406
+      },
+      {
+        "name": "__TEXT,__unwind_info",
+        "size": 4172,
+        "offset": 29164
+      },
+      {
+        "name": "__DATA_CONST,__got",
+        "size": 192,
+        "offset": 49152
+      },
+      {
+        "name": "__DATA_CONST,__const",
+        "size": 144,
+        "offset": 49344
+      },
+      {
+        "name": "__DATA_CONST,__cfstring",
+        "size": 1632,
+        "offset": 49488
+      },
+      {
+        "name": "__DATA_CONST,__objc_imageinfo",
+        "size": 8,
+        "offset": 51120
+      },
+      {
+        "name": "__DATA,__objc_selrefs",
+        "size": 304,
+        "offset": 65536
+      },
+      {
+        "name": "__DATA,__objc_classrefs",
+        "size": 80,
+        "offset": 65840
+      },
+      {
+        "name": "__DATA,__bss",
+        "size": 64,
+        "offset": 0
+      }
+    ]
+  },
+  "security_properties": {
+    "pie": false,
+    "stack_canary": true,
+    "arc": true,
+    "flags": [
+      "NOUNDEFS",
+      "DYLDLINK",
+      "TWOLEVEL",
+      "NO_REEXPORTED_DYLIBS"
+    ]
+  },
+  "security_features": [
+    {
+      "feature": "SSL/TLS Pinning",
+      "evidence": [
+        "ssl"
+      ]
+    },
+    {
+      "feature": "Jailbreak Detection",
+      "evidence": [
+        "cydia",
+        "substrate",
+        "/bin/bash",
+        "sileo"
+      ]
+    },
+    {
+      "feature": "Network Requests",
+      "evidence": [
+        "nsurl"
+      ]
+    }
+  ],
+  "obfuscation": [
+    {
+      "type": "Jailbreak Detection",
+      "severity": "medium",
+      "evidence": [
+        "/Applications/Cydia.app",
+        "/bin/bash",
+        "cydia",
+        "substrate",
+        "sileo"
+      ]
+    },
+    {
+      "type": "SSL Pinning",
+      "severity": "medium",
+      "evidence": [
+        "ssl"
+      ],
+      "bypass": "Use SSL Kill Switch or Frida ssl-pinning-bypass script"
+    }
+  ],
+  "functions": [
+    {
+      "name": "sym.imp.NSLog",
+      "size": 12,
+      "addr": "0x69f8"
+    },
+    {
+      "name": "sym.imp.objc_begin_catch",
+      "size": 12,
+      "addr": "0x69ec"
+    },
+    {
+      "name": "sym.imp.objc_end_catch",
+      "size": 12,
+      "addr": "0x69e0"
+    },
+    {
+      "name": "sym.imp.objc_enumerationMutation",
+      "size": 12,
+      "addr": "0x69bc"
+    },
+    {
+      "name": "sym.imp.objc_getClass",
+      "size": 12,
+      "addr": "0x6980"
+    },
+    {
+      "name": "sym.imp.objc_retainAutoreleaseReturnValue",
+      "size": 12,
+      "addr": "0x6a10"
+    },
+    {
+      "name": "sym.imp.objc_retainAutoreleasedReturnValue",
+      "size": 12,
+      "addr": "0x6998"
+    },
+    {
+      "name": "sym.imp.objc_retainBlock",
+      "size": 12,
+      "addr": "0x69a4"
+    },
+    {
+      "name": "sym.imp.objc_storeStrong",
+      "size": 12,
+      "addr": "0x698c"
+    },
+    {
+      "name": "sym.imp.dispatch_async",
+      "size": 12,
+      "addr": "0x6a04"
+    },
+    {
+      "name": "sym.imp._Block_object_assign",
+      "size": 12,
+      "addr": "0x6a1c"
+    },
+    {
+      "name": "sym.imp.__stack_chk_fail",
+      "size": 12,
+      "addr": "0x69b0"
+    },
+    {
+      "name": "sym.imp.memset",
+      "size": 12,
+      "addr": "0x69c8"
+    },
+    {
+      "name": "sym.imp._Unwind_Resume",
+      "size": 12,
+      "addr": "0x69d4"
+    },
+    {
+      "name": "sym.imp.MSHookMessageEx",
+      "size": 12,
+      "addr": "0x6974"
+    },
+    {
+      "name": "sym.__logosLocalInit",
+      "size": 200,
+      "addr": "0x4000"
+    },
+    {
+      "name": "sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_",
+      "size": 160,
+      "addr": "0x40c8"
+    },
+    {
+      "name": "sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_",
+      "size": 176,
+      "addr": "0x4168"
+    },
+    {
+      "name": "sym.__logos_method__ungrouped_UIApplication_canOpenURL_",
+      "size": 356,
+      "addr": "0x4218"
+    },
+    {
+      "name": "sym.__logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_",
+      "size": 316,
+      "addr": "0x437c"
+    },
+    {
+      "name": "sym._isJBPath",
+      "size": 920,
+      "addr": "0x44b8"
+    },
+    {
+      "name": "sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke",
+      "size": 5396,
+      "addr": "0x4850"
+    },
+    {
+      "name": "sym._showPopup",
+      "size": 324,
+      "addr": "0x5d6c"
+    },
+    {
+      "name": "sym.GCC_except_table6",
+      "size": 4,
+      "addr": "0x6a2c"
+    },
+    {
+      "name": "sym.___showPopup_block_invoke",
+      "size": 1276,
+      "addr": "0x5f14"
+    },
+    {
+      "name": "sym.___showPopup_block_invoke_2",
+      "size": 928,
+      "addr": "0x6410"
+    },
+    {
+      "name": "sym.___showPopup_block_invoke_3",
+      "size": 240,
+      "addr": "0x67b0"
+    },
+    {
+      "name": "sym.___copy_helper_block_e8_32b",
+      "size": 56,
+      "addr": "0x5eb0"
+    },
+    {
+      "name": "sym.___destroy_helper_block_e8_32s",
+      "size": 44,
+      "addr": "0x5ee8"
+    },
+    {
+      "name": "sym.___copy_helper_block_e8_32s",
+      "size": 56,
+      "addr": "0x68a0"
+    },
+    {
+      "name": "sym.___copy_helper_block_e8_32s40s",
+      "size": 88,
+      "addr": "0x68d8"
+    },
+    {
+      "name": "sym.___destroy_helper_block_e8_32s40s",
+      "size": 68,
+      "addr": "0x6930"
+    }
+  ],
+  "symbols": [
+    {
+      "addr": "0000000000006a2c",
+      "type": "s",
+      "name": "GCC_except_table6"
+    },
+    {
+      "addr": "0000000000010130",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_"
+    },
+    {
+      "addr": "0000000000010148",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.110"
+    },
+    {
+      "addr": "0000000000010150",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.119"
+    },
+    {
+      "addr": "0000000000010158",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.151"
+    },
+    {
+      "addr": "0000000000010160",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.154"
+    },
+    {
+      "addr": "0000000000010168",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.155"
+    },
+    {
+      "addr": "0000000000010170",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.164"
+    },
+    {
+      "addr": "0000000000010178",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.167"
+    },
+    {
+      "addr": "0000000000010138",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.82"
+    },
+    {
+      "addr": "0000000000010140",
+      "type": "s",
+      "name": "_OBJC_CLASSLIST_REFERENCES_$_.97"
+    },
+    {
+      "addr": "0000000000010000",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_"
+    },
+    {
+      "addr": "00000000000100a0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.101"
+    },
+    {
+      "addr": "00000000000100a8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.103"
+    },
+    {
+      "addr": "00000000000100b0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.112"
+    },
+    {
+      "addr": "00000000000100b8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.123"
+    },
+    {
+      "addr": "00000000000100c0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.125"
+    },
+    {
+      "addr": "00000000000100c8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.131"
+    },
+    {
+      "addr": "00000000000100d0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.153"
+    },
+    {
+      "addr": "00000000000100d8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.157"
+    },
+    {
+      "addr": "00000000000100e0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.159"
+    },
+    {
+      "addr": "00000000000100e8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.166"
+    },
+    {
+      "addr": "00000000000100f0",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.169"
+    },
+    {
+      "addr": "00000000000100f8",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.171"
+    },
+    {
+      "addr": "0000000000010100",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.174"
+    },
+    {
+      "addr": "0000000000010108",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.176"
+    },
+    {
+      "addr": "0000000000010110",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.180"
+    },
+    {
+      "addr": "0000000000010118",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.182"
+    },
+    {
+      "addr": "0000000000010120",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.184"
+    },
+    {
+      "addr": "0000000000010128",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.186"
+    },
+    {
+      "addr": "0000000000010008",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.2"
+    },
+    {
+      "addr": "0000000000010020",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.31"
+    },
+    {
+      "addr": "0000000000010028",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.33"
+    },
+    {
+      "addr": "0000000000010030",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.35"
+    },
+    {
+      "addr": "0000000000010038",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.39"
+    },
+    {
+      "addr": "0000000000010040",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.45"
+    },
+    {
+      "addr": "0000000000010010",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.5"
+    },
+    {
+      "addr": "0000000000010048",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.55"
+    },
+    {
+      "addr": "0000000000010050",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.59"
+    },
+    {
+      "addr": "0000000000010058",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.67"
+    },
+    {
+      "addr": "0000000000010060",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.69"
+    },
+    {
+      "addr": "0000000000010068",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.71"
+    },
+    {
+      "addr": "0000000000010070",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.73"
+    },
+    {
+      "addr": "0000000000010078",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.79"
+    },
+    {
+      "addr": "0000000000010018",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.8"
+    },
+    {
+      "addr": "0000000000010080",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.81"
+    },
+    {
+      "addr": "0000000000010088",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.84"
+    },
+    {
+      "addr": "0000000000010090",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.88"
+    },
+    {
+      "addr": "0000000000010098",
+      "type": "s",
+      "name": "_OBJC_SELECTOR_REFERENCES_.99"
+    },
+    {
+      "addr": "0000000000004850",
+      "type": "t",
+      "name": "____logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$_block_invoke"
+    },
+    {
+      "addr": "000000000000c0c0",
+      "type": "s",
+      "name": "___block_descriptor_40_e8_32bs_e35_v24\u0001?0\u0001\"PigeonDocumentSnapshot\"8\u000116l"
+    },
+    {
+      "addr": "000000000000c0f0",
+      "type": "s",
+      "name": "___block_descriptor_40_e8_32s_e23_v16\u0001?0\u0001\"UIAlertAction\"8l"
+    },
+    {
+      "addr": "000000000000c120",
+      "type": "s",
+      "name": "___block_descriptor_48_e8_32s40s_e5_v8\u0001?0l"
+    },
+    {
+      "addr": "0000000000005eb0",
+      "type": "t",
+      "name": "___copy_helper_block_e8_32b"
+    },
+    {
+      "addr": "00000000000068a0",
+      "type": "t",
+      "name": "___copy_helper_block_e8_32s"
+    },
+    {
+      "addr": "00000000000068d8",
+      "type": "t",
+      "name": "___copy_helper_block_e8_32s40s"
+    },
+    {
+      "addr": "0000000000005ee8",
+      "type": "t",
+      "name": "___destroy_helper_block_e8_32s"
+    },
+    {
+      "addr": "0000000000006930",
+      "type": "t",
+      "name": "___destroy_helper_block_e8_32s40s"
+    },
+    {
+      "addr": "0000000000005f14",
+      "type": "t",
+      "name": "___showPopup_block_invoke"
+    },
+    {
+      "addr": "0000000000006410",
+      "type": "t",
+      "name": "___showPopup_block_invoke_2"
+    },
+    {
+      "addr": "00000000000067b0",
+      "type": "t",
+      "name": "___showPopup_block_invoke_3"
+    },
+    {
+      "addr": "0000000000004000",
+      "type": "t",
+      "name": "__logosLocalInit"
+    },
+    {
+      "addr": "000000000000437c",
+      "type": "t",
+      "name": "__logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$"
+    },
+    {
+      "addr": "00000000000040c8",
+      "type": "t",
+      "name": "__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$"
+    },
+    {
+      "addr": "0000000000004168",
+      "type": "t",
+      "name": "__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$"
+    },
+    {
+      "addr": "0000000000004218",
+      "type": "t",
+      "name": "__logos_method$_ungrouped$UIApplication$canOpenURL$"
+    },
+    {
+      "addr": "00000000000101b0",
+      "type": "b",
+      "name": "__logos_orig$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$"
+    },
+    {
+      "addr": "0000000000010198",
+      "type": "b",
+      "name": "__logos_orig$_ungrouped$NSFileManager$fileExistsAtPath$"
+    },
+    {
+      "addr": "00000000000101a0",
+      "type": "b",
+      "name": "__logos_orig$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$"
+    },
+    {
+      "addr": "00000000000101a8",
+      "type": "b",
+      "name": "__logos_orig$_ungrouped$UIApplication$canOpenURL$"
+    },
+    {
+      "addr": "0000000000010180",
+      "type": "b",
+      "name": "_detectedUID"
+    },
+    {
+      "addr": "00000000000044b8",
+      "type": "t",
+      "name": "_isJBPath"
+    },
+    {
+      "addr": "00000000000101b8",
+      "type": "b",
+      "name": "_isJBPath.jbPaths"
+    },
+    {
+      "addr": "0000000000005d6c",
+      "type": "t",
+      "name": "_showPopup"
+    },
+    {
+      "addr": "0000000000010190",
+      "type": "b",
+      "name": "_shownPdfPath"
+    },
+    {
+      "addr": "0000000000010188",
+      "type": "b",
+      "name": "_shownVideoPath"
+    }
+  ],
+  "imports": [
+    "Block_object_assign",
+    "CFConstantStringClassReference",
+    "MSHookMessageEx",
+    "NSConcreteStackBlock",
+    "NSDictionary0__",
+    "NSLog",
+    "OBJC_CLASS_$_NSArray",
+    "OBJC_CLASS_$_NSDictionary",
+    "OBJC_CLASS_$_NSMutableArray",
+    "OBJC_CLASS_$_NSMutableDictionary",
+    "OBJC_CLASS_$_NSString",
+    "OBJC_CLASS_$_NSURL",
+    "OBJC_CLASS_$_UIAlertAction",
+    "OBJC_CLASS_$_UIAlertController",
+    "OBJC_CLASS_$_UIApplication",
+    "OBJC_CLASS_$_UIPasteboard",
+    "OBJC_EHTYPE_$_NSException",
+    "Unwind_Resume",
+    "dispatch_async",
+    "dispatch_main_q",
+    "dyld_stub_binder",
+    "memset",
+    "objc_begin_catch",
+    "objc_end_catch",
+    "objc_enumerationMutation",
+    "objc_getClass",
+    "objc_msgSend",
+    "objc_personality_v0",
+    "objc_release",
+    "objc_retain",
+    "objc_retainAutoreleaseReturnValue",
+    "objc_retainAutoreleasedReturnValue",
+    "objc_retainBlock",
+    "objc_storeStrong",
+    "stack_chk_fail",
+    "stack_chk_guard"
+  ],
+  "strings": [
+    "__TEXT",
+    "__text",
+    "__stubs",
+    "__init_offsets",
+    "__gcc_except_tab__TEXT",
+    "__cstring",
+    "__objc_methname",
+    "__unwind_info",
+    "__DATA_CONST",
+    "__got",
+    "__const",
+    "__cfstring",
+    "__objc_imageinfo__DATA_CONST",
+    "__DATA",
+    "__objc_selrefs",
+    "__objc_classrefs__DATA",
+    "__bss",
+    "__LINKEDIT",
+    "/home/runner/workspace/3afer_tweak/3aferBypass.dylib",
+    "/System/Library/Frameworks/Foundation.framework/Foundation",
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+    "/usr/lib/libobjc.A.dylib",
+    "/System/Library/Frameworks/UIKit.framework/UIKit",
+    "/usr/lib/libSystem.B.dylib",
+    "/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate",
+    "NSFileManager",
+    "UIApplication",
+    "FLTFirebaseFirestorePlugin",
+    "/Applications/Cydia.app",
+    "/Library/MobileSubstrate/MobileSubstrate.dylib",
+    "/bin/bash",
+    "/usr/sbin/sshd",
+    "/etc/apt",
+    "/usr/bin/ssh",
+    "/var/jb",
+    "/var/binpack",
+    "/.bootstrapped",
+    "/usr/lib/TweakInject",
+    "/Library/TweakInject",
+    "Cydia",
+    "substrate",
+    "TweakInject",
+    "cydia",
+    "sileo",
+    "zebra",
+    "filza",
+    "users/",
+    "allowUsers",
+    "/notifications",
+    "[3afer] UID: %@",
+    "allowUsers/allowUser",
+    "activation list",
+    "2024-01-01",
+    "endDate",
+    "2030-12-31",
+    "[3afer] BYPASS: %@",
+    "/videos/",
+    "video_list",
+    "video_url",
+    "chapter Num",
+    "Video %lu",
+    "[3afer] VIDEOS: %lu",
+    "Videos (%lu)",
+    "/pdfs/",
+    "pdf_list",
+    "pdf_url",
+    "lecturer Num",
+    "PDF %lu",
+    "[3afer] PDFS: %lu",
+    "PDFs (%lu)",
+    "v24@?0@\"PigeonDocumentSnapshot\"8@16",
+    "Copied!",
+    "v16@?0@\"UIAlertAction\"8",
+    "Close",
+    "v8@?0",
+    "fileExistsAtPath:",
+    "fileExistsAtPath:isDirectory:",
+    "canOpenURL:",
+    "documentReferenceGetApp:request:completion:",
+    "arrayWithObjects:count:",
+    "countByEnumeratingWithState:objects:count:",
+    "isEqualToString:",
+    "containsString:",
+    "absoluteString",
+    "hasPrefix:",
+    "componentsSeparatedByString:",
+    "count",
+    "objectAtIndexedSubscript:",
+    "mutableCopy",
+    "dictionary",
+    "objectForKeyedSubscript:",
+    "dictionaryWithObjects:forKeys:count:",
+    "setObject:forKeyedSubscript:",
+    "setData:",
+    "array",
+    "stringWithFormat:",
+    "length",
+    "addObject:",
+    "alertControllerWithTitle:message:preferredStyle:",
+    "generalPasteboard",
+    "setString:",
+    "sharedApplication",
+    "URLWithString:",
+    "openURL:options:completionHandler:",
+    "actionWithTitle:style:handler:",
+    "addAction:",
+    "keyWindow",
+    "rootViewController",
+    "presentedViewController",
+    "presentViewController:animated:completion:",
+    "_MSHookMessageEx",
+    "_objc_getClass",
+    "_objc_storeStrong",
+    "_objc_msgSend",
+    "_objc_retainAutoreleasedReturnValue",
+    "_objc_retainBlock",
+    "_objc_retain",
+    "__NSConcreteStackBlock",
+    "___stack_chk_fail",
+    "___stack_chk_guard",
+    "_objc_release",
+    "_objc_enumerationMutation",
+    "_memset",
+    "__Unwind_Resume",
+    "_objc_end_catch",
+    "_objc_begin_catch",
+    "_NSLog",
+    "_dispatch_async",
+    "_objc_retainAutoreleaseReturnValue",
+    "__dispatch_main_q",
+    "__Block_object_assign",
+    "___NSDictionary0__",
+    "_OBJC_EHTYPE_$_NSException",
+    "___CFConstantStringClassReference",
+    "_OBJC_CLASS_$_NSArray",
+    "_OBJC_CLASS_$_NSMutableDictionary",
+    "_OBJC_CLASS_$_NSDictionary",
+    "_OBJC_CLASS_$_NSMutableArray",
+    "_OBJC_CLASS_$_NSString",
+    "_OBJC_CLASS_$_UIAlertController",
+    "_OBJC_CLASS_$_UIAlertAction",
+    "_OBJC_CLASS_$_UIPasteboard",
+    "_OBJC_CLASS_$_UIApplication",
+    "_OBJC_CLASS_$_NSURL",
+    "___objc_personality_v0",
+    "__logosLocalInit",
+    "_OBJC_SELECTOR_REFERENCES_",
+    "__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$",
+    "__logos_orig$_ungrouped$NSFileManager$fileExistsAtPath$",
+    "_OBJC_SELECTOR_REFERENCES_.2",
+    "__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$",
+    "__logos_orig$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$",
+    "_OBJC_SELECTOR_REFERENCES_.5",
+    "__logos_method$_ungrouped$UIApplication$canOpenURL$",
+    "__logos_orig$_ungrouped$UIApplication$canOpenURL$",
+    "_OBJC_SELECTOR_REFERENCES_.8",
+    "__logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$",
+    "__logos_orig$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$",
+    "_isJBPath",
+    "_OBJC_SELECTOR_REFERENCES_.45",
+    "_OBJC_SELECTOR_REFERENCES_.39",
+    "____logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$_block_invoke",
+    "_isJBPath.jbPaths",
+    "_OBJC_CLASSLIST_REFERENCES_$_",
+    "_OBJC_SELECTOR_REFERENCES_.31",
+    "_OBJC_SELECTOR_REFERENCES_.33",
+    "_OBJC_SELECTOR_REFERENCES_.35",
+    "_OBJC_SELECTOR_REFERENCES_.55",
+    "_OBJC_SELECTOR_REFERENCES_.59",
+    "_detectedUID",
+    "_OBJC_SELECTOR_REFERENCES_.67",
+    "_OBJC_SELECTOR_REFERENCES_.69",
+    "_OBJC_SELECTOR_REFERENCES_.71",
+    "_OBJC_SELECTOR_REFERENCES_.73",
+    "_OBJC_SELECTOR_REFERENCES_.79",
+    "_OBJC_SELECTOR_REFERENCES_.81",
+    "_OBJC_CLASSLIST_REFERENCES_$_.82",
+    "_OBJC_SELECTOR_REFERENCES_.84",
+    "_OBJC_SELECTOR_REFERENCES_.88",
+    "_OBJC_CLASSLIST_REFERENCES_$_.97",
+    "_OBJC_SELECTOR_REFERENCES_.99",
+    "_OBJC_SELECTOR_REFERENCES_.101",
+    "_OBJC_SELECTOR_REFERENCES_.103",
+    "_shownVideoPath",
+    "_OBJC_CLASSLIST_REFERENCES_$_.110",
+    "_OBJC_SELECTOR_REFERENCES_.112",
+    "_OBJC_CLASSLIST_REFERENCES_$_.119",
+    "_OBJC_SELECTOR_REFERENCES_.123",
+    "_OBJC_SELECTOR_REFERENCES_.125",
+    "_OBJC_SELECTOR_REFERENCES_.131",
+    "_showPopup",
+    "_shownPdfPath",
+    "GCC_except_table6",
+    "___showPopup_block_invoke",
+    "_OBJC_CLASSLIST_REFERENCES_$_.151",
+    "_OBJC_SELECTOR_REFERENCES_.153",
+    "_OBJC_CLASSLIST_REFERENCES_$_.154",
+    "___showPopup_block_invoke_2",
+    "_OBJC_SELECTOR_REFERENCES_.174",
+    "_OBJC_SELECTOR_REFERENCES_.176",
+    "_OBJC_CLASSLIST_REFERENCES_$_.164",
+    "_OBJC_SELECTOR_REFERENCES_.166",
+    "_OBJC_SELECTOR_REFERENCES_.180",
+    "_OBJC_SELECTOR_REFERENCES_.182",
+    "_OBJC_SELECTOR_REFERENCES_.184",
+    "_OBJC_SELECTOR_REFERENCES_.186",
+    "_OBJC_CLASSLIST_REFERENCES_$_.155",
+    "_OBJC_SELECTOR_REFERENCES_.157",
+    "_OBJC_SELECTOR_REFERENCES_.159",
+    "___showPopup_block_invoke_3",
+    "_OBJC_CLASSLIST_REFERENCES_$_.167",
+    "_OBJC_SELECTOR_REFERENCES_.169",
+    "_OBJC_SELECTOR_REFERENCES_.171",
+    "dyld_stub_binder",
+    "___copy_helper_block_e8_32b",
+    "___destroy_helper_block_e8_32s",
+    "___copy_helper_block_e8_32s",
+    "___copy_helper_block_e8_32s40s",
+    "___destroy_helper_block_e8_32s40s",
+    "___block_descriptor_40_e8_32bs_e35_v24",
+    "\"PigeonDocumentSnapshot\"8",
+    "___block_descriptor_40_e8_32s_e23_v16",
+    "\"UIAlertAction\"8l",
+    "___block_descriptor_48_e8_32s40s_e5_v8",
+    "3aferBypass.dylib",
+    "r6mu]e",
+    "subject.CN",
+    "c]+_-"
+  ],
+  "rop_gadgets": [
+    {
+      "addr": "0x00000000000067a8",
+      "gadget": "add sp, sp, #0x120 ; ret"
+    },
+    {
+      "addr": "0x0000000000004848",
+      "gadget": "add sp, sp, #0x1b0 ; ret"
+    },
+    {
+      "addr": "0x0000000000005ee0",
+      "gadget": "add sp, sp, #0x20 ; ret"
+    },
+    {
+      "addr": "0x0000000000006400",
+      "gadget": "add sp, sp, #0x210 ; ldp x29, x30, [sp, #0x10] ; ldp x28, x27, [sp], #0x20 ; ret"
+    },
+    {
+      "addr": "0x00000000000040c0",
+      "gadget": "add sp, sp, #0x30 ; ret"
+    },
+    {
+      "addr": "0x0000000000004160",
+      "gadget": "add sp, sp, #0x40 ; ret"
+    },
+    {
+      "addr": "0x0000000000005d54",
+      "gadget": "add sp, sp, #0x4b0 ; ldp x29, x30, [sp, #0x10] ; ldp x28, x27, [sp], #0x20 ; ret"
+    },
+    {
+      "addr": "0x0000000000004210",
+      "gadget": "add sp, sp, #0x50 ; ret"
+    },
+    {
+      "addr": "0x0000000000005ea8",
+      "gadget": "add sp, sp, #0xb0 ; ret"
+    },
+    {
+      "addr": "0x00000000000044b0",
+      "gadget": "add sp, sp, #0xc0 ; ret"
+    },
+    {
+      "addr": "0x0000000000006960",
+      "gadget": "add x0, x8, #0x20 ; bl #0x698c ; ldp x29, x30, [sp, #0x20] ; add sp, sp, #0x30 ; ret"
+    },
+    {
+      "addr": "0x0000000000004708",
+      "gadget": "add x2, sp, #0x58 ; add x3, sp, #0xb0 ; mov x4, #0x10 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004770",
+      "gadget": "add x2, x2, #0x2b0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004798",
+      "gadget": "add x2, x2, #0x2d0 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000047c0",
+      "gadget": "add x2, x2, #0x2f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004274",
+      "gadget": "add x2, x2, #0x310 ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042a4",
+      "gadget": "add x2, x2, #0x330 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042cc",
+      "gadget": "add x2, x2, #0x350 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042f4",
+      "gadget": "add x2, x2, #0x370 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004994",
+      "gadget": "add x2, x2, #0x390 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000049c8",
+      "gadget": "add x2, x2, #0x3b0 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000049fc",
+      "gadget": "add x2, x2, #0x3d0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004a40",
+      "gadget": "add x2, x2, #0x3f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004b7c",
+      "gadget": "add x2, x2, #0x430 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004cd4",
+      "gadget": "add x2, x2, #0x450 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004f1c",
+      "gadget": "add x2, x2, #0x510 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005014",
+      "gadget": "add x2, x2, #0x530 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005188",
+      "gadget": "add x2, x2, #0x550 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005210",
+      "gadget": "add x2, x2, #0x590 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005280",
+      "gadget": "add x2, x2, #0x5b0 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000605c",
+      "gadget": "add x2, x2, #0x5d0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000006090",
+      "gadget": "add x2, x2, #0x5f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005564",
+      "gadget": "add x2, x2, #0x630 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000055ec",
+      "gadget": "add x2, x2, #0x650 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000056e4",
+      "gadget": "add x2, x2, #0x670 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005858",
+      "gadget": "add x2, x2, #0x690 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000058e0",
+      "gadget": "add x2, x2, #0x6b0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005950",
+      "gadget": "add x2, x2, #0x6d0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005c34",
+      "gadget": "add x2, x2, #0x710 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000656c",
+      "gadget": "add x2, x2, #0x750 ; mov x3, #0 ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000065e0",
+      "gadget": "add x2, x2, #0x770 ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x000000000000623c",
+      "gadget": "add x2, x2, #0x790 ; mov x3, #1 ; mov x4, #0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004618",
+      "gadget": "add x3, sp, #0xb0 ; mov x4, #0x10 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000040b4",
+      "gadget": "add x3, x3, #0x1b0 ; bl #0x6974 ; ldp x29, x30, [sp, #0x20] ; add sp, sp, #0x30 ; ret"
+    },
+    {
+      "addr": "0x0000000000004e9c",
+      "gadget": "add x3, x3, #0x450 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000698c",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x10] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006998",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x20] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069a4",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x28] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069b0",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x40] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069bc",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x58] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069c8",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x60] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069d4",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x68] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069e0",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x70] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069ec",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x78] ; br x16"
+    },
+    {
+      "addr": "0x00000000000069f8",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x80] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006a04",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x88] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006a10",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0x90] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006a1c",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #0xa0] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006980",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16, #8] ; br x16"
+    },
+    {
+      "addr": "0x0000000000006974",
+      "gadget": "adrp x16, #0xc000 ; ldr x16, [x16] ; br x16"
+    },
+    {
+      "addr": "0x000000000000476c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x2b0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004794",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x2d0 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000047bc",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x2f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004270",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x310 ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042a0",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x330 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042c8",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x350 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000042f0",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x370 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004990",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x390 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000049c4",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x3b0 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000049f8",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x3d0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004a3c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x3f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004b78",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x430 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004cd0",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x450 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004f18",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x510 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005010",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x530 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005184",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x550 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000520c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x590 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000527c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x5b0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000006058",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x5d0 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000608c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x5f0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005560",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x630 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000055e8",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x650 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000056e0",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x670 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005854",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x690 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000058dc",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x6b0 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000594c",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x6d0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005c30",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x710 ; blr x8"
+    },
+    {
+      "addr": "0x00000000000065dc",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x770 ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000006238",
+      "gadget": "adrp x2, #0xc000 ; add x2, x2, #0x790 ; mov x3, #1 ; mov x4, #0 ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004e98",
+      "gadget": "adrp x3, #0xc000 ; add x3, x3, #0x450 ; blr x8"
+    },
+    {
+      "addr": "0x000000000000615c",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x108] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000062ac",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x110] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000062cc",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x118] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000006318",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x120] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x000000000000469c",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x30] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004244",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x40] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x00000000000048c8",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x48] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004a64",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x60] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000005144",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x68] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    },
+    {
+      "addr": "0x0000000000004ac4",
+      "gadget": "adrp x8, #0x10000 ; ldr x1, [x8, #0x70] ; adrp x8, #0xc000 ; ldr x8, [x8, #0x18] ; blr x8"
+    }
+  ],
+  "disassembly": "/tmp/e06971afbcb37423481c6231f960161d:\n(__TEXT,__text) section\n__logosLocalInit:\n    4000:\tff c3 00 d1\tsub\tsp, sp, #0x30\n    4004:\tfd 7b 02 a9\tstp\tx29, x30, [sp, #0x20]\n    4008:\tfd 83 00 91\tadd\tx29, sp, #0x20\n    400c:\t00 00 00 d0\tadrp\tx0, 2 ; 0x6000\n    4010:\t00 e0 30 91\tadd\tx0, x0, #0xc38 ; literal pool for: \"NSFileManager\"\n    4014:\t5b 0a 00 94\tbl\t0x6980 ; symbol stub for: _objc_getClass\n    4018:\ta0 83 1f f8\tstur\tx0, [x29, #-0x8]\n    401c:\ta0 83 5f f8\tldur\tx0, [x29, #-0x8]\n    4020:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4024:\t01 01 40 f9\tldr\tx1, [x8]\n    4028:\t02 00 00 90\tadrp\tx2, 0 ; 0x4000\n    402c:\t42 20 03 91\tadd\tx2, x2, #0xc8\n    4030:\t63 00 00 90\tadrp\tx3, 12 ; 0x10000\n    4034:\t63 60 06 91\tadd\tx3, x3, #0x198\n    4038:\t4f 0a 00 94\tbl\t0x6974 ; symbol stub for: _MSHookMessageEx\n    403c:\ta0 83 5f f8\tldur\tx0, [x29, #-0x8]\n    4040:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4044:\t01 05 40 f9\tldr\tx1, [x8, #0x8]\n    4048:\t02 00 00 90\tadrp\tx2, 0 ; 0x4000\n    404c:\t42 a0 05 91\tadd\tx2, x2, #0x168\n    4050:\t63 00 00 90\tadrp\tx3, 12 ; 0x10000\n    4054:\t63 80 06 91\tadd\tx3, x3, #0x1a0\n    4058:\t47 0a 00 94\tbl\t0x6974 ; symbol stub for: _MSHookMessageEx\n    405c:\t00 00 00 d0\tadrp\tx0, 2 ; 0x6000\n    4060:\t00 18 31 91\tadd\tx0, x0, #0xc46 ; literal pool for: \"UIApplication\"\n    4064:\t47 0a 00 94\tbl\t0x6980 ; symbol stub for: _objc_getClass\n    4068:\te0 0b 00 f9\tstr\tx0, [sp, #0x10]\n    406c:\te0 0b 40 f9\tldr\tx0, [sp, #0x10]\n    4070:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4074:\t01 09 40 f9\tldr\tx1, [x8, #0x10]\n    4078:\t02 00 00 90\tadrp\tx2, 0 ; 0x4000\n    407c:\t42 60 08 91\tadd\tx2, x2, #0x218\n    4080:\t63 00 00 90\tadrp\tx3, 12 ; 0x10000\n    4084:\t63 a0 06 91\tadd\tx3, x3, #0x1a8\n    4088:\t3b 0a 00 94\tbl\t0x6974 ; symbol stub for: _MSHookMessageEx\n    408c:\t00 00 00 d0\tadrp\tx0, 2 ; 0x6000\n    4090:\t00 50 31 91\tadd\tx0, x0, #0xc54 ; literal pool for: \"FLTFirebaseFirestorePlugin\"\n    4094:\t3b 0a 00 94\tbl\t0x6980 ; symbol stub for: _objc_getClass\n    4098:\te0 07 00 f9\tstr\tx0, [sp, #0x8]\n    409c:\te0 07 40 f9\tldr\tx0, [sp, #0x8]\n    40a0:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    40a4:\t01 0d 40 f9\tldr\tx1, [x8, #0x18]\n    40a8:\t02 00 00 90\tadrp\tx2, 0 ; 0x4000\n    40ac:\t42 f0 0d 91\tadd\tx2, x2, #0x37c\n    40b0:\t63 00 00 90\tadrp\tx3, 12 ; 0x10000\n    40b4:\t63 c0 06 91\tadd\tx3, x3, #0x1b0\n    40b8:\t2f 0a 00 94\tbl\t0x6974 ; symbol stub for: _MSHookMessageEx\n    40bc:\tfd 7b 42 a9\tldp\tx29, x30, [sp, #0x20]\n    40c0:\tff c3 00 91\tadd\tsp, sp, #0x30\n    40c4:\tc0 03 5f d6\tret\n__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$:\n    40c8:\tff 03 01 d1\tsub\tsp, sp, #0x40\n    40cc:\tfd 7b 03 a9\tstp\tx29, x30, [sp, #0x30]\n    40d0:\tfd c3 00 91\tadd\tx29, sp, #0x30\n    40d4:\te8 03 01 aa\tmov\tx8, x1\n    40d8:\te1 03 02 aa\tmov\tx1, x2\n    40dc:\ta0 03 1f f8\tstur\tx0, [x29, #-0x10]\n    40e0:\te8 0f 00 f9\tstr\tx8, [sp, #0x18]\n    40e4:\te0 43 00 91\tadd\tx0, sp, #0x10\n    40e8:\tff 0b 00 f9\tstr\txzr, [sp, #0x10]\n    40ec:\t28 0a 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    40f0:\te0 0b 40 f9\tldr\tx0, [sp, #0x10]\n    40f4:\tf1 00 00 94\tbl\t_isJBPath\n    40f8:\t20 01 00 36\ttbz\tw0, #0x0, 0x411c\n    40fc:\t01 00 00 14\tb\t0x4100\n    4100:\t09 00 80 52\tmov\tw9, #0x0\n    4104:\t28 00 80 52\tmov\tw8, #0x1\n    4108:\t29 01 00 12\tand\tw9, w9, #0x1\n    410c:\t29 01 08 0a\tand\tw9, w9, w8\n    4110:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    4114:\te8 0f 00 b9\tstr\tw8, [sp, #0xc]\n    4118:\t0c 00 00 14\tb\t0x4148\n    411c:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4120:\t08 cd 40 f9\tldr\tx8, [x8, #0x198]\n    4124:\ta0 03 5f f8\tldur\tx0, [x29, #-0x10]\n    4128:\te1 0f 40 f9\tldr\tx1, [sp, #0x18]\n    412c:\te2 0b 40 f9\tldr\tx2, [sp, #0x10]\n    4130:\t00 01 3f d6\tblr\tx8\n    4134:\t28 00 80 52\tmov\tw8, #0x1\n    4138:\t09 00 08 0a\tand\tw9, w0, w8\n    413c:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    4140:\te8 0f 00 b9\tstr\tw8, [sp, #0xc]\n    4144:\t01 00 00 14\tb\t0x4148\n    4148:\te0 43 00 91\tadd\tx0, sp, #0x10\n    414c:\t01 00 80 d2\tmov\tx1, #0x0\n    4150:\t0f 0a 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    4154:\ta8 f3 5f 38\tldurb\tw8, [x29, #-0x1]\n    4158:\t00 01 00 12\tand\tw0, w8, #0x1\n    415c:\tfd 7b 43 a9\tldp\tx29, x30, [sp, #0x30]\n    4160:\tff 03 01 91\tadd\tsp, sp, #0x40\n    4164:\tc0 03 5f d6\tret\n__logos_method$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$:\n    4168:\tff 43 01 d1\tsub\tsp, sp, #0x50\n    416c:\tfd 7b 04 a9\tstp\tx29, x30, [sp, #0x40]\n    4170:\tfd 03 01 91\tadd\tx29, sp, #0x40\n    4174:\te8 03 01 aa\tmov\tx8, x1\n    4178:\te1 03 02 aa\tmov\tx1, x2\n    417c:\te3 07 00 f9\tstr\tx3, [sp, #0x8]\n    4180:\ta0 03 1f f8\tstur\tx0, [x29, #-0x10]\n    4184:\ta8 83 1e f8\tstur\tx8, [x29, #-0x18]\n    4188:\te0 83 00 91\tadd\tx0, sp, #0x20\n    418c:\tff 13 00 f9\tstr\txzr, [sp, #0x20]\n    4190:\tff 09 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    4194:\te3 07 40 f9\tldr\tx3, [sp, #0x8]\n    4198:\te3 0f 00 f9\tstr\tx3, [sp, #0x18]\n    419c:\te0 13 40 f9\tldr\tx0, [sp, #0x20]\n    41a0:\tc6 00 00 94\tbl\t_isJBPath\n    41a4:\t20 01 00 36\ttbz\tw0, #0x0, 0x41c8\n    41a8:\t01 00 00 14\tb\t0x41ac\n    41ac:\t09 00 80 52\tmov\tw9, #0x0\n    41b0:\t28 00 80 52\tmov\tw8, #0x1\n    41b4:\t29 01 00 12\tand\tw9, w9, #0x1\n    41b8:\t29 01 08 0a\tand\tw9, w9, w8\n    41bc:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    41c0:\te8 17 00 b9\tstr\tw8, [sp, #0x14]\n    41c4:\t0d 00 00 14\tb\t0x41f8\n    41c8:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    41cc:\t08 d1 40 f9\tldr\tx8, [x8, #0x1a0]\n    41d0:\ta0 03 5f f8\tldur\tx0, [x29, #-0x10]\n    41d4:\ta1 83 5e f8\tldur\tx1, [x29, #-0x18]\n    41d8:\te2 13 40 f9\tldr\tx2, [sp, #0x20]\n    41dc:\te3 0f 40 f9\tldr\tx3, [sp, #0x18]\n    41e0:\t00 01 3f d6\tblr\tx8\n    41e4:\t28 00 80 52\tmov\tw8, #0x1\n    41e8:\t09 00 08 0a\tand\tw9, w0, w8\n    41ec:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    41f0:\te8 17 00 b9\tstr\tw8, [sp, #0x14]\n    41f4:\t01 00 00 14\tb\t0x41f8\n    41f8:\te0 83 00 91\tadd\tx0, sp, #0x20\n    41fc:\t01 00 80 d2\tmov\tx1, #0x0\n    4200:\te3 09 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    4204:\ta8 f3 5f 38\tldurb\tw8, [x29, #-0x1]\n    4208:\t00 01 00 12\tand\tw0, w8, #0x1\n    420c:\tfd 7b 44 a9\tldp\tx29, x30, [sp, #0x40]\n    4210:\tff 43 01 91\tadd\tsp, sp, #0x50\n    4214:\tc0 03 5f d6\tret\n__logos_method$_ungrouped$UIApplication$canOpenURL$:\n    4218:\tff 43 01 d1\tsub\tsp, sp, #0x50\n    421c:\tfd 7b 04 a9\tstp\tx29, x30, [sp, #0x40]\n    4220:\tfd 03 01 91\tadd\tx29, sp, #0x40\n    4224:\te8 03 01 aa\tmov\tx8, x1\n    4228:\te1 03 02 aa\tmov\tx1, x2\n    422c:\ta0 03 1f f8\tstur\tx0, [x29, #-0x10]\n    4230:\ta8 83 1e f8\tstur\tx8, [x29, #-0x18]\n    4234:\te0 83 00 91\tadd\tx0, sp, #0x20\n    4238:\tff 13 00 f9\tstr\txzr, [sp, #0x20]\n    423c:\td4 09 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    4240:\te0 13 40 f9\tldr\tx0, [sp, #0x20]\n    4244:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4248:\t01 21 40 f9\tldr\tx1, [x8, #0x40]\n    424c:\t48 00 00 90\tadrp\tx8, 8 ; 0xc000\n    4250:\t08 0d 40 f9\tldr\tx8, [x8, #0x18] ; literal pool symbol address: _objc_msgSend\n    4254:\t00 01 3f d6\tblr\tx8\n    4258:\tfd 03 1d aa\tmov\tx29, x29\n    425c:\tcf 09 00 94\tbl\t0x6998 ; symbol stub for: _objc_retainAutoreleasedReturnValue\n    4260:\te0 0f 00 f9\tstr\tx0, [sp, #0x18]\n    4264:\te0 0f 40 f9\tldr\tx0, [sp, #0x18]\n    4268:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    426c:\t01 1d 40 f9\tldr\tx1, [x8, #0x38]\n    4270:\t42 00 00 90\tadrp\tx2, 8 ; 0xc000\n    4274:\t42 40 0c 91\tadd\tx2, x2, #0x310\n    4278:\t48 00 00 90\tadrp\tx8, 8 ; 0xc000\n    427c:\t08 0d 40 f9\tldr\tx8, [x8, #0x18] ; literal pool symbol address: _objc_msgSend\n    4280:\t00 01 3f d6\tblr\tx8\n    4284:\t00 04 00 37\ttbnz\tw0, #0x0, 0x4304\n    4288:\t01 00 00 14\tb\t0x428c\n    428c:\te0 0f 40 f9\tldr\tx0, [sp, #0x18]\n    4290:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4294:\t01 1d 40 f9\tldr\tx1, [x8, #0x38]\n    4298:\t48 00 00 90\tadrp\tx8, 8 ; 0xc000\n    429c:\t08 0d 40 f9\tldr\tx8, [x8, #0x18] ; literal pool symbol address: _objc_msgSend\n    42a0:\t42 00 00 90\tadrp\tx2, 8 ; 0xc000\n    42a4:\t42 c0 0c 91\tadd\tx2, x2, #0x330\n    42a8:\t00 01 3f d6\tblr\tx8\n    42ac:\tc0 02 00 37\ttbnz\tw0, #0x0, 0x4304\n    42b0:\t01 00 00 14\tb\t0x42b4\n    42b4:\te0 0f 40 f9\tldr\tx0, [sp, #0x18]\n    42b8:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    42bc:\t01 1d 40 f9\tldr\tx1, [x8, #0x38]\n    42c0:\t48 00 00 90\tadrp\tx8, 8 ; 0xc000\n    42c4:\t08 0d 40 f9\tldr\tx8, [x8, #0x18] ; literal pool symbol address: _objc_msgSend\n    42c8:\t42 00 00 90\tadrp\tx2, 8 ; 0xc000\n    42cc:\t42 40 0d 91\tadd\tx2, x2, #0x350\n    42d0:\t00 01 3f d6\tblr\tx8\n    42d4:\t80 01 00 37\ttbnz\tw0, #0x0, 0x4304\n    42d8:\t01 00 00 14\tb\t0x42dc\n    42dc:\te0 0f 40 f9\tldr\tx0, [sp, #0x18]\n    42e0:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    42e4:\t01 1d 40 f9\tldr\tx1, [x8, #0x38]\n    42e8:\t48 00 00 90\tadrp\tx8, 8 ; 0xc000\n    42ec:\t08 0d 40 f9\tldr\tx8, [x8, #0x18] ; literal pool symbol address: _objc_msgSend\n    42f0:\t42 00 00 90\tadrp\tx2, 8 ; 0xc000\n    42f4:\t42 c0 0d 91\tadd\tx2, x2, #0x370\n    42f8:\t00 01 3f d6\tblr\tx8\n    42fc:\t20 01 00 36\ttbz\tw0, #0x0, 0x4320\n    4300:\t01 00 00 14\tb\t0x4304\n    4304:\t09 00 80 52\tmov\tw9, #0x0\n    4308:\t28 00 80 52\tmov\tw8, #0x1\n    430c:\t29 01 00 12\tand\tw9, w9, #0x1\n    4310:\t29 01 08 0a\tand\tw9, w9, w8\n    4314:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    4318:\te8 17 00 b9\tstr\tw8, [sp, #0x14]\n    431c:\t0c 00 00 14\tb\t0x434c\n    4320:\t68 00 00 90\tadrp\tx8, 12 ; 0x10000\n    4324:\t08 d5 40 f9\tldr\tx8, [x8, #0x1a8]\n    4328:\ta0 03 5f f8\tldur\tx0, [x29, #-0x10]\n    432c:\ta1 83 5e f8\tldur\tx1, [x29, #-0x18]\n    4330:\te2 13 40 f9\tldr\tx2, [sp, #0x20]\n    4334:\t00 01 3f d6\tblr\tx8\n    4338:\t28 00 80 52\tmov\tw8, #0x1\n    433c:\t09 00 08 0a\tand\tw9, w0, w8\n    4340:\ta9 f3 1f 38\tsturb\tw9, [x29, #-0x1]\n    4344:\te8 17 00 b9\tstr\tw8, [sp, #0x14]\n    4348:\t01 00 00 14\tb\t0x434c\n    434c:\te0 63 00 91\tadd\tx0, sp, #0x18\n    4350:\t01 00 80 d2\tmov\tx1, #0x0\n    4354:\te1 07 00 f9\tstr\tx1, [sp, #0x8]\n    4358:\t8d 09 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    435c:\te1 07 40 f9\tldr\tx1, [sp, #0x8]\n    4360:\te0 83 00 91\tadd\tx0, sp, #0x20\n    4364:\t8a 09 00 94\tbl\t0x698c ; symbol stub for: _objc_storeStrong\n    4368:\ta8 f3 5f 38\tldurb\tw8, [x29, #-0x1]\n    436c:\t00 01 00 12\tand\tw0, w8, #0x1\n    4370:\tfd 7b 44 a9\tldp\tx29, x30, [sp, #0x40]\n    4374:\tff 43 01 91\tadd\tsp, sp, #0x50\n    4378:\tc0 03 5f d6\tret\n__logos_method$_ungrouped$FLT",
+  "capstone_disasm": "0x00004000:  sub        sp, sp, #0x30\n0x00004004:  stp        x29, x30, [sp, #0x20]\n0x00004008:  add        x29, sp, #0x20\n0x0000400c:  adrp       x0, #0x6000\n0x00004010:  add        x0, x0, #0xc38\n0x00004014:  bl         #0x6980\n0x00004018:  stur       x0, [x29, #-8]\n0x0000401c:  ldur       x0, [x29, #-8]\n0x00004020:  adrp       x8, #0x10000\n0x00004024:  ldr        x1, [x8]\n0x00004028:  adrp       x2, #0x4000\n0x0000402c:  add        x2, x2, #0xc8\n0x00004030:  adrp       x3, #0x10000\n0x00004034:  add        x3, x3, #0x198\n0x00004038:  bl         #0x6974\n0x0000403c:  ldur       x0, [x29, #-8]\n0x00004040:  adrp       x8, #0x10000\n0x00004044:  ldr        x1, [x8, #8]\n0x00004048:  adrp       x2, #0x4000\n0x0000404c:  add        x2, x2, #0x168\n0x00004050:  adrp       x3, #0x10000\n0x00004054:  add        x3, x3, #0x1a0\n0x00004058:  bl         #0x6974\n0x0000405c:  adrp       x0, #0x6000\n0x00004060:  add        x0, x0, #0xc46\n0x00004064:  bl         #0x6980\n0x00004068:  str        x0, [sp, #0x10]\n0x0000406c:  ldr        x0, [sp, #0x10]\n0x00004070:  adrp       x8, #0x10000\n0x00004074:  ldr        x1, [x8, #0x10]\n0x00004078:  adrp       x2, #0x4000\n0x0000407c:  add        x2, x2, #0x218\n0x00004080:  adrp       x3, #0x10000\n0x00004084:  add        x3, x3, #0x1a8\n0x00004088:  bl         #0x6974\n0x0000408c:  adrp       x0, #0x6000\n0x00004090:  add        x0, x0, #0xc54\n0x00004094:  bl         #0x6980\n0x00004098:  str        x0, [sp, #8]\n0x0000409c:  ldr        x0, [sp, #8]\n0x000040a0:  adrp       x8, #0x10000\n0x000040a4:  ldr        x1, [x8, #0x18]\n0x000040a8:  adrp       x2, #0x4000\n0x000040ac:  add        x2, x2, #0x37c\n0x000040b0:  adrp       x3, #0x10000\n0x000040b4:  add        x3, x3, #0x1b0\n0x000040b8:  bl         #0x6974\n0x000040bc:  ldp        x29, x30, [sp, #0x20]\n0x000040c0:  add        sp, sp, #0x30\n0x000040c4:  ret        \n0x000040c8:  sub        sp, sp, #0x40\n0x000040cc:  stp        x29, x30, [sp, #0x30]\n0x000040d0:  add        x29, sp, #0x30\n0x000040d4:  mov        x8, x1\n0x000040d8:  mov        x1, x2\n0x000040dc:  stur       x0, [x29, #-0x10]\n0x000040e0:  str        x8, [sp, #0x18]\n0x000040e4:  add        x0, sp, #0x10\n0x000040e8:  str        xzr, [sp, #0x10]\n0x000040ec:  bl         #0x698c\n0x000040f0:  ldr        x0, [sp, #0x10]\n0x000040f4:  bl         #0x44b8\n0x000040f8:  tbz        w0, #0, #0x411c\n0x000040fc:  b          #0x4100\n0x00004100:  mov        w9, #0\n0x00004104:  mov        w8, #1\n0x00004108:  and        w9, w9, #1\n0x0000410c:  and        w9, w9, w8\n0x00004110:  sturb      w9, [x29, #-1]\n0x00004114:  str        w8, [sp, #0xc]\n0x00004118:  b          #0x4148\n0x0000411c:  adrp       x8, #0x10000\n0x00004120:  ldr        x8, [x8, #0x198]\n0x00004124:  ldur       x0, [x29, #-0x10]\n0x00004128:  ldr        x1, [sp, #0x18]\n0x0000412c:  ldr        x2, [sp, #0x10]\n0x00004130:  blr        x8\n0x00004134:  mov        w8, #1\n0x00004138:  and        w9, w0, w8\n0x0000413c:  sturb      w9, [x29, #-1]\n0x00004140:  str        w8, [sp, #0xc]\n0x00004144:  b          #0x4148\n0x00004148:  add        x0, sp, #0x10\n0x0000414c:  mov        x1, #0\n0x00004150:  bl         #0x698c\n0x00004154:  ldurb      w8, [x29, #-1]\n0x00004158:  and        w0, w8, #1\n0x0000415c:  ldp        x29, x30, [sp, #0x30]\n0x00004160:  add        sp, sp, #0x40\n0x00004164:  ret        \n0x00004168:  sub        sp, sp, #0x50\n0x0000416c:  stp        x29, x30, [sp, #0x40]\n0x00004170:  add        x29, sp, #0x40\n0x00004174:  mov        x8, x1\n0x00004178:  mov        x1, x2\n0x0000417c:  str        x3, [sp, #8]\n0x00004180:  stur       x0, [x29, #-0x10]\n0x00004184:  stur       x8, [x29, #-0x18]\n0x00004188:  add        x0, sp, #0x20\n0x0000418c:  str        xzr, [sp, #0x20]\n0x00004190:  bl         #0x698c\n0x00004194:  ldr        x3, [sp, #8]\n0x00004198:  str        x3, [sp, #0x18]\n0x0000419c:  ldr        x0, [sp, #0x20]\n0x000041a0:  bl         #0x44b8\n0x000041a4:  tbz        w0, #0, #0x41c8\n0x000041a8:  b          #0x41ac\n0x000041ac:  mov        w9, #0\n0x000041b0:  mov        w8, #1\n0x000041b4:  and        w9, w9, #1\n0x000041b8:  and        w9, w9, w8\n0x000041bc:  sturb      w9, [x29, #-1]\n0x000041c0:  str        w8, [sp, #0x14]\n0x000041c4:  b          #0x41f8\n0x000041c8:  adrp       x8, #0x10000\n0x000041cc:  ldr        x8, [x8, #0x1a0]\n0x000041d0:  ldur       x0, [x29, #-0x10]\n0x000041d4:  ldur       x1, [x29, #-0x18]\n0x000041d8:  ldr        x2, [sp, #0x20]\n0x000041dc:  ldr        x3, [sp, #0x18]\n0x000041e0:  blr        x8\n0x000041e4:  mov        w8, #1\n0x000041e8:  and        w9, w0, w8\n0x000041ec:  sturb      w9, [x29, #-1]\n0x000041f0:  str        w8, [sp, #0x14]\n0x000041f4:  b          #0x41f8\n0x000041f8:  add        x0, sp, #0x20\n0x000041fc:  mov        x1, #0\n0x00004200:  bl         #0x698c\n0x00004204:  ldurb      w8, [x29, #-1]\n0x00004208:  and        w0, w8, #1\n0x0000420c:  ldp        x29, x30, [sp, #0x40]\n0x00004210:  add        sp, sp, #0x50\n0x00004214:  ret        \n0x00004218:  sub        sp, sp, #0x50\n0x0000421c:  stp        x29, x30, [sp, #0x40]\n0x00004220:  add        x29, sp, #0x40\n0x00004224:  mov        x8, x1\n0x00004228:  mov        x1, x2\n0x0000422c:  stur       x0, [x29, #-0x10]\n0x00004230:  stur       x8, [x29, #-0x18]\n0x00004234:  add        x0, sp, #0x20\n0x00004238:  str        xzr, [sp, #0x20]\n0x0000423c:  bl         #0x698c\n0x00004240:  ldr        x0, [sp, #0x20]\n0x00004244:  adrp       x8, #0x10000\n0x00004248:  ldr        x1, [x8, #0x40]\n0x0000424c:  adrp       x8, #0xc000\n0x00004250:  ldr        x8, [x8, #0x18]\n0x00004254:  blr        x8\n0x00004258:  mov        x29, x29\n0x0000425c:  bl         #0x6998\n0x00004260:  str        x0, [sp, #0x18]\n0x00004264:  ldr        x0, [sp, #0x18]\n0x00004268:  adrp       x8, #0x10000\n0x0000426c:  ldr        x1, [x8, #0x38]\n0x00004270:  adrp       x2, #0xc000\n0x00004274:  add        x2, x2, #0x310\n0x00004278:  adrp       x8, #0xc000\n0x0000427c:  ldr        x8, [x8, #0x18]\n0x00004280:  blr        x8\n0x00004284:  tbnz       w0, #0, #0x4304\n0x00004288:  b          #0x428c\n0x0000428c:  ldr        x0, [sp, #0x18]\n0x00004290:  adrp       x8, #0x10000\n0x00004294:  ldr        x1, [x8, #0x38]\n0x00004298:  adrp       x8, #0xc000\n0x0000429c:  ldr        x8, [x8, #0x18]\n0x000042a0:  adrp       x2, #0xc000\n0x000042a4:  add        x2, x2, #0x330\n0x000042a8:  blr        x8\n0x000042ac:  tbnz       w0, #0, #0x4304\n0x000042b0:  b          #0x42b4\n0x000042b4:  ldr        x0, [sp, #0x18]\n0x000042b8:  adrp       x8, #0x10000\n0x000042bc:  ldr        x1, [x8, #0x38]\n0x000042c0:  adrp       x8, #0xc000\n0x000042c4:  ldr        x8, [x8, #0x18]\n0x000042c8:  adrp       x2, #0xc000\n0x000042cc:  add        x2, x2, #0x350\n0x000042d0:  blr        x8\n0x000042d4:  tbnz       w0, #0, #0x4304\n0x000042d8:  b          #0x42dc\n0x000042dc:  ldr        x0, [sp, #0x18]\n0x000042e0:  adrp       x8, #0x10000\n0x000042e4:  ldr        x1, [x8, #0x38]\n0x000042e8:  adrp       x8, #0xc000\n0x000042ec:  ldr        x8, [x8, #0x18]\n0x000042f0:  adrp       x2, #0xc000\n0x000042f4:  add        x2, x2, #0x370\n0x000042f8:  blr        x8\n0x000042fc:  tbz        w0, #0, #0x4320\n0x00004300:  b          #0x4304\n0x00004304:  mov        w9, #0\n0x00004308:  mov        w8, #1\n0x0000430c:  and        w9, w9, #1\n0x00004310:  and        w9, w9, w8\n0x00004314:  sturb      w9, [x29, #-1]\n0x00004318:  str        w8, [sp, #0x14]\n0x0000431c:  b          #0x434c",
+  "pseudo_c": "// --- sym.__logosLocalInit @ 0x4000 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.__logosLocalInit (int64_t arg_30h) {\n    loc_0x00004000:\n        // ICOD XREFS from sym.__logosLocalInit @ 0x4028(x), 0x4048(x), 0x4078(x), 0x40a8(x)\n        // ICOD XREF from sym.__logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_ @ 0x4400(x)\n        sp = sp - 0x30 // [00] -r-x section size 10612 named 0.__TEXT.__text\n        [var_20h] = (x29, 2)\n        x29 = sp + 0x20\n        x0 = 0x6000\n        x0 = x0 + 0xc38 // 0x6c38 // \"NSFileManager\" // section.4.__TEXT.__cstring\n        sym.imp.objc_getClass ()\n        [x29 -8] = x0\n        x0 = [x29 -8] // (pstr 0x00006c38) \"NSFileManager\" // section.4.__TEXT.__cstring\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8]     // [0x10000:4]=0x6ef6 section.5.__TEXT.__objc_methname // sym._OBJC_SELECTOR_REFERENCES_\n        [11] -rw- section size 304 named 11.__DATA.__objc_selrefs // (pstr 0x00006ef6) \"fileExistsAtPath:\"\n        x2 = sym.__logosLocalInit // pc // 0x4000\n        x2 = x2 + 0xc8 // sym.func.000040c8\n        x3 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x3 = x3 + 0x198 // sym.__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_\n        sym.imp.MSHookMessageEx ()\n        x0 = [x29 -8] // (pstr 0x00006c38) \"NSFileManager\" // section.4.__TEXT.__cstring\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8 + 8] // [0x10008:4]=0x6f08 str.fileExistsAtPath:isDirectory: // sym._OBJC_SELECTOR_REFERENCES_.2 // (pstr 0x00006f08) \"fileExistsAtPath:isDirectory:\"\n        x2 = sym.__logosLocalInit // pc // 0x4000\n        x2 = x2 + 0x168 // sym.func.00004168\n        x3 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x3 = x3 + 0x1a0 // sym.__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_\n        sym.imp.MSHookMessageEx ()\n        x0 = 0x6000\n        x0 = x0 + 0xc46 // 0x6c46 // \"UIApplication\" // str.UIApplication\n        sym.imp.objc_getClass ()\n        [var_10h] = x0\n        x0 = [var_10h] // (pstr 0x00006c46) \"UIApplication\" // str.UIApplication\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8 + 0x10] // [0x10010:4]=0x6f26 str.canOpenURL: // \"&o\" // (pstr 0x00006f26) \"canOpenURL:\" sym._OBJC_SELECTOR_REFERENCES_.5\n        x2 = sym.__logosLocalInit // pc // 0x4000\n        x2 = x2 + 0x218 // sym.func.00004218\n        x3 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x3 = x3 + 0x1a8 // \"__cstring\" // sym.__logos_orig__ungrouped_UIApplication_canOpenURL_\n        sym.imp.MSHookMessageEx ()\n        x0 = 0x6000\n        x0 = x0 + 0xc54 // 0x6c54 // \"FLTFirebaseFirestorePlugin\" // str.FLTFirebaseFirestorePlugin\n        sym.imp.objc_getClass ()\n        [var_8h] = x0\n        x0 = [var_8h] // (pstr 0x00006c54) \"FLTFirebaseFirestorePlugin\" // str.FLTFirebaseFirestorePlugin\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8 + 0x18] // [0x10018:4]=0x6f32 str.documentReferenceGetApp:request:completion: // \"2o\" // (pstr 0x00006f32) \"documentReferenceGetApp:request:completion:\" sym._OBJC_SELECTOR_REFERENCES_.8\n        x2 = sym.__logosLocalInit // pc // 0x4000\n        x2 = x2 + 0x37c // sym.func.0000437c\n        x3 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x3 = x3 + 0x1b0 // sym.__logos_orig__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_\n        sym.imp.MSHookMessageEx ()\n        (x29, 2) = 3  // sp\n        sp = sp + 0x30 // 0x178000\n        return x0;\n}\n\n\n// --- sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ @ 0x40c8 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ (int64_t arg1, int64_t arg2, int64_t type, int64_t arg_40h) {\n    loc_0x000040c8:\n        // ICOD XREF from sym.__logosLocalInit @ 0x402c(r)\n        sp = sp - 0x40\n        [var_30h] = (x29, 2)\n        x29 = sp + 0x30\n        x8 = x1       // arg2\n        x1 = x2       // int type\n        [x29 -0x10] = x0 // arg1 // (pstr 0x00006c46) \"UIApplication\"\n        [var_18h] = x8 // (pstr 0x00006c54) \"FLTFirebaseFirestorePlugin\"\n        x0 = sp + 0x10 // void *instance\n        [instance] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x0 = [instance] // int64_t type // (cstr 0x00006c38) \"NSFileManager\"\n        sym._isJBPath () // sym.func.000044b8 // sym._isJBPath(0x0, 0x0, 0x0)\n        if (w0 == 0) goto 0x411c // likely\n        goto loc_0x000040fc;\n    loc_0x0000411c:\n        // CODE XREF from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ @ 0x40f8(x)\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x8 = [x8 + 0x198] // [0x10198:4]=0 // sym.__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_\n        x0 = [x29 -0x10] // sp\n        x1 = [var_18h]\n        x2 = [instance]\n        blr x8        // \"(\" // 0x4134(0x178000, 0x0, 0x0, 0x0)\n        w8 = 1\n        w9 = w0 & w8\n        sturb w9, [x29, -1]\n        [arg_40hxc] = w8\n        goto 0x4148\n        \n    loc_0x00004148:\n        // CODE XREFS from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ @ 0x4118(x), 0x4144(x)\n        x0 = sp + 0x10 // void *instance\n        x1 = 0        // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        w8 = (byte) [x29 -1]\n        w0 = w8 & 1\n        (x29, 2) = 3\n        sp = sp + 0x40 // 0x178000\n        return x0;\n    loc_0x00004100: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ @ 0x40fc(x)\n         w9 = 0\n         w8 = 1\n         w9 = w9 & 1\n         w9 = w9 & w8\n         sturb w9, [x29, -1]\n         [arg_40hxc] = w8\n         \n         goto loc_0x00004148\n    loc_0x00004148: // orphan\n         // CODE XREFS from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_ @ 0x4118(x), 0x4144(x)\n         x0 = sp + 0x10           // void *instance\n         x1 = 0                   // int type\n         sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n         w8 = (byte) [x29 -1]\n         w0 = w8 & 1\n         (x29, 2) = 3\n         sp = sp + 0x40           // 0x178000\n\n        return x0;\n}\n\n\n// --- sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ @ 0x4168 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ (int64_t arg1, int64_t arg2, int64_t type, int64_t arg4, int64_t arg_50h) {\n    loc_0x00004168:\n        // ICOD XREF from sym.__logosLocalInit @ 0x404c(r)\n        sp = sp - 0x50\n        [var_40h] = (x29, 2)\n        x29 = sp + 0x40\n        x8 = x1       // arg2\n        x1 = x2       // int type\n        [var_8h] = x3 // arg4\n        [x29 -0x10] = x0 // arg1\n        [x29 -0x18] = x8 // (cstr 0x00006c38) \"NSFileManager\"\n        x0 = sp + 0x20 // void *instance\n        [instance] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x3 = [var_8h]\n        [var_18h] = x3\n        x0 = [instance] // int64_t type // (cstr 0x00006c38) \"NSFileManager\"\n        sym._isJBPath () // sym.func.000044b8 // sym._isJBPath(0x0, 0x0, 0x0)\n        if (w0 == 0) goto 0x41c8 // likely\n        goto loc_0x000041a8;\n    loc_0x000041c8:\n        // CODE XREF from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ @ 0x41a4(x)\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x8 = [x8 + 0x1a0] // [0x101a0:4]=0 // sym.__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_\n        x0 = [x29 -0x10] // sp\n        x1 = [x29 -0x18] // (pstr 0x00006c38) \"NSFileManager\" // section.4.__TEXT.__cstring\n        x2 = [instance]\n        x3 = [var_18h]\n        blr x8        // \"(\" // 0x41e4(0x178000, 0x6c38, 0x0, 0x0)\n        w8 = 1\n        w9 = w0 & w8\n        sturb w9, [x29, -1]\n        [arg_50hx14] = w8\n        goto 0x41f8\n        \n    loc_0x000041f8:\n        // CODE XREFS from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ @ 0x41c4(x), 0x41f4(x)\n        x0 = sp + 0x20 // void *instance\n        x1 = 0        // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        w8 = (byte) [x29 -1]\n        w0 = w8 & 1\n        (x29, 2) = 3\n        sp = sp + 0x50 // 0x178000\n        return x0;\n    loc_0x000041ac: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ @ 0x41a8(x)\n         w9 = 0\n         w8 = 1\n         w9 = w9 & 1\n         w9 = w9 & w8\n         sturb w9, [x29, -1]\n         [arg_50hx14] = w8\n         \n         goto loc_0x000041f8\n    loc_0x000041f8: // orphan\n         // CODE XREFS from sym.__logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_ @ 0x41c4(x), 0x41f4(x)\n         x0 = sp + 0x20           // void *instance\n         x1 = 0                   // int type\n         sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n         w8 = (byte) [x29 -1]\n         w0 = w8 & 1\n         (x29, 2) = 3\n         sp = sp + 0x50           // 0x178000\n\n        return x0;\n}\n\n\n// --- sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x4218 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.__logos_method__ungrouped_UIApplication_canOpenURL_ (int64_t arg1, int64_t arg2, int64_t type, int64_t arg_50h) {\n    loc_0x00004218:\n        // ICOD XREF from sym.__logosLocalInit @ 0x407c(r)\n        sp = sp - 0x50\n        [var_40h] = (x29, 2)\n        x29 = sp + 0x40\n        x8 = x1       // arg2\n        x1 = x2       // int type\n        [x29 -0x10] = x0 // arg1\n        [x29 -0x18] = x8 // (cstr 0x00006c38) \"NSFileManager\"\n        x0 = sp + 0x20 // void *instance\n        [instance] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x0 = [instance] // void *instance // (cstr 0x00006c38) \"NSFileManager\"\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8 + 0x40] // [0x10040:4]=0x6fc2 str.absoluteString // sym._OBJC_SELECTOR_REFERENCES_.45 // (pstr 0x00006fc2) \"absoluteString\"\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = [x8 + 0x18] // [0xc018:4]=3 // reloc.objc_msgSend\n        blr x8        // 0x8010000000000003(0x0, 0x10000000006fc2, 0x0, 0x0)\n        x29 = x29\n        sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0)\n        [var_18h] = x0 // (cstr 0x00006c38) \"NSFileManager\"\n        x0 = [var_18h] // (cstr 0x00006c38) \"NSFileManager\"\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x1 = [x8 + 0x38] // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n        x2 = reloc.MSHookMessageEx // 0xc000\n        x2 = x2 + 0x310 // 0xc310 // str.cstr.cydia\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = [x8 + 0x18] // [0xc018:4]=3 // reloc.objc_msgSend\n        blr x8        // 0x8010000000000003(0x0, 0x10000000006fb2, 0xc310, 0x0)\n        if (w0 != 0) goto 0x4304 // unlikely\n        goto loc_0x00004288;\n    loc_0x00004304:\n        // CODE XREFS from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x4284(x), 0x42ac(x), 0x42d4(x), 0x4300(x)\n        w9 = 0\n        w8 = 1\n        w9 = w9 & 1\n        w9 = w9 & w8\n        sturb w9, [x29, -1]\n        [arg_50hx14] = w8\n        goto 0x434c\n        \n    loc_0x0000434c:\n        // CODE XREFS from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x431c(x), 0x4348(x)\n        x0 = sp + 0x18 // void *instance\n        x1 = 0        // int type\n        [var_8h] = x1\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x1 = [var_8h] // int type\n        x0 = sp + 0x20 // void *instance\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, -1)\n        w8 = (byte) [x29 -1]\n        w0 = w8 & 1\n        (x29, 2) = 3\n        sp = sp + 0x50 // 0x178000\n        return x0;\n    loc_0x0000428c: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x4288(x)\n         x0 = [var_18h]\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x330          // \"__const\" // str.cstr.sileo\n         blr x8                   // 0x8010000000000003(0x0, 0x10000000006fb2, 0xc330, 0x0)\n         if (w0 != 0) \n         goto loc_0x00004304\n    loc_0x000042b0: // orphan\n         \n    loc_0x000042b4: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x42b0(x)\n         x0 = [var_18h]\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x350          // 0xc350 // str.cstr.zebra\n         blr x8                   // 0x8010000000000003(0x0, 0x10000000006fb2, 0xc350, 0x0)\n         if (w0 != 0) \n         goto loc_0x00004304\n    loc_0x000042d8: // orphan\n         \n    loc_0x000042dc: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x42d8(x)\n         x0 = [var_18h]\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x370          // 0xc370 // str.cstr.filza\n         blr x8                   // 0x8010000000000003(0x0, 0x10000000006fb2, 0xc370, 0x0)\n         if (w0 == 0) \n         goto loc_0x00004320\n    loc_0x00004300: // orphan\n         \n    loc_0x00004320: // orphan\n         // CODE XREF from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x42fc(x)\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x8 = [x8 + 0x1a8]        // [0x101a8:4]=0 // sym.__logos_orig__ungrouped_UIApplication_canOpenURL_\n         x0 = [x29 -0x10]         // sp\n         x1 = [x29 -0x18]         // (pstr 0x00006c38) \"NSFileManager\" // section.4.__TEXT.__cstring\n         x2 = [instance]\n         blr x8                   // \"(\" // 0x4338(0x178000, 0x6c38, 0x0, 0x0)\n         w8 = 1\n         w9 = w0 & w8\n         sturb w9, [x29, -1]\n         [arg_50hx14] = w8\n         \n    loc_0x0000434c: // orphan\n         // CODE XREFS from sym.__logos_method__ungrouped_UIApplication_canOpenURL_ @ 0x431c(x), 0x4348(x)\n         x0 = sp + 0x18           // void *instance\n         x1 = 0                   // int type\n         [var_8h] = x1\n         sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n         x1 = [var_8h]            // int type\n         x0 = sp + 0x20           // void *instance\n         sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, -1)\n         w8 = (byte) [x29 -1]\n         w0 = w8 & 1\n         (x29, 2) = 3\n         sp = sp + 0x50           // 0x178000\n\n        return x0;\n}\n\n\n// --- sym.__logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_ @ 0x437c ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.__logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_ (void *arg1, int64_t arg2, int64_t type, int64_t arg4, int64_t arg5, int64_t arg_8h, int64_t arg_10h, int64_t arg_18h, int64_t arg_20h, void *arg_28h, void *arg_30h, void *arg_38h, void *arg_40h, void *arg_48h, int64_t arg_50h, int64_t arg_58h, int64_t arg_b0h, int64_t arg_c0h) {\n    loc_0x0000437c:\n        // ICOD XREF from sym.__logosLocalInit @ 0x40ac(r)\n        sp = sp - 0xc0\n        [var_b0h] = (x29, 2)\n        x29 = sp + 0xb0\n        x8 = x1       // arg2\n        x1 = x2       // int type\n        [var_0h] = x3 // arg4\n        [arg_b0h] = x4 // arg5\n        [x29 -8] = x0 // arg1 // (pstr 0x00006c38) \"NSFileManager\"\n        [x29 -0x10] = x8\n        x0 = x29 - 0x18 // void *instance\n        [var_0h_5] = x0\n        x8 = 0\n        [var_0h_6] = x8\n        [x29 -0x18] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x1 = [var_0h] // int type\n        x0 = x29 - 0x20 // void *instance\n        [var_0h_7] = x0\n        [x29 -0x20] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x1 = [arg_b0h] // int type\n        x0 = x29 - 0x28 // void *instance\n        [var_0h_8] = x0\n        [x29 -0x28] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x8 = sp + 0x58\n        [var_0h_9] = x8\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = [x8 + 0x38] // [0xc038:4]=7 // reloc._NSConcreteStackBlock\n        [var_58h] = x8\n        w8 = -0x3e000000\n        [var_0h_10] = w8\n        [var_0h_11] = 0\n        x8 = sym.__logosLocalInit // sym.func.00004000 // 0x4000\n        x8 = x8 + 0x850 // sym.func.00004850\n        [arg_58h] = x8\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = x8 + 0xc0 // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n        [arg_50h] = x8\n        x0 = [x29 -0x28] // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n        [var_0h_14] = x0\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = [x8 + 0x30] // [0xc030:4]=6 // reloc.objc_retain\n        blr x8        // 0x8010000000000006(0xc0c0, 0x0, 0x0, 0x0)\n        x0 = [var_0h_9]\n        x8 = [var_0h_14] // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n        x9 = x0 + 0x20 // mach0_segment64_0\n        [var_0h_15] = x9\n        [arg_48h] = x8\n        sym.imp.objc_retainBlock ()\n        x8 = x29 - 0x30\n        [var_0h_17] = x8\n        [x29 -0x30] = x0\n        x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n        x8 = [x8 + 0x1b0] // [0x101b0:4]=0 // sym.__logos_orig__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_\n        x0 = [x29 -8]\n        x1 = [x29 -0x10]\n        x2 = [x29 -0x18]\n        x3 = [x29 -0x20] // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n        x4 = [x29 -0x30]\n        blr x8        // 0x4470(0x0, 0x0, 0x0, 0xc0c0)\n        x0 = [var_0h_17] // void *instance\n        x1 = [var_0h_6] // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000177fb0, 0)\n        x0 = [var_0h_15] // void *instance\n        x1 = [var_0h_6] // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0, -1)\n        x0 = [var_0h_8] // void *instance\n        x1 = [var_0h_6] // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0, -1)\n        x0 = [var_0h_7] // void *instance\n        x1 = [var_0h_6] // int type\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(-1, 0x00000007)\n        x0 = [var_0h_5] // void *instance\n        x1 = [var_0h_6] // int type // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x8010000000000007, 0x00000000)\n        (x29, 2) = 3\n        sp = sp + 0xc0 // 0x178000\n        return x0;\n}\n\n\n// --- sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4850 ---\n// callconv: x0 arm64 (x0, x1, x2, x3, x4, x5, x6, x7, stack);\nvoid sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke (int64_t arg1, int type, int64_t arg3, int64_t arg_10h, int64_t arg_130h, int64_t arg_240h, int64_t arg_318h, int64_t arg_320h, int64_t arg_348h, int64_t arg_350h, int64_t arg_3a0h, int64_t arg_3a8h, int64_t arg_4b0h) {\n    loc_0x00004850:\n        // ICOD XREF from sym.__logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_ @ 0x4404(r)\n        [sp - 0x20]! = (x28, 2)\n        [var_0h_6] = (x29, 2)\n        x29 = sp + 0x10\n        sp = sp - 0x4b0\n        [var_320h] = x0 // arg1\n        [var_0h] = x2 // arg3\n        x8 = reloc.MSHookMessageEx // 0xc000\n        x8 = [x8 + 0x48] // [0xc048:4]=9 // \"\\t\" // reloc.__stack_chk_guard\n        x8 = [x8]\n        [x29 -0x18] = x8\n        [x29 -0x80] = x0 // arg1\n        x0 = x29 - 0x88 // void *instance\n        [x29 -0x88] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x1 = [var_0h] // int type\n        x0 = x29 - 0x90 // void *instance\n        [x29 -0x90] = 0\n        sym.imp.objc_storeStrong () // void *objc_storeStrong(0x0000000000000000, 0)\n        x0 = [var_320h]\n        [x29 -0x98] = x0\n        x8 = [x29 -0x88]\n        w9 = 0\n        w9 = w9 & 1\n        w9 = w9 & 1\n        sturb w9, [x29, -0xb1]\n        w9 = 0\n        [var_32ch] = w9\n        if (!x8) goto 0x4918 // likely\n        goto loc_0x000048c0;\n    loc_0x00004918:\n        // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x48bc(x), 0x4914(x)\n        w8 = [var_32ch]\n        [var_30ch] = w8\n        w8 = (byte) [x29 -0xb1]\n        if (w8 == 0) goto 0x4940 // likely\n        goto loc_0x00004928;\n    loc_0x00004940:\n        // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4924(x), 0x493c(x)\n        w8 = [var_30ch]\n        if (w8 == 0) goto 0x5cb4 // likely\n        goto loc_0x00004948;\n    loc_0x00005cb4:\n        // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4944(x), 0x5cb0(x)\n        goto 0x5cb8\n        \n    loc_0x00005cb8:\n        // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x5cb4(x)\n        // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ +0x14c4(x)\n        x8 = [var_320h]\n        x8 = [x8 + 0x20] // mach0_segment64_0\n        if (!x8) goto 0x5d18 // unlikely\n        goto loc_0x00005cc4;\n        goto loc_0x00005cc4;\n        return x0;\n    loc_0x000048c4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x48c0(x)\n         x0 = [x29 -0x88]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x48]         // [0x10048:4]=0x6fd1 str.path // sym._OBJC_SELECTOR_REFERENCES_.55 // (pstr 0x00006fd1) \"path\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fd1, 0x0, 0x0)\n         [var_310h] = x0\n         \n    loc_0x000048e4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x48e0(x)\n         x0 = [var_310h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         x8 = x0                  // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         [x29 -0xb0] = x8\n         w8 = 1\n         w8 = w8 & 1\n         w8 = w8 & 1\n         sturb w8, [x29, -0xb1]\n         x8 = x0 - 0              // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         w8 = (ne)? 1 : 0\n         [var_32ch] = w8\n         \n    loc_0x00004928: // orphan\n         \n    loc_0x0000492c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4928(x)\n         x0 = [x29 -0xb0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0xc0c0, 0x0, 0x0, 0x0)\n         \n    loc_0x00004948: // orphan\n         \n    loc_0x0000494c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4948(x)\n         x0 = [x29 -0x88]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x48]         // [0x10048:4]=0x6fd1 str.path // sym._OBJC_SELECTOR_REFERENCES_.55 // (pstr 0x00006fd1) \"path\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fd1, 0x0, 0x0)\n         [var_300h] = x0\n         \n    loc_0x0000496c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4968(x)\n         x0 = [var_300h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         [x29 -0xc0] = x0\n         x0 = [x29 -0xc0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x50]         // [0x10050:4]=0x6fd6 str.hasPrefix: // sym._OBJC_SELECTOR_REFERENCES_.59 // (pstr 0x00006fd6) \"hasPrefix:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x390          // 0xc390 // str.cstr.users_\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fd6, 0xc390, 0x0)\n         [var_2fch] = w0\n         \n    loc_0x000049a4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x49a0(x)\n         w8 = [var_2fch]\n         if (w8 == 0) \n         goto loc_0x00004b64\n    loc_0x000049ac: // orphan\n         \n    loc_0x000049b0: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x49ac(x)\n         x0 = [x29 -0xc0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x3b0          // 0xc3b0 // str.cstr.allowUsers\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fb2, 0xc3b0, 0x0)\n         [var_2f8h] = w0\n         \n    loc_0x000049d8: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x49d4(x)\n         w8 = [var_2f8h]          // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         if (w8 != 0) \n         goto loc_0x00004b64\n    loc_0x000049e0: // orphan\n         \n    loc_0x000049e4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x49e0(x)\n         x0 = [x29 -0xc0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x3d0          // \"__objc_imageinfo__DATA_CONST\" // str.cstr._notifications\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fb2, 0xc3d0, 0x0)\n         [var_2f4h] = w0\n         \n    loc_0x00004a0c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a08(x)\n         w8 = [var_2f4h]          // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         if (w8 != 0) \n         goto loc_0x00004b64\n    loc_0x00004a14: // orphan\n         \n    loc_0x00004a18: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a14(x)\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x8 = [x8 + 0x180]        // [0x10180:4]=0 // sym._detectedUID\n                                  [13] -rw- section size 64 named 13.__DATA.__bss\n         if (x8) \n         goto loc_0x00004b64\n    loc_0x00004a24: // orphan\n         \n    loc_0x00004a28: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a24(x)\n         x0 = [x29 -0xc0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x58]         // [0x10058:4]=0x6fe1 str.componentsSeparatedByString: // sym._OBJC_SELECTOR_REFERENCES_.67 // (pstr 0x00006fe1) \"componentsSeparatedByString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x3f0\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fe1, 0xc3f0, 0x0)\n         [var_2e8h] = x0\n         \n    loc_0x00004a50: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a4c(x)\n         x0 = [var_2e8h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         [x29 -0xc8] = x0\n         x0 = [x29 -0xc8]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x60]         // [0x10060:4]=0x6ffe str.count // sym._OBJC_SELECTOR_REFERENCES_.69 // (pstr 0x00006ffe) \"count\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006ffe, 0x0, 0x0)\n         [var_2e0h] = x0\n         \n    loc_0x00004a80: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a7c(x)\n         x8 = [var_2e0h]          // [0x2e0:4]=0x6f675f5f // \"__got\"\n         x8 = x8 - 2\n         if (eq) \n         goto loc_0x00004b54\n    loc_0x00004a8c: // orphan\n         \n    loc_0x00004a90: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a8c(x)\n         x0 = [x29 -0xc8]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x68]         // [0x10068:4]=0x7004 str.objectAtIndexedSubscript: // sym._OBJC_SELECTOR_REFERENCES_.71 // (pstr 0x00007004) \"objectAtIndexedSubscript:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = 1\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000007004, 0x1, 0x0)\n         [var_2d8h] = x0\n         \n    loc_0x00004ab4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4ab0(x)\n         x0 = [var_2d8h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         [var_2c8h] = x0\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x70]         // [0x10070:4]=0x701e str.copy // sym._OBJC_SELECTOR_REFERENCES_.73 // (pstr 0x0000701e) \"copy\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x1000000000701e, 0x0, 0x0)\n         [var_2d0h] = x0\n         \n    loc_0x00004ae0: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4adc(x)\n         x8 = [var_2d0h]          // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x9 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         [var_2c0h] = x9\n         x0 = [x9 + 0x180]        // [0x10180:4]=0 // sym._detectedUID\n                                  [13] -rw- section size 64 named 13.__DATA.__bss\n         [x9 + 0x180] = x8        // [0x10180:4]=0 // sym._detectedUID\n                                  [13] -rw- section size 64 named 13.__DATA.__bss\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         x0 = [var_2c8h]\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         x8 = [var_2c0h]          // (pstr 0x00006ef6) \"fileExistsAtPath:\" sym._OBJC_SELECTOR_REFERENCES_\n         x8 = [x8 + 0x180]        // sym._detectedUID // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x9 = sp\n         [x9] = x8                // sp\n         x0 = reloc.MSHookMessageEx // 0xc000\n         x0 = x0 + 0x410          // 0xc410 // str.cstr._3afer__UID:___\n         sym.imp.NSLog ()\n         \n    loc_0x00004b30: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4b2c(x)\n         \n    loc_0x00004b54: // orphan\n         // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4a88(x), 0x4b30(x)\n         x0 = x29 - 0xc8          // void *instance\n         x1 = 0                   // int type\n         sym.imp.objc_storeStrong () // void *objc_storeStrong(0x000000000000c0c0, 0)\n         \n    loc_0x00004b64: // orphan\n         // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x49a8(x), 0x49dc(x), 0x4a10(x), 0x4a20(x), 0x4b60(x)\n         x0 = [x29 -0xc0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x38]         // [0x10038:4]=0x6fb2 str.containsString: // sym._OBJC_SELECTOR_REFERENCES_.39 // (pstr 0x00006fb2) \"containsString:\"\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x430          // 0xc430 // str.cstr.allowUsers_allowUser\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000006fb2, 0xc430, 0x0)\n         [var_2bch] = w0\n         \n    loc_0x00004b8c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4b88(x)\n         w8 = [var_2bch]          // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         if (w8 == 0) \n         goto loc_0x00004f04\n    loc_0x00004b94: // orphan\n         \n    loc_0x00004b98: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4b94(x)\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x8 = [x8 + 0x180]        // [0x10180:4]=0xc0c0 sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l // sym._detectedUID\n                                  [13] -rw- section size 64 named 13.__DATA.__bss // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         if (!x8) \n         goto loc_0x00004f04\n    loc_0x00004ba4: // orphan\n         \n    loc_0x00004ba8: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4ba4(x)\n         [x29 -0xd0] = 0\n         x0 = [x29 -0x88]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x78]         // [0x10078:4]=0x7023 str.data // \"#p\" // (pstr 0x00007023) \"data\" sym._OBJC_SELECTOR_REFERENCES_.79\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000007023, 0x0, 0x0)\n         [var_2b0h] = x0\n         \n    loc_0x00004bcc: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4bc8(x)\n         x0 = [var_2b0h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         [var_2a8h] = x0\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0xc0c0, 0x0, 0x0, 0x0)\n         x0 = [var_2a8h]          // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         if (!x0) \n         goto loc_0x00004c6c\n    loc_0x00004bf0: // orphan\n         \n    loc_0x00004bf4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4bf0(x)\n         x0 = [x29 -0x88]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x78]         // [0x10078:4]=0x7023 str.data // \"#p\" // (pstr 0x00007023) \"data\" sym._OBJC_SELECTOR_REFERENCES_.79\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000007023, 0x0, 0x0)\n         [var_2a0h] = x0\n         \n    loc_0x00004c14: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4c10(x)\n         x0 = [var_2a0h]          // void *instance // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(0x0000000000000000)\n         [arg_240h] = x0\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x80]         // [0x10080:4]=0x7028 str.mutableCopy // \"(p\" // (pstr 0x00007028) \"mutableCopy\" sym._OBJC_SELECTOR_REFERENCES_.81\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0xc0c0, 0x10000000007028, 0x0, 0x0)\n         [var_298h] = x0\n         \n    loc_0x00004c40: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4c3c(x)\n         x8 = [var_298h]          // [0x298:4]=25 // mach0_segment64_1 // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         x0 = [x29 -0xd0]\n         [x29 -0xd0] = x8\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         x0 = [arg_240h]\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         \n         goto loc_0x00004cb8\n    loc_0x00004c6c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4bec(x)\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x0 = [x8 + 0x138]        // [0x10138:4]=25 // sym._OBJC_CLASSLIST_REFERENCES___.82\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x88]         // [0x10088:4]=0x7034 str.dictionary // \"4p\" // (pstr 0x00007034) \"dictionary\" sym._OBJC_SELECTOR_REFERENCES_.84\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0x8010000000000019, 0x10000000007034, 0x0, 0x0)\n         [var_28h8] = x0\n         \n    loc_0x00004c90: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4c8c(x)\n         x0 = [var_28h8]          // void *instance\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(-1)\n         x8 = x0\n         x0 = [x29 -0xd0]         // sym.___block_descriptor_40_e8_32bs_e35_v24_0_PigeonDocumentSnapshot_816l\n         [x29 -0xd0] = x8\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0xc0c0, 0x0, 0x0, 0x0)\n         \n    loc_0x00004cb8: // orphan\n         // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4c68(x), 0x4cb4(x)\n         [x29 -0xd8] = 0\n         x0 = [x29 -0xd0]\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x90]         // [0x10090:4]=0x703f str.objectForKeyedSubscript: // \"?p\" // (pstr 0x0000703f) \"objectForKeyedSubscript:\" sym._OBJC_SELECTOR_REFERENCES_.88\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x450          // 0xc450 // str.cstr.activation_list\n         blr x8                   // 0x8010000000000003(0x8010000000000019, 0x1000000000703f, 0xc450, 0x0)\n         [var_28h0] = x0\n         \n    loc_0x00004ce4: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4ce0(x)\n         x0 = [var_28h0]          // void *instance\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(-1)\n         [var_278h] = x0\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x8010000000000019, 0x0, 0x0, 0x0)\n         x0 = [var_278h]\n         if (!x0) \n         goto loc_0x00004d8c\n    loc_0x00004d08: // orphan\n         \n    loc_0x00004d0c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4d08(x)\n         x0 = [x29 -0xd0]\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x90]         // [0x10090:4]=0x703f str.objectForKeyedSubscript: // \"?p\" // (pstr 0x0000703f) \"objectForKeyedSubscript:\" sym._OBJC_SELECTOR_REFERENCES_.88\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         x2 = reloc.MSHookMessageEx // 0xc000\n         x2 = x2 + 0x450          // 0xc450 // str.cstr.activation_list\n         blr x8                   // 0x8010000000000003(0x8010000000000019, 0x1000000000703f, 0xc450, 0x0)\n         [var_270h] = x0\n         \n    loc_0x00004d34: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4d30(x)\n         x0 = [var_270h]          // void *instance\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(-1)\n         [var_260h] = x0\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x80]         // [0x10080:4]=0x7028 str.mutableCopy // \"(p\" // (pstr 0x00007028) \"mutableCopy\" sym._OBJC_SELECTOR_REFERENCES_.81\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0x8010000000000019, 0x10000000007028, 0x0, 0x0)\n         [var_268h] = x0\n         \n    loc_0x00004d60: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4d5c(x)\n         x8 = [var_268h]\n         x0 = [x29 -0xd8]\n         [x29 -0xd8] = x8\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         x0 = [var_260h]\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x0, 0x0, 0x0, 0x0)\n         \n         goto loc_0x00004dd8\n    loc_0x00004d8c: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4d04(x)\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x0 = [x8 + 0x138]        // [0x10138:4]=25 // sym._OBJC_CLASSLIST_REFERENCES___.82\n         x8 = sym._OBJC_SELECTOR_REFERENCES_ // 0x10000\n         x1 = [x8 + 0x88]         // [0x10088:4]=0x7034 str.dictionary // \"4p\" // (pstr 0x00007034) \"dictionary\" sym._OBJC_SELECTOR_REFERENCES_.84\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x18]         // [0xc018:4]=3 // reloc.objc_msgSend\n         blr x8                   // 0x8010000000000003(0x8010000000000019, 0x10000000007034, 0x0, 0x0)\n         [var_258h] = x0\n         \n    loc_0x00004db0: // orphan\n         // CODE XREF from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4dac(x)\n         x0 = [var_258h]          // void *instance\n         x29 = x29                // sp\n         sym.imp.objc_retainAutoreleasedReturnValue () // void objc_retainAutoreleasedReturnValue(-1)\n         x8 = x0\n         x0 = [x29 -0xd8]\n         [x29 -0xd8] = x8\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = [x8 + 0x50]         // [0xc050:4]=10 // \"\\n\" // reloc.objc_release\n         blr x8                   // 0x801000000000000a(0x8010000000000019, 0x0, 0x0, 0x0)\n         \n    loc_0x00004dd8: // orphan\n         // CODE XREFS from sym.____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke @ 0x4d88(x), 0x4dd4(x)\n         x3 = x29 - 0x38\n         x8 = reloc.MSHookMessageEx // 0xc000\n         x8 = x8 + 0x470          // 0xc470 // str.cstr.data\n         [x29 -0x38] = x8\n         x2 = x29 - 0x28\n         x8 = reloc.MSHookMessageEx // 0xc000\n ",
+  "ghidra_source": "// Decompiled by Ghidra 11.3.2\n// Binary: e06971afbcb37423481c6231f960161d\n// Architecture: AARCH64 / AARCH64:LE:64:AppleSilicon\n\n// Function: __logosLocalInit @ 00004000\n\nvoid __logosLocalInit(void)\n\n{\n  undefined8 uVar1;\n  \n  uVar1 = _objc_getClass(\"NSFileManager\");\n  _MSHookMessageEx(uVar1,\"fileExistsAtPath:\",\n                   __logos_method__ungrouped_NSFileManager_fileExistsAtPath_,\n                   &__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_);\n  _MSHookMessageEx(uVar1,\"fileExistsAtPath:isDirectory:\",\n                   __logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_,\n                   &__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_);\n  uVar1 = _objc_getClass(\"UIApplication\");\n  _MSHookMessageEx(uVar1,\"canOpenURL:\",__logos_method__ungrouped_UIApplication_canOpenURL_,\n                   &__logos_orig__ungrouped_UIApplication_canOpenURL_);\n  uVar1 = _objc_getClass(\"FLTFirebaseFirestorePlugin\");\n  _MSHookMessageEx(uVar1,\"documentReferenceGetApp:request:completion:\",\n                   __logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_\n                   ,&\n                    __logos_orig__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_\n                  );\n  return;\n}\n\n// Function: __logos_method$_ungrouped$NSFileManager$fileExistsAtPath$ @ 000040c8\n\nbyte __logos_method__ungrouped_NSFileManager_fileExistsAtPath_\n               (undefined8 param_1,undefined8 param_2,undefined8 param_3)\n\n{\n  ulong uVar1;\n  undefined8 local_30;\n  undefined8 local_28;\n  undefined8 local_20;\n  byte local_11;\n  \n  local_30 = 0;\n  local_28 = param_2;\n  local_20 = param_1;\n  _objc_storeStrong(&local_30,param_3);\n  uVar1 = _isJBPath(local_30);\n  if ((uVar1 & 1) == 0) {\n    local_11 = (*__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_)\n                         (local_20,local_28,local_30);\n    local_11 = local_11 & 1;\n  }\n  else {\n    local_11 = 0;\n  }\n  _objc_storeStrong(&local_30,0);\n  return local_11 & 1;\n}\n\n// Function: __logos_method$_ungrouped$NSFileManager$fileExistsAtPath$isDirectory$ @ 00004168\n\nbyte __logos_method__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_\n               (undefined8 param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4)\n\n{\n  ulong uVar1;\n  undefined8 local_30;\n  undefined8 local_28;\n  undefined8 local_20;\n  byte local_11;\n  \n  local_30 = 0;\n  local_28 = param_2;\n  local_20 = param_1;\n  _objc_storeStrong(&local_30,param_3);\n  uVar1 = _isJBPath(local_30);\n  if ((uVar1 & 1) == 0) {\n    local_11 = (*__logos_orig__ungrouped_NSFileManager_fileExistsAtPath_isDirectory_)\n                         (local_20,local_28,local_30,param_4);\n    local_11 = local_11 & 1;\n  }\n  else {\n    local_11 = 0;\n  }\n  _objc_storeStrong(&local_30,0);\n  return local_11 & 1;\n}\n\n// Function: __logos_method$_ungrouped$UIApplication$canOpenURL$ @ 00004218\n\nbyte __logos_method__ungrouped_UIApplication_canOpenURL_\n               (undefined8 param_1,undefined8 param_2,undefined8 param_3)\n\n{\n  ulong uVar1;\n  undefined8 local_38;\n  undefined8 local_30;\n  undefined8 local_28;\n  undefined8 local_20;\n  byte local_11;\n  \n  local_30 = 0;\n  local_28 = param_2;\n  local_20 = param_1;\n  _objc_storeStrong(&local_30,param_3);\n  (*(code *)PTR__objc_msgSend_0000c018)(local_30,\"absoluteString\");\n  local_38 = _objc_retainAutoreleasedReturnValue();\n  uVar1 = (*(code *)PTR__objc_msgSend_0000c018)(local_38,\"containsString:\",&cf_cydia);\n  if (((((uVar1 & 1) == 0) &&\n       (uVar1 = (*(code *)PTR__objc_msgSend_0000c018)(local_38,\"containsString:\",&cf_sileo),\n       (uVar1 & 1) == 0)) &&\n      (uVar1 = (*(code *)PTR__objc_msgSend_0000c018)(local_38,\"containsString:\",&cf_zebra),\n      (uVar1 & 1) == 0)) &&\n     (uVar1 = (*(code *)PTR__objc_msgSend_0000c018)(local_38,\"containsString:\",&cf_filza),\n     (uVar1 & 1) == 0)) {\n    local_11 = (*__logos_orig__ungrouped_UIApplication_canOpenURL_)(local_20,local_28,local_30);\n    local_11 = local_11 & 1;\n  }\n  else {\n    local_11 = 0;\n  }\n  _objc_storeStrong(&local_38);\n  _objc_storeStrong(&local_30,0);\n  return local_11 & 1;\n}\n\n// Function: __logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$ @ 0000437c\n\nvoid __logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_\n               (undefined8 param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4,\n               undefined8 param_5)\n\n{\n  undefined8 uVar1;\n  undefined8 local_48;\n  undefined8 local_40;\n  undefined8 local_38;\n  undefined8 local_30;\n  undefined8 local_28;\n  undefined8 local_20;\n  undefined8 local_18;\n  \n  local_28 = 0;\n  local_20 = param_2;\n  local_18 = param_1;\n  _objc_storeStrong(&local_28,param_3);\n  local_30 = 0;\n  _objc_storeStrong(&local_30,param_4);\n  local_38 = 0;\n  _objc_storeStrong(&local_38,param_5);\n  uVar1 = local_38;\n  (*(code *)PTR__objc_retain_0000c030)();\n  local_48 = uVar1;\n  local_40 = _objc_retainBlock();\n  (*__logos_orig__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion_)\n            (local_18,local_20,local_28,local_30,local_40);\n  _objc_storeStrong(&local_40,0);\n  _objc_storeStrong(&local_48,0);\n  _objc_storeStrong(&local_38,0);\n  _objc_storeStrong(&local_30,0);\n  _objc_storeStrong(&local_28,0);\n  return;\n}\n\n// Function: _isJBPath @ 000044b8\n\nbyte _isJBPath(undefined8 param_1)\n\n{\n  bool bVar1;\n  long lVar2;\n  long lVar3;\n  ulong uVar4;\n  ulong local_190;\n  ulong local_188;\n  undefined1 auStack_158 [8];\n  long local_150;\n  long *local_148;\n  undefined8 local_118;\n  undefined8 local_110;\n  byte local_101;\n  undefined1 auStack_100 [128];\n  cfstringStruct *local_80;\n  cfstringStruct *local_78;\n  cfstringStruct *local_70;\n  cfstringStruct *local_68;\n  cfstringStruct *local_60;\n  cfstringStruct *local_58;\n  cfstringStruct *local_50;\n  cfstringStruct *local_48;\n  cfstringStruct *local_40;\n  cfstringStruct *local_38;\n  cfstringStruct *local_30;\n  long local_28;\n  \n  local_28 = *(long *)PTR____stack_chk_guard_0000c048;\n  local_110 = 0;\n  _objc_storeStrong(&local_110,param_1);\n  if (_isJBPath_jbPaths == 0) {\n    local_80 = &cf__Applications_Cydia_app;\n    local_78 = &cf__Library_MobileSubstrate_MobileSubstrate_dylib;\n    local_70 = &cf__bin_bash;\n    local_68 = &cf__usr_sbin_sshd;\n    local_60 = &cf__etc_apt;\n    local_58 = &cf__usr_bin_ssh;\n    local_50 = &cf__var_jb;\n    local_48 = &cf__var_binpack;\n    local_40 = &cf___bootstrapped;\n    local_38 = &cf__usr_lib_TweakInject;\n    local_30 = &cf__Library_TweakInject;\n    (*(code *)PTR__objc_msgSend_0000c018)\n              (&_OBJC_CLASS___NSArray,\"arrayWithObjects:count:\",&local_80,0xb);\n    lVar3 = _objc_retainAutoreleasedReturnValue();\n    lVar2 = _isJBPath_jbPaths;\n    _isJBPath_jbPaths = lVar3;\n    (*(code *)PTR__objc_release_0000c050)(lVar2);\n  }\n  _memset(auStack_158,0,0x40);\n  lVar2 = _isJBPath_jbPaths;\n  (*(code *)PTR__objc_retain_0000c030)();\n  local_188 = (*(code *)PTR__objc_msgSend_0000c018)\n                        (lVar2,\"countByEnumeratingWithState:objects:count:\",auStack_158,auStack_100,\n                         0x10);\n  if (local_188 != 0) {\n    lVar3 = *local_148;\n    local_190 = 0;\n    do {\n      do {\n        if (*local_148 - lVar3 != 0) {\n          _objc_enumerationMutation(*local_148 - lVar3,lVar2);\n        }\n        local_118 = *(undefined8 *)(local_150 + local_190 * 8);\n        uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"isEqualToString:\",local_118);\n        if ((uVar4 & 1) != 0) {\n          local_101 = 1;\n          bVar1 = true;\n          goto LAB_00004738;\n        }\n        local_190 = local_190 + 1;\n      } while (local_190 < local_188);\n      local_188 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (lVar2,\"countByEnumeratingWithState:objects:count:\",auStack_158,\n                             auStack_100,0x10);\n      local_190 = 0;\n    } while (local_188 != 0);\n  }\n  bVar1 = false;\nLAB_00004738:\n  (*(code *)PTR__objc_release_0000c050)(lVar2);\n  if (!bVar1) {\n    uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"containsString:\",&cf_Cydia);\n    if ((((uVar4 & 1) == 0) &&\n        (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"containsString:\",&cf_substrate),\n        (uVar4 & 1) == 0)) &&\n       (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"containsString:\",&cf_TweakInject),\n       (uVar4 & 1) == 0)) {\n      local_101 = 0;\n    }\n    else {\n      local_101 = 1;\n    }\n  }\n  _objc_storeStrong(&local_110,0);\n  if (*(long *)PTR____stack_chk_guard_0000c048 - local_28 == 0) {\n    return local_101 & 1;\n  }\n                    /* WARNING: Subroutine does not return */\n  ___stack_chk_fail(*(long *)PTR____stack_chk_guard_0000c048 - local_28);\n}\n\n// Function: ____logos_method$_ungrouped$FLTFirebaseFirestorePlugin$documentReferenceGetApp$request$completion$_block_invoke @ 00004850\n\n/* WARNING: Restarted to delay deadcode elimination for space: ram */\n\nvoid ____logos_method__ungrouped_FLTFirebaseFirestorePlugin_documentReferenceGetApp_request_completion__block_invoke\n               (long param_1,undefined8 param_2,undefined8 param_3)\n\n{\n  undefined1 uVar1;\n  ulong uVar2;\n  bool bVar3;\n  uint uVar4;\n  undefined8 uVar5;\n  long lVar6;\n  long lVar7;\n  undefined8 uVar8;\n  undefined8 uVar9;\n  ulong uVar10;\n  cfstringStruct *pcVar11;\n  long local_430;\n  cfstringStruct *local_410;\n  long local_320;\n  cfstringStruct *local_300;\n  long local_190;\n  long local_188;\n  cfstringStruct *local_180;\n  undefined8 local_178;\n  ulong local_170;\n  undefined8 local_168;\n  undefined8 local_160;\n  undefined1 local_151;\n  long local_150;\n  long local_148;\n  byte local_139;\n  long local_138;\n  long local_130;\n  cfstringStruct *local_128;\n  undefined8 local_120;\n  ulong local_118;\n  undefined8 local_110;\n  undefined8 local_108;\n  undefined1 local_f9;\n  long local_f8;\n  long local_f0;\n  undefined8 local_e8;\n  undefined8 local_e0;\n  undefined8 local_d8;\n  undefined8 local_d0;\n  undefined1 local_c1;\n  long local_c0;\n  long local_a8;\n  undefined8 local_a0;\n  long local_98;\n  long local_90;\n  cfstringStruct *local_88;\n  cfstringStruct *local_80;\n  long local_78;\n  cfstringStruct *local_70;\n  cfstringStruct *local_68;\n  cfstringStruct *local_60;\n  long local_58;\n  cfstringStruct *local_50;\n  cfstringStruct *local_48;\n  cfstringStruct *local_40;\n  cfstringStruct *local_38;\n  cfstringStruct *local_30;\n  long local_28;\n  \n  local_28 = *(long *)PTR____stack_chk_guard_0000c048;\n  local_98 = 0;\n  local_90 = param_1;\n  _objc_storeStrong(&local_98);\n  local_a0 = 0;\n  _objc_storeStrong(&local_a0,param_3);\n  local_c1 = 0;\n  bVar3 = false;\n  uVar1 = local_98 != 0;\n  local_a8 = param_1;\n  if ((bool)uVar1) {\n    uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"path\");\n    local_c0 = _objc_retainAutoreleasedReturnValue(uVar5);\n    bVar3 = local_c0 != 0;\n    local_c1 = uVar1;\n    (*(code *)PTR__objc_release_0000c050)(local_c0);\n    uVar1 = local_c1;\n  }\n  local_c1 = uVar1;\n  if (bVar3) {\n    uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"path\");\n    local_d0 = _objc_retainAutoreleasedReturnValue(uVar5);\n    uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"hasPrefix:\",&cf_users_);\n    if (((((uVar4 & 1) != 0) &&\n         (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"containsString:\",&cf_allowUsers),\n         (uVar4 & 1) == 0)) &&\n        (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)\n                           (local_d0,\"containsString:\",&cf__notifications), (uVar4 & 1) == 0)) &&\n       (_detectedUID == 0)) {\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"componentsSeparatedByString:\",&cf__);\n      local_d8 = _objc_retainAutoreleasedReturnValue(uVar5);\n      lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_d8,\"count\");\n      if (lVar6 == 2) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_d8,\"objectAtIndexedSubscript:\",1);\n        uVar5 = _objc_retainAutoreleasedReturnValue(uVar5);\n        lVar7 = (*(code *)PTR__objc_msgSend_0000c018)(uVar5,\"copy\");\n        lVar6 = _detectedUID;\n        _detectedUID = lVar7;\n        (*(code *)PTR__objc_release_0000c050)(lVar6);\n        (*(code *)PTR__objc_release_0000c050)(uVar5);\n        _NSLog(&cf__3afer_UID___);\n      }\n      _objc_storeStrong(&local_d8,0);\n    }\n    uVar4 = (*(code *)PTR__objc_msgSend_0000c018)\n                      (local_d0,\"containsString:\",&cf_allowUsers_allowUser);\n    if (((uVar4 & 1) != 0) && (_detectedUID != 0)) {\n      local_e0 = 0;\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"data\");\n      lVar6 = _objc_retainAutoreleasedReturnValue(uVar5);\n      (*(code *)PTR__objc_release_0000c050)();\n      if (lVar6 == 0) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (&_OBJC_CLASS___NSMutableDictionary,\"dictionary\");\n        uVar8 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar5 = local_e0;\n        local_e0 = uVar8;\n        (*(code *)PTR__objc_release_0000c050)(uVar5);\n      }\n      else {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"data\");\n        uVar8 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar9 = (*(code *)PTR__objc_msgSend_0000c018)(uVar8,\"mutableCopy\");\n        uVar5 = local_e0;\n        local_e0 = uVar9;\n        (*(code *)PTR__objc_release_0000c050)(uVar5);\n        (*(code *)PTR__objc_release_0000c050)(uVar8);\n      }\n      local_e8 = 0;\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                        (local_e0,\"objectForKeyedSubscript:\",&cf_activationlist);\n      lVar6 = _objc_retainAutoreleasedReturnValue(uVar5);\n      (*(code *)PTR__objc_release_0000c050)();\n      if (lVar6 == 0) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (&_OBJC_CLASS___NSMutableDictionary,\"dictionary\");\n        uVar8 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar5 = local_e8;\n        local_e8 = uVar8;\n        (*(code *)PTR__objc_release_0000c050)(uVar5);\n      }\n      else {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (local_e0,\"objectForKeyedSubscript:\",&cf_activationlist);\n        uVar8 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar9 = (*(code *)PTR__objc_msgSend_0000c018)(uVar8,\"mutableCopy\");\n        uVar5 = local_e8;\n        local_e8 = uVar9;\n        (*(code *)PTR__objc_release_0000c050)(uVar5);\n        (*(code *)PTR__objc_release_0000c050)(uVar8);\n      }\n      local_48 = &cf_data;\n      local_38 = &cf_2024_01_01;\n      local_40 = &cf_endDate;\n      local_30 = &cf_2030_12_31;\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                        (&_OBJC_CLASS___NSDictionary,\"dictionaryWithObjects:forKeys:count:\",\n                         &local_38,&local_48,2);\n      uVar5 = _objc_retainAutoreleasedReturnValue(uVar5);\n      (*(code *)PTR__objc_msgSend_0000c018)\n                (local_e8,\"setObject:forKeyedSubscript:\",uVar5,_detectedUID);\n      (*(code *)PTR__objc_release_0000c050)(uVar5);\n      (*(code *)PTR__objc_msgSend_0000c018)\n                (local_e0,\"setObject:forKeyedSubscript:\",local_e8,&cf_activationlist);\n      (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"setData:\",local_e0);\n      _NSLog(&cf__3afer_BYPASS___);\n      _objc_storeStrong(&local_e8);\n      _objc_storeStrong(&local_e0,0);\n    }\n    uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"containsString:\",&cf__videos_);\n    if (((uVar4 & 1) != 0) &&\n       (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"isEqualToString:\",_shownVideoPath),\n       (uVar4 & 1) == 0)) {\n      uVar8 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"copy\");\n      uVar5 = _shownVideoPath;\n      _shownVideoPath = uVar8;\n      (*(code *)PTR__objc_release_0000c050)(uVar5);\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"data\");\n      local_f0 = _objc_retainAutoreleasedReturnValue(uVar5);\n      local_f9 = 0;\n      bVar3 = false;\n      uVar1 = local_f0 != 0;\n      if ((bool)uVar1) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (local_f0,\"objectForKeyedSubscript:\",&cf_video_list);\n        local_f8 = _objc_retainAutoreleasedReturnValue(uVar5);\n        bVar3 = local_f8 != 0;\n        local_f9 = uVar1;\n        (*(code *)PTR__objc_release_0000c050)(local_f8);\n        uVar1 = local_f9;\n      }\n      local_f9 = uVar1;\n      if (bVar3) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (local_f0,\"objectForKeyedSubscript:\",&cf_video_list);\n        local_108 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___NSMutableArray,\"array\");\n        local_110 = _objc_retainAutoreleasedReturnValue(uVar5);\n        for (local_118 = 0; uVar2 = local_118,\n            uVar10 = (*(code *)PTR__objc_msgSend_0000c018)(local_108,\"count\"), uVar2 < uVar10;\n            local_118 = local_118 + 1) {\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_108,\"objectAtIndexedSubscript:\",local_118);\n          local_120 = _objc_retainAutoreleasedReturnValue(uVar5);\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_120,\"objectForKeyedSubscript:\",&cf_video_url);\n          pcVar11 = (cfstringStruct *)_objc_retainAutoreleasedReturnValue(uVar5);\n          local_300 = pcVar11;\n          if (pcVar11 == (cfstringStruct *)0x0) {\n            local_300 = &cf___;\n          }\n          (*(code *)PTR__objc_retain_0000c030)();\n          local_128 = local_300;\n          (*(code *)PTR__objc_release_0000c050)(pcVar11);\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_120,\"objectForKeyedSubscript:\",&cf_chapterNum);\n          lVar6 = _objc_retainAutoreleasedReturnValue(uVar5);\n          local_139 = 0;\n          local_320 = lVar6;\n          if (lVar6 == 0) {\n            uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_Video_lu);\n            local_138 = _objc_retainAutoreleasedReturnValue(uVar5);\n            local_320 = local_138;\n          }\n          local_139 = lVar6 == 0;\n          (*(code *)PTR__objc_retain_0000c030)();\n          local_130 = local_320;\n          if ((local_139 & 1) != 0) {\n            (*(code *)PTR__objc_release_0000c050)(local_138);\n          }\n          (*(code *)PTR__objc_release_0000c050)(lVar6);\n          lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_130,\"length\");\n          if (lVar6 == 0) {\n            uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_Video_lu);\n            lVar7 = _objc_retainAutoreleasedReturnValue(uVar5);\n            lVar6 = local_130;\n            local_130 = lVar7;\n            (*(code *)PTR__objc_release_0000c050)(lVar6);\n          }\n          lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_128,\"length\");\n          uVar5 = local_110;\n          if (lVar6 != 0) {\n            local_68 = &cf_name;\n            local_58 = local_130;\n            local_60 = &cf_url;\n            local_50 = local_128;\n            uVar8 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSDictionary,\"dictionaryWithObjects:forKeys:count:\",\n                               &local_58,&local_68,2);\n            uVar8 = _objc_retainAutoreleasedReturnValue(uVar8);\n            (*(code *)PTR__objc_msgSend_0000c018)(uVar5,\"addObject:\");\n            (*(code *)PTR__objc_release_0000c050)(uVar8);\n          }\n          _objc_storeStrong(&local_130);\n          _objc_storeStrong(&local_128,0);\n          _objc_storeStrong(&local_120,0);\n        }\n        lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"count\");\n        if (lVar6 != 0) {\n          (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"count\");\n          _NSLog(&cf__3afer_VIDEOS__lu);\n          (*(code *)PTR__objc_msgSend_0000c018)(local_110,\"count\");\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_Videos__lu_);\n          uVar5 = _objc_retainAutoreleasedReturnValue(uVar5);\n          _showPopup(uVar5,local_110);\n          (*(code *)PTR__objc_release_0000c050)(uVar5);\n        }\n        _objc_storeStrong(&local_110);\n        _objc_storeStrong(&local_108,0);\n      }\n      _objc_storeStrong(&local_f0,0);\n    }\n    uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"containsString:\",&cf__pdfs_);\n    if (((uVar4 & 1) != 0) &&\n       (uVar4 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"isEqualToString:\",_shownPdfPath),\n       (uVar4 & 1) == 0)) {\n      uVar8 = (*(code *)PTR__objc_msgSend_0000c018)(local_d0,\"copy\");\n      uVar5 = _shownPdfPath;\n      _shownPdfPath = uVar8;\n      (*(code *)PTR__objc_release_0000c050)(uVar5);\n      uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(local_98,\"data\");\n      local_148 = _objc_retainAutoreleasedReturnValue(uVar5);\n      local_151 = 0;\n      bVar3 = false;\n      uVar1 = local_148 != 0;\n      if ((bool)uVar1) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (local_148,\"objectForKeyedSubscript:\",&cf_pdf_list);\n        local_150 = _objc_retainAutoreleasedReturnValue(uVar5);\n        bVar3 = local_150 != 0;\n        local_151 = uVar1;\n        (*(code *)PTR__objc_release_0000c050)(local_150);\n        uVar1 = local_151;\n      }\n      local_151 = uVar1;\n      if (bVar3) {\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                          (local_148,\"objectForKeyedSubscript:\",&cf_pdf_list);\n        local_160 = _objc_retainAutoreleasedReturnValue(uVar5);\n        uVar5 = (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___NSMutableArray,\"array\");\n        local_168 = _objc_retainAutoreleasedReturnValue(uVar5);\n        for (local_170 = 0; uVar2 = local_170,\n            uVar10 = (*(code *)PTR__objc_msgSend_0000c018)(local_160,\"count\"), uVar2 < uVar10;\n            local_170 = local_170 + 1) {\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_160,\"objectAtIndexedSubscript:\",local_170);\n          local_178 = _objc_retainAutoreleasedReturnValue(uVar5);\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_178,\"objectForKeyedSubscript:\",&cf_pdf_url);\n          pcVar11 = (cfstringStruct *)_objc_retainAutoreleasedReturnValue(uVar5);\n          local_410 = pcVar11;\n          if (pcVar11 == (cfstringStruct *)0x0) {\n            local_410 = &cf___;\n          }\n          (*(code *)PTR__objc_retain_0000c030)();\n          local_180 = local_410;\n          (*(code *)PTR__objc_release_0000c050)(pcVar11);\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (local_178,\"objectForKeyedSubscript:\",&cf_lecturerNum);\n          lVar6 = _objc_retainAutoreleasedReturnValue(uVar5);\n          local_430 = lVar6;\n          if (lVar6 == 0) {\n            uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_PDF_lu);\n            local_190 = _objc_retainAutoreleasedReturnValue(uVar5);\n            local_430 = local_190;\n          }\n          (*(code *)PTR__objc_retain_0000c030)();\n          local_188 = local_430;\n          if (lVar6 == 0) {\n            (*(code *)PTR__objc_release_0000c050)(local_190);\n          }\n          (*(code *)PTR__objc_release_0000c050)(lVar6);\n          lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_188,\"length\");\n          if (lVar6 == 0) {\n            uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_PDF_lu);\n            lVar7 = _objc_retainAutoreleasedReturnValue(uVar5);\n            lVar6 = local_188;\n            local_188 = lVar7;\n            (*(code *)PTR__objc_release_0000c050)(lVar6);\n          }\n          lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_180,\"length\");\n          uVar5 = local_168;\n          if (lVar6 != 0) {\n            local_88 = &cf_name;\n            local_78 = local_188;\n            local_80 = &cf_url;\n            local_70 = local_180;\n            uVar8 = (*(code *)PTR__objc_msgSend_0000c018)\n                              (&_OBJC_CLASS___NSDictionary,\"dictionaryWithObjects:forKeys:count:\",\n                               &local_78,&local_88,2);\n            uVar8 = _objc_retainAutoreleasedReturnValue(uVar8);\n            (*(code *)PTR__objc_msgSend_0000c018)(uVar5,\"addObject:\");\n            (*(code *)PTR__objc_release_0000c050)(uVar8);\n          }\n          _objc_storeStrong(&local_188);\n          _objc_storeStrong(&local_180,0);\n          _objc_storeStrong(&local_178,0);\n        }\n        lVar6 = (*(code *)PTR__objc_msgSend_0000c018)(local_168,\"count\");\n        if (lVar6 != 0) {\n          (*(code *)PTR__objc_msgSend_0000c018)(local_168,\"count\");\n          _NSLog(&cf__3afer_PDFS__lu);\n          (*(code *)PTR__objc_msgSend_0000c018)(local_168,\"count\");\n          uVar5 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (&_OBJC_CLASS___NSString,\"stringWithFormat:\",&cf_PDFs__lu_);\n          uVar5 = _objc_retainAutoreleasedReturnValue(uVar5);\n          _showPopup(uVar5,local_168);\n          (*(code *)PTR__objc_release_0000c050)(uVar5);\n        }\n        _objc_storeStrong(&local_168);\n        _objc_storeStrong(&local_160,0);\n      }\n      _objc_storeStrong(&local_148,0);\n    }\n    _objc_storeStrong(&local_d0,0);\n  }\n  if (*(long *)(param_1 + 0x20) != 0) {\n    (**(code **)(*(long *)(param_1 + 0x20) + 0x10))(*(long *)(param_1 + 0x20),local_98,local_a0);\n  }\n  _objc_storeStrong(&local_a0);\n  _objc_storeStrong(&local_98,0);\n  if (*(long *)PTR____stack_chk_guard_0000c048 - local_28 != 0) {\n                    /* WARNING: Subroutine does not return */\n    ___stack_chk_fail(*(long *)PTR____stack_chk_guard_0000c048 - local_28);\n  }\n  return;\n}\n\n// Function: _showPopup @ 00005d6c\n\nvoid _showPopup(undefined8 param_1,undefined8 param_2)\n\n{\n  undefined *puVar1;\n  undefined8 uVar2;\n  undefined8 uVar3;\n  undefined8 uVar4;\n  undefined8 local_30;\n  undefined8 local_28;\n  undefined8 local_20;\n  undefined8 local_18;\n  \n  local_18 = 0;\n  _objc_storeStrong(&local_18,param_1);\n  local_20 = 0;\n  _objc_storeStrong(&local_20,param_2);\n  puVar1 = PTR___dispatch_main_q_0000c098;\n  _objc_retainAutoreleaseReturnValue();\n  uVar4 = _objc_retainAutoreleasedReturnValue(puVar1);\n  uVar3 = local_18;\n  (*(code *)PTR__objc_retain_0000c030)();\n  uVar2 = local_20;\n  local_30 = uVar3;\n  (*(code *)PTR__objc_retain_0000c030)();\n  local_28 = uVar2;\n  _dispatch_async(uVar4);\n  (*(code *)PTR__objc_release_0000c050)(uVar4);\n  _objc_storeStrong(&local_28,0);\n  _objc_storeStrong(&local_30,0);\n  _objc_storeStrong(&local_20,0);\n  _objc_storeStrong(&local_18,0);\n  return;\n}\n\n// Function: ___copy_helper_block_e8_32b @ 00005eb0\n\nvoid ___copy_helper_block_e8_32b(long param_1,long param_2)\n\n{\n  __Block_object_assign(param_1 + 0x20,*(undefined8 *)(param_2 + 0x20),7);\n  return;\n}\n\n// Function: ___destroy_helper_block_e8_32s @ 00005ee8\n\nvoid ___destroy_helper_block_e8_32s(long param_1)\n\n{\n  _objc_storeStrong(param_1 + 0x20,0);\n  return;\n}\n\n// Function: ___showPopup_block_invoke @ 00005f14\n\nvoid ___showPopup_block_invoke(long param_1)\n\n{\n  undefined8 uVar1;\n  undefined8 uVar2;\n  undefined8 uVar3;\n  long lVar4;\n  ulong local_180;\n  ulong local_178;\n  undefined8 local_150;\n  undefined *local_148;\n  undefined4 local_140;\n  undefined4 local_13c;\n  code *local_138;\n  undefined *local_130;\n  undefined8 local_128;\n  undefined8 local_120;\n  undefined8 local_118;\n  undefined8 local_110;\n  undefined1 auStack_108 [8];\n  long local_100;\n  long *local_f8;\n  undefined8 local_c8;\n  undefined8 local_c0;\n  long local_b8;\n  long local_b0;\n  undefined1 auStack_a8 [128];\n  long local_28;\n  \n  local_28 = *(long *)PTR____stack_chk_guard_0000c048;\n  local_b8 = param_1;\n  local_b0 = param_1;\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___UIAlertController,\"alertControllerWithTitle:message:preferredStyle:\",\n             *(undefined8 *)(param_1 + 0x20),0,0);\n  local_c0 = _objc_retainAutoreleasedReturnValue();\n  _memset(auStack_108,0,0x40);\n  uVar1 = *(undefined8 *)(param_1 + 0x28);\n  (*(code *)PTR__objc_retain_0000c030)();\n  local_178 = (*(code *)PTR__objc_msgSend_0000c018)\n                        (uVar1,\"countByEnumeratingWithState:objects:count:\",auStack_108,auStack_a8,\n                         0x10);\n  if (local_178 != 0) {\n    lVar4 = *local_f8;\n    local_180 = 0;\n    do {\n      do {\n        if (*local_f8 - lVar4 != 0) {\n          _objc_enumerationMutation(*local_f8 - lVar4,uVar1);\n        }\n        local_c8 = *(undefined8 *)(local_100 + local_180 * 8);\n        (*(code *)PTR__objc_msgSend_0000c018)(local_c8,\"objectForKeyedSubscript:\",&cf_name);\n        local_110 = _objc_retainAutoreleasedReturnValue();\n        (*(code *)PTR__objc_msgSend_0000c018)(local_c8,\"objectForKeyedSubscript:\",&cf_url);\n        uVar2 = _objc_retainAutoreleasedReturnValue();\n        uVar3 = local_110;\n        local_148 = PTR___NSConcreteStackBlock_0000c038;\n        local_140 = 0xc2000000;\n        local_13c = 0;\n        local_138 = ___showPopup_block_invoke_2;\n        local_130 = &___block_descriptor_40_e8_32s_e23_v16__0__UIAlertAction_8l;\n        local_118 = uVar2;\n        (*(code *)PTR__objc_retain_0000c030)();\n        local_128 = uVar2;\n        (*(code *)PTR__objc_msgSend_0000c018)\n                  (&_OBJC_CLASS___UIAlertAction,\"actionWithTitle:style:handler:\",uVar3,0,&local_148)\n        ;\n        local_120 = _objc_retainAutoreleasedReturnValue();\n        (*(code *)PTR__objc_msgSend_0000c018)(local_c0,\"addAction:\",local_120);\n        _objc_storeStrong(&local_120);\n        _objc_storeStrong(&local_128,0);\n        _objc_storeStrong(&local_118,0);\n        _objc_storeStrong(&local_110,0);\n        local_180 = local_180 + 1;\n      } while (local_180 < local_178);\n      local_178 = (*(code *)PTR__objc_msgSend_0000c018)\n                            (uVar1,\"countByEnumeratingWithState:objects:count:\",auStack_108,\n                             auStack_a8,0x10);\n      local_180 = 0;\n    } while (local_178 != 0);\n  }\n  (*(code *)PTR__objc_release_0000c050)(uVar1);\n  uVar1 = local_c0;\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___UIAlertAction,\"actionWithTitle:style:handler:\",&cf_Close,1,0);\n  uVar3 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"addAction:\");\n  (*(code *)PTR__objc_release_0000c050)(uVar3);\n  (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___UIApplication,\"sharedApplication\");\n  uVar1 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"keyWindow\");\n  uVar3 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar3,\"rootViewController\");\n  local_150 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_release_0000c050)(uVar3);\n  (*(code *)PTR__objc_release_0000c050)(uVar1);\n  while( true ) {\n    (*(code *)PTR__objc_msgSend_0000c018)(local_150,\"presentedViewController\");\n    lVar4 = _objc_retainAutoreleasedReturnValue();\n    (*(code *)PTR__objc_release_0000c050)();\n    if (lVar4 == 0) break;\n    (*(code *)PTR__objc_msgSend_0000c018)(local_150,\"presentedViewController\");\n    uVar3 = _objc_retainAutoreleasedReturnValue();\n    uVar1 = local_150;\n    local_150 = uVar3;\n    (*(code *)PTR__objc_release_0000c050)(uVar1);\n  }\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (local_150,\"presentViewController:animated:completion:\",local_c0,1);\n  _objc_storeStrong(&local_150,0);\n  _objc_storeStrong(&local_c0,0);\n  if (*(long *)PTR____stack_chk_guard_0000c048 - local_28 == 0) {\n    return;\n  }\n                    /* WARNING: Subroutine does not return */\n  ___stack_chk_fail(*(long *)PTR____stack_chk_guard_0000c048 - local_28);\n}\n\n// Function: ___showPopup_block_invoke_2 @ 00006410\n\nvoid ___showPopup_block_invoke_2(long param_1)\n\n{\n  undefined8 uVar1;\n  long lVar2;\n  undefined8 uVar3;\n  undefined8 local_70;\n  undefined *local_68;\n  undefined4 local_60;\n  undefined4 local_5c;\n  code *local_58;\n  undefined *local_50;\n  undefined8 local_48;\n  undefined8 local_40;\n  long local_38;\n  undefined8 local_30;\n  long local_28;\n  \n  local_30 = 0;\n  local_28 = param_1;\n  _objc_storeStrong(&local_30);\n  uVar3 = *(undefined8 *)(param_1 + 0x20);\n  local_38 = param_1;\n  (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___UIPasteboard,\"generalPasteboard\");\n  uVar1 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"setString:\",uVar3);\n  (*(code *)PTR__objc_release_0000c050)(uVar1);\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___UIAlertController,\"alertControllerWithTitle:message:preferredStyle:\",\n             &cf_Copied_,*(undefined8 *)(param_1 + 0x20));\n  uVar1 = _objc_retainAutoreleasedReturnValue();\n  local_68 = PTR___NSConcreteStackBlock_0000c038;\n  local_60 = 0xc2000000;\n  local_5c = 0;\n  local_58 = ___showPopup_block_invoke_3;\n  local_50 = &___block_descriptor_40_e8_32s_e23_v16__0__UIAlertAction_8l;\n  uVar3 = *(undefined8 *)(param_1 + 0x20);\n  local_40 = uVar1;\n  (*(code *)PTR__objc_retain_0000c030)();\n  local_48 = uVar3;\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___UIAlertAction,\"actionWithTitle:style:handler:\",&cf_Open,0,&local_68);\n  uVar3 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"addAction:\");\n  (*(code *)PTR__objc_release_0000c050)(uVar3);\n  uVar1 = local_40;\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___UIAlertAction,\"actionWithTitle:style:handler:\",&cf_OK,1,0);\n  uVar3 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"addAction:\");\n  (*(code *)PTR__objc_release_0000c050)(uVar3);\n  (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___UIApplication,\"sharedApplication\");\n  uVar1 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar1,\"keyWindow\");\n  uVar3 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)(uVar3,\"rootViewController\");\n  local_70 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_release_0000c050)(uVar3);\n  (*(code *)PTR__objc_release_0000c050)(uVar1);\n  while( true ) {\n    (*(code *)PTR__objc_msgSend_0000c018)(local_70,\"presentedViewController\");\n    lVar2 = _objc_retainAutoreleasedReturnValue();\n    (*(code *)PTR__objc_release_0000c050)();\n    if (lVar2 == 0) break;\n    (*(code *)PTR__objc_msgSend_0000c018)(local_70,\"presentedViewController\");\n    uVar3 = _objc_retainAutoreleasedReturnValue();\n    uVar1 = local_70;\n    local_70 = uVar3;\n    (*(code *)PTR__objc_release_0000c050)(uVar1);\n  }\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (local_70,\"presentViewController:animated:completion:\",local_40,1);\n  _objc_storeStrong(&local_70,0);\n  _objc_storeStrong(&local_48,0);\n  _objc_storeStrong(&local_40,0);\n  _objc_storeStrong(&local_30,0);\n  return;\n}\n\n// Function: ___showPopup_block_invoke_3 @ 000067b0\n\nvoid ___showPopup_block_invoke_3(long param_1)\n\n{\n  undefined8 uVar1;\n  undefined8 uVar2;\n  undefined8 local_20;\n  long local_18;\n  \n  local_20 = 0;\n  local_18 = param_1;\n  _objc_storeStrong();\n  (*(code *)PTR__objc_msgSend_0000c018)(&_OBJC_CLASS___UIApplication,\"sharedApplication\");\n  uVar1 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (&_OBJC_CLASS___NSURL,\"URLWithString:\",*(undefined8 *)(param_1 + 0x20));\n  uVar2 = _objc_retainAutoreleasedReturnValue();\n  (*(code *)PTR__objc_msgSend_0000c018)\n            (uVar1,\"openURL:options:completionHandler:\",uVar2,\n             *(undefined8 *)PTR____NSDictionary0___0000c0a8,0);\n  (*(code *)PTR__objc_release_0000c050)(uVar2);\n  (*(code *)PTR__objc_release_0000c050)(uVar1);\n  _objc_storeStrong(&local_20,0);\n  return;\n}\n\n// Function: ___copy_helper_block_e8_32s @ 000068a0\n\nvoid ___copy_helper_block_e8_32s(long param_1,long param_2)\n\n{\n  undefined8 uVar1;\n  \n  uVar1 = *(undefined8 *)(param_2 + 0x20);\n  *(undefined8 *)(param_1 + 0x20) = 0;\n  _objc_storeStrong(param_1 + 0x20,uVar1);\n  return;\n}\n\n// Function: ___copy_helper_block_e8_32s40s @ 000068d8\n\nvoid ___copy_helper_block_e8_32s40s(long param_1,long param_2)\n\n{\n  undefined8 uVar1;\n  \n  uVar1 = *(undefined8 *)(param_2 + 0x20);\n  *(undefined8 *)(param_1 + 0x20) = 0;\n  _objc_storeStrong(param_1 + 0x20,uVar1);\n  uVar1 = *(undefined8 *)(param_2 + 0x28);\n  *(undefined8 *)(param_1 + 0x28) = 0;\n  _objc_storeStrong(param_1 + 0x28,uVar1);\n  return;\n}\n\n// Function: ___destroy_helper_block_e8_32s40s @ 00006930\n\nvoid ___destroy_helper_block_e8_32s40s(long param_1)\n\n{\n  _objc_storeStrong(param_1 + 0x28);\n  _objc_storeStrong(param_1 + 0x20,0);\n  return;\n}\n\n\n// Summary: 16 functions decompiled, 18 skipped (external/thunk), 0 errors",
+  "retdec_source": "//\n// This file was generated by the Retargetable Decompiler\n// Website: https://retdec.com\n//\n\n#include <stdint.h>\n\n// ------------------- Function Prototypes --------------------\n\nint64_t ____logos_method_24__ungrouped_24_FLTFirebaseFirestorePlugin_24_documentReferenceGetApp_24_request_24_completion_24__block_invoke(int64_t a1);\nint64_t ___copy_helper_block_e8_32b(void);\nint64_t ___copy_helper_block_e8_32s(void);\nint64_t ___copy_helper_block_e8_32s40s(void);\nint64_t ___destroy_helper_block_e8_32s(void);\nint64_t ___destroy_helper_block_e8_32s40s(void);\nint64_t ___showPopup_block_invoke(void);\nint64_t ___showPopup_block_invoke_2(void);\nint64_t ___showPopup_block_invoke_3(void);\nint64_t __logos_method_24__ungrouped_24_FLTFirebaseFirestorePlugin_24_documentReferenceGetApp_24_request_24_completion_24_(void);\nint64_t __logos_method_24__ungrouped_24_NSFileManager_24_fileExistsAtPath_24_(void);\nint64_t __logos_method_24__ungrouped_24_NSFileManager_24_fileExistsAtPath_24_isDirectory_24_(void);\nint64_t __logos_method_24__ungrouped_24_UIApplication_24_canOpenURL_24_(void);\nint64_t __logosLocalInit(void);\nint64_t _isJBPath(void);\nint64_t _showPopup(void);\nint64_t function_4134(void);\nint64_t function_4148(int64_t a1, int64_t a2);\nint64_t function_41e4(void);\nint64_t function_41f8(int64_t a1, int64_t a2);\nint64_t function_4258(void);\nint64_t function_4284(int64_t a1, int64_t a2);\nint64_t function_4338(void);\nint64_t function_434c(int64_t a1, int64_t a2);\nint64_t function_442c(int64_t a1, int64_t a2);\nint64_t function_4470(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6);\nint64_t function_4600(int64_t a1, int64_t a2);\nint64_t function_4624(int64_t a1, int64_t a2);\nint64_t function_4748(int32_t a1);\nint64_t function_5e20(int64_t a1);\nint64_t function_5e48(int64_t a1, int64_t a2, int64_t a3);\nint64_t function_5e74(int64_t a1, int64_t a2, int64_t a3, int64_t a4);\nint64_t function_5f74(int64_t a1);\nint64_t function_5fac(int64_t a1, int64_t a2);\nint64_t function_5fd0(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6, int64_t a7, int64_t a8, int64_t a9);\nint64_t function_6214(void);\nint64_t function_624c(int64_t a1);\nint64_t function_6274(int64_t a1);\nint64_t function_6284(void);\nint64_t function_62a0(void);\nint64_t function_62c0(void);\nint64_t function_62e0(int64_t a1);\nint64_t function_6300(int64_t a1);\nint64_t function_6310(int64_t a1);\nint64_t function_632c(void);\nint64_t function_6344(int64_t a1);\nint64_t function_63c8(int64_t a1, int64_t a2, int64_t a3);\nint64_t function_646c(int64_t a1);\nint64_t function_6490(int64_t a1);\nint64_t function_64a0(int64_t a1);\nint64_t function_64d4(int64_t a1);\nint64_t function_654c(int64_t a1, int64_t a2, int64_t a3);\nint64_t function_6580(int64_t a1);\nint64_t function_65ac(int64_t a1);\nint64_t function_65bc(int64_t a1, int64_t a2, int64_t a3, int64_t a4);\nint64_t function_65f0(int64_t a1);\nint64_t function_6618(void);\nint64_t function_6628(void);\nint64_t function_6644(void);\nint64_t function_6664(void);\nint64_t function_6684(void);\nint64_t function_66a4(void);\nint64_t function_66b4(void);\nint64_t function_66d0(void);\nint64_t function_66e8(int64_t a1);\nint64_t function_676c(int64_t a1, int64_t a2, int64_t a3);\nint64_t function_6800(int64_t a1);\nint64_t function_6830(int64_t a1);\nint64_t function_6868(int64_t a1);\nint64_t function_6878(int64_t a1);\nint64_t function_6888(int64_t a1, int64_t a2);\nint64_t function_6974(int64_t a1, int64_t a2, int64_t a3, int64_t * a4);\nint64_t function_6980(char * a1);\nint64_t function_698c(int64_t * a1, int64_t a2);\nint64_t function_6998(int64_t a1);\nint64_t function_69a4(int64_t a1);\nint64_t function_69b0(int64_t a1);\nint64_t function_69bc(int64_t a1);\nint64_t function_69c8(int64_t * a1, int64_t a2, int64_t a3);\nint64_t function_69d4(int64_t a1);\nint64_t function_69e0(int64_t a1);\nint64_t function_69ec(int64_t a1);\nint64_t function_69f8(int64_t * a1);\nint64_t function_6a04(int64_t a1, int64_t a2);\nint64_t function_6a10(void);\nint64_t function_6a1c(int64_t a1, int64_t a2, int64_t a3);\nint64_t function_8010000000000000(void);\nint64_t function_8010000000000001(void);\nint64_t function_8010000000000002(void);\nint64_t function_8010000000000003(void);\nint64_t function_8010000000000004(void);\nint64_t function_8010000000000005(void);\nint64_t function_8010000000000006(void);\nint64_t function_8010000000000008(void);\nint64_t function_801000000000000a(void);\nint64_t function_801000000000000b(void);\nint64_t function_801000000000000c(void);\nint64_t function_801000000000000d(void);\nint64_t function_801000000000000e(void);\nint64_t function_801000000000000f(void);\nint64_t function_8010000000000010(void);\nint64_t function_8010000000000011(void);\nint64_t function_8010000000000012(void);\nint64_t function_8010000000000014(void);\n\n// --------------------- Global Variables ---------------------\n\nint64_t g1 = 0; // 0x10198\nint64_t g2 = 0; // 0x101a0\nint64_t g3 = 0; // 0x101a8\nint64_t g4 = 0; // 0x101b0\nint64_t g5 = 0; // 0x101b8\nint64_t g6 = -0x7feffffffffffff9; // 0xc038\nint64_t g7 = -0x7feffffffffffff7; // 0xc048\nint64_t g8 = -0x7fefffffffffffed; // 0xc098\nint64_t g9 = 0; // 0xc0f0\nint64_t g10 = -0x7fdfffffffffffe9; // 0xc150\nint64_t g11 = -0x7fdfffffffffffe9; // 0xc170\nint64_t g12 = -0x7fdfffffffffffe9; // 0xc190\nint64_t g13 = -0x7fdfffffffffffe9; // 0xc1b0\nint64_t g14 = -0x7fdfffffffffffe9; // 0xc1d0\nint64_t g15 = -0x7fdfffffffffffe9; // 0xc1f0\nint64_t g16 = -0x7fdfffffffffffe9; // 0xc210\nint64_t g17 = -0x7fdfffffffffffe9; // 0xc230\nint64_t g18 = -0x7fdfffffffffffe9; // 0xc250\nint64_t g19 = -0x7fdfffffffffffe9; // 0xc270\nint64_t g20 = -0x7fdfffffffffffe9; // 0xc290\nint32_t g21;\n\n// ------------------------ Functions -------------------------\n\n// Address range: 0x4000 - 0x40c8\nint64_t __logosLocalInit(void) {\n    int64_t v1 = function_6980(\"NSFileManager\"); // 0x4014\n    function_6974(v1, 0x10000000006ef6, 0x40c8, &g1);\n    function_6974(v1, 0x6f08, 0x4168, &g2);\n    int64_t v2 = function_6980(\"UIApplication\"); // 0x4064\n    function_6974(v2, 0x6f26, 0x4218, &g3);\n    int64_t v3 = function_6980(\"FLTFirebaseFirestorePlugin\"); // 0x4094\n    return function_6974(v3, 0x6f32, 0x437c, &g4);\n}\n\n// Address range: 0x40c8 - 0x4134\nint64_t __logos_method_24__ungrouped_24_NSFileManager_24_fileExistsAtPath_24_(void) {\n    int64_t v1 = 0; // bp-48, 0x40e8\n    int64_t result; // 0x40c8\n    function_698c(&v1, result);\n    if (_isJBPath() % 2 == 0) {\n        // 0x411c\n        return result;\n    }\n    // 0x4100\n    return function_4148(1, (int64_t)&g21);\n}\n\n// Address range: 0x4134 - 0x4148\nint64_t function_4134(void) {\n    // 0x4134\n    int64_t v1; // 0x4134\n    *(char *)(v1 - 1) = (char)v1 % 2;\n    return function_4148(1, (int64_t)&g21);\n}\n\n// Address range: 0x4148 - 0x4168\nint64_t function_4148(int64_t a1, int64_t a2) {\n    // 0x4148\n    int64_t v1; // bp+16, 0x4148\n    function_698c(&v1, 0);\n    int64_t v2; // 0x4148\n    return (int64_t)(*(char *)(v2 - 1) % 2);\n}\n\n// Address range: 0x4168 - 0x41e4\nint64_t __logos_method_24__ungrouped_24_NSFileManager_24_fileExistsAtPath_24_isDirectory_24_(void) {\n    int64_t v1 = 0; // bp-48, 0x418c\n    int64_t result; // 0x4168\n    function_698c(&v1, result);\n    if (_isJBPath() % 2 == 0) {\n        // 0x41c8\n        return result;\n    }\n    // 0x41ac\n    return function_41f8(1, (int64_t)&g21);\n}\n\n// Address range: 0x41e4 - 0x41f8\nint64_t function_41e4(void) {\n    // 0x41e4\n    int64_t v1; // 0x41e4\n    *(char *)(v1 - 1) = (char)v1 % 2;\n    return function_41f8(1, (int64_t)&g21);\n}\n\n// Address range: 0x41f8 - 0x4218\nint64_t function_41f8(int64_t a1, int64_t a2) {\n    // 0x41f8\n    int64_t v1; // bp+32, 0x41f8\n    function_698c(&v1, 0);\n    int64_t v2; // 0x41f8\n    return (int64_t)(*(char *)(v2 - 1) % 2);\n}\n\n// Address range: 0x4218 - 0x4258\nint64_t __logos_method_24__ungrouped_24_UIApplication_24_canOpenURL_24_(void) {\n    int64_t v1 = 0; // bp-48, 0x4238\n    int64_t v2; // 0x4218\n    function_698c(&v1, v2);\n    return function_8010000000000003();\n}\n\n// Address range: 0x4258 - 0x4284\nint64_t function_4258(void) {\n    // 0x4258\n    int64_t v1; // 0x4258\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x4284 - 0x4338\nint64_t function_4284(int64_t a1, int64_t a2) {\n    // 0x4284\n    int64_t v1; // 0x4284\n    if (v1 % 2 == 0) {\n        // 0x428c\n        return function_8010000000000003();\n    }\n    // 0x4304\n    *(char *)(v1 - 1) = 0;\n    return function_434c(1, (int64_t)&g21);\n}\n\n// Address range: 0x4338 - 0x434c\nint64_t function_4338(void) {\n    // 0x4338\n    int64_t v1; // 0x4338\n    *(char *)(v1 - 1) = (char)v1 % 2;\n    return function_434c(1, (int64_t)&g21);\n}\n\n// Address range: 0x434c - 0x437c\nint64_t function_434c(int64_t a1, int64_t a2) {\n    // 0x434c\n    int64_t v1; // bp+24, 0x434c\n    function_698c(&v1, 0);\n    int64_t v2; // bp+32, 0x434c\n    function_698c(&v2, 0);\n    int64_t v3; // 0x434c\n    return (int64_t)(*(char *)(v3 - 1) % 2);\n}\n\n// Address range: 0x437c - 0x442c\nint64_t __logos_method_24__ungrouped_24_FLTFirebaseFirestorePlugin_24_documentReferenceGetApp_24_request_24_completion_24_(void) {\n    int64_t v1 = 0; // bp-40, 0x43b0\n    int64_t v2; // 0x437c\n    function_698c(&v1, v2);\n    int64_t v3 = 0; // bp-48, 0x43c4\n    function_698c(&v3, v2);\n    int64_t v4 = 0; // bp-56, 0x43d8\n    function_698c(&v4, v2);\n    return function_8010000000000006();\n}\n\n// Address range: 0x442c - 0x4470\nint64_t function_442c(int64_t a1, int64_t a2) {\n    // 0x442c\n    int64_t v1; // 0x442c\n    *(int64_t *)(v1 - 48) = function_69a4(a1);\n    return *(int64_t *)(v1 - 8);\n}\n\n// Address range: 0x4470 - 0x44b8\nint64_t function_4470(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6) {\n    // 0x4470\n    function_698c((int64_t *)a1, a6);\n    function_698c((int64_t *)a2, a6);\n    function_698c((int64_t *)a3, a6);\n    function_698c((int64_t *)a4, a6);\n    return function_698c((int64_t *)a5, a6);\n}\n\n// Address range: 0x44b8 - 0x4600\nint64_t _isJBPath(void) {\n    int64_t v1 = 0; // bp-272, 0x44e8\n    int64_t v2; // 0x44b8\n    function_698c(&v1, v2);\n    if (g5 != 0) {\n        // 0x45d4\n        int64_t v3; // bp-344, 0x44b8\n        function_69c8(&v3, 0, 64);\n        return function_8010000000000006();\n    }\n    // 0x4500\n    int64_t v4; // bp-128, 0x44b8\n    int64_t v5 = &v4; // 0x44cc\n    v4 = &g10;\n    *(int64_t *)(v5 + 8) = (int64_t)&g11;\n    *(int64_t *)(v5 + 16) = (int64_t)&g12;\n    *(int64_t *)(v5 + 24) = (int64_t)&g13;\n    *(int64_t *)(v5 + 32) = (int64_t)&g14;\n    *(int64_t *)(v5 + 40) = (int64_t)&g15;\n    *(int64_t *)(v5 + 48) = (int64_t)&g16;\n    *(int64_t *)(v5 + 56) = (int64_t)&g17;\n    *(int64_t *)(v5 + 64) = (int64_t)&g18;\n    *(int64_t *)(v5 + 72) = (int64_t)&g19;\n    *(int64_t *)(v5 + 80) = (int64_t)&g20;\n    return function_8010000000000003();\n}\n\n// Address range: 0x4600 - 0x4624\nint64_t function_4600(int64_t a1, int64_t a2) {\n    // 0x4600\n    return function_8010000000000003();\n}\n\n// Address range: 0x4624 - 0x4748\nint64_t function_4624(int64_t a1, int64_t a2) {\n    // 0x4624\n    int64_t v1; // 0x4624\n    if (v1 == 0) {\n        // 0x4738\n        return function_801000000000000a();\n    }\n    // 0x4684\n    return function_8010000000000003();\n}\n\n// Address range: 0x4748 - 0x4850\nint64_t function_4748(int32_t a1) {\n    // 0x4748\n    if (a1 == 0) {\n        // 0x4758\n        return function_8010000000000003();\n    }\n    // 0x4804\n    int64_t v1; // bp+160, 0x4748\n    int64_t v2 = function_698c(&v1, 0); // 0x480c\n    int64_t v3; // 0x4748\n    if (*(int64_t *)g7 != *(int64_t *)(v3 - 24)) {\n        // 0x4834\n        function_69b0(v2);\n    }\n    // 0x4838\n    int32_t v4; // 0x4748\n    return v4 % 2;\n}\n\n// Address range: 0x4850 - 0x5d6c\nint64_t ____logos_method_24__ungrouped_24_FLTFirebaseFirestorePlugin_24_documentReferenceGetApp_24_request_24_completion_24__block_invoke(int64_t a1) {\n    int64_t v1 = 0; // bp-144, 0x4880\n    int64_t v2; // 0x4850\n    function_698c(&v1, v2);\n    int64_t v3 = 0; // bp-152, 0x4890\n    function_698c(&v3, v2);\n    if (v1 != 0) {\n        // 0x48c4\n        return function_8010000000000003();\n    }\n    int64_t result = *(int64_t *)(v2 + 32); // 0x5cbc\n    if (result != 0) {\n        // 0x5cc8\n        return result;\n    }\n    // 0x5d18\n    function_698c(&v3, 0);\n    int64_t v4 = function_698c(&v1, 0); // 0x5d30\n    int64_t result2 = v4; // 0x5d48\n    if (*(int64_t *)g7 != *(int64_t *)g7) {\n        // 0x5d50\n        result2 = function_69b0(v4);\n    }\n    // 0x5cc8\n    return result2;\n}\n\n// Address range: 0x5d6c - 0x5e20\nint64_t _showPopup(void) {\n    int64_t v1 = 0; // bp-24, 0x5d98\n    int64_t v2; // 0x5d6c\n    function_698c(&v1, v2);\n    int64_t v3 = 0; // bp-32, 0x5dac\n    function_698c(&v3, v2);\n    function_6a10();\n    function_6998(g8);\n    return function_8010000000000006();\n}\n\n// Address range: 0x5e20 - 0x5e48\nint64_t function_5e20(int64_t a1) {\n    // 0x5e20\n    int64_t v1; // 0x5e20\n    *(int64_t *)(v1 - 32) = a1;\n    return function_8010000000000006();\n}\n\n// Address range: 0x5e48 - 0x5e74\nint64_t function_5e48(int64_t a1, int64_t a2, int64_t a3) {\n    // 0x5e48\n    int64_t v1; // 0x5e48\n    *(int64_t *)(v1 - 24) = a1;\n    function_6a04(a3, a2);\n    return function_801000000000000a();\n}\n\n// Address range: 0x5e74 - 0x5eb0\nint64_t function_5e74(int64_t a1, int64_t a2, int64_t a3, int64_t a4) {\n    // 0x5e74\n    int64_t v1; // 0x5e74\n    int64_t * v2 = (int64_t *)(v1 - 72); // 0x5e78\n    function_698c((int64_t *)a1, *v2);\n    function_698c((int64_t *)a2, *v2);\n    function_698c((int64_t *)a3, *v2);\n    return function_698c((int64_t *)a4, *v2);\n}\n\n// Address range: 0x5eb0 - 0x5ee8\nint64_t ___copy_helper_block_e8_32b(void) {\n    // 0x5eb0\n    int64_t v1; // 0x5eb0\n    return function_6a1c(v1 + 32, *(int64_t *)(v1 + 32), 7);\n}\n\n// Address range: 0x5ee8 - 0x5f14\nint64_t ___destroy_helper_block_e8_32s(void) {\n    // 0x5ee8\n    int64_t v1; // 0x5ee8\n    return function_698c((int64_t *)(v1 + 32), 0);\n}\n\n// Address range: 0x5f14 - 0x5f74\nint64_t ___showPopup_block_invoke(void) {\n    // 0x5f14\n    return function_8010000000000003();\n}\n\n// Address range: 0x5f74 - 0x5fac\nint64_t function_5f74(int64_t a1) {\n    // 0x5f74\n    int64_t v1; // 0x5f74\n    *(int64_t *)(v1 - 176) = function_6998(v1);\n    function_69c8((int64_t *)(v1 - 248), 0, 64);\n    return function_8010000000000006();\n}\n\n// Address range: 0x5fac - 0x5fd0\nint64_t function_5fac(int64_t a1, int64_t a2) {\n    // 0x5fac\n    return function_8010000000000003();\n}\n\n// Address range: 0x5fd0 - 0x6214\nint64_t function_5fd0(int64_t a1, int64_t a2, int64_t a3, int64_t a4, int64_t a5, int64_t a6, int64_t a7, int64_t a8, int64_t a9) {\n    // 0x5fd0\n    int64_t v1; // 0x5fd0\n    int64_t v2 = v1;\n    if (v1 == 0) {\n        // 0x6204\n        return function_801000000000000a();\n    }\n    // 0x6030\n    *(int64_t *)(v2 - 184) = *(int64_t *)*(int64_t *)(v2 - 240);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6214 - 0x624c\nint64_t function_6214(void) {\n    // 0x6214\n    return function_8010000000000003();\n}\n\n// Address range: 0x624c - 0x6274\nint64_t function_624c(int64_t a1) {\n    // 0x624c\n    int64_t v1; // 0x624c\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6274 - 0x6284\nint64_t function_6274(int64_t a1) {\n    // 0x6274\n    return function_801000000000000a();\n}\n\n// Address range: 0x6284 - 0x62a0\nint64_t function_6284(void) {\n    // 0x6284\n    return function_8010000000000003();\n}\n\n// Address range: 0x62a0 - 0x62c0\nint64_t function_62a0(void) {\n    // 0x62a0\n    int64_t v1; // 0x62a0\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x62c0 - 0x62e0\nint64_t function_62c0(void) {\n    // 0x62c0\n    int64_t v1; // 0x62c0\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x62e0 - 0x6300\nint64_t function_62e0(int64_t a1) {\n    // 0x62e0\n    int64_t v1; // 0x62e0\n    function_6998(v1);\n    return function_801000000000000a();\n}\n\n// Address range: 0x6300 - 0x6310\nint64_t function_6300(int64_t a1) {\n    // 0x6300\n    return function_801000000000000a();\n}\n\n// Address range: 0x6310 - 0x632c\nint64_t function_6310(int64_t a1) {\n    // 0x6310\n    return function_8010000000000003();\n}\n\n// Address range: 0x632c - 0x6344\nint64_t function_632c(void) {\n    // 0x632c\n    int64_t v1; // 0x632c\n    function_6998(v1);\n    return function_801000000000000a();\n}\n\n// Address range: 0x6344 - 0x63c8\nint64_t function_6344(int64_t a1) {\n    // 0x6344\n    return function_8010000000000003();\n}\n\n// Address range: 0x63c8 - 0x6410\nint64_t function_63c8(int64_t a1, int64_t a2, int64_t a3) {\n    // 0x63c8\n    function_698c((int64_t *)a1, a3);\n    int64_t v1 = function_698c((int64_t *)a2, a3); // 0x63dc\n    int64_t result = v1; // 0x63f4\n    int64_t v2; // 0x63c8\n    if (*(int64_t *)g7 != *(int64_t *)(v2 - 24)) {\n        // 0x63fc\n        result = function_69b0(v1);\n    }\n    // 0x6400\n    return result;\n}\n\n// Address range: 0x6410 - 0x646c\nint64_t ___showPopup_block_invoke_2(void) {\n    int64_t v1 = 0; // bp-48, 0x6434\n    int64_t v2; // 0x6410\n    function_698c(&v1, v2);\n    return function_8010000000000003();\n}\n\n// Address range: 0x646c - 0x6490\nint64_t function_646c(int64_t a1) {\n    // 0x646c\n    int64_t v1; // 0x646c\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6490 - 0x64a0\nint64_t function_6490(int64_t a1) {\n    // 0x6490\n    return function_801000000000000a();\n}\n\n// Address range: 0x64a0 - 0x64d4\nint64_t function_64a0(int64_t a1) {\n    // 0x64a0\n    return function_8010000000000003();\n}\n\n// Address range: 0x64d4 - 0x654c\nint64_t function_64d4(int64_t a1) {\n    // 0x64d4\n    int64_t v1; // 0x64d4\n    *(int64_t *)(v1 - 48) = function_6998(v1);\n    *(int64_t *)(v1 - 88) = g6;\n    *(int32_t *)(v1 - 80) = -0x3e000000;\n    *(int32_t *)(v1 - 76) = 0;\n    *(int64_t *)(v1 - 72) = 0x67b0;\n    *(int64_t *)(v1 - 64) = (int64_t)&g9;\n    return function_8010000000000006();\n}\n\n// Address range: 0x654c - 0x6580\nint64_t function_654c(int64_t a1, int64_t a2, int64_t a3) {\n    // 0x654c\n    int64_t v1; // 0x654c\n    *(int64_t *)(v1 - 56) = a2;\n    return function_8010000000000003();\n}\n\n// Address range: 0x6580 - 0x65ac\nint64_t function_6580(int64_t a1) {\n    // 0x6580\n    int64_t v1; // 0x6580\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x65ac - 0x65bc\nint64_t function_65ac(int64_t a1) {\n    // 0x65ac\n    return function_801000000000000a();\n}\n\n// Address range: 0x65bc - 0x65f0\nint64_t function_65bc(int64_t a1, int64_t a2, int64_t a3, int64_t a4) {\n    // 0x65bc\n    int64_t v1; // 0x65bc\n    int64_t v2 = v1;\n    *(int64_t *)(v2 - 128) = *(int64_t *)(v2 - 48);\n    return function_8010000000000003();\n}\n\n// Address range: 0x65f0 - 0x6618\nint64_t function_65f0(int64_t a1) {\n    // 0x65f0\n    int64_t v1; // 0x65f0\n    *(int64_t *)(v1 - 120) = function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6618 - 0x6628\nint64_t function_6618(void) {\n    // 0x6618\n    return function_801000000000000a();\n}\n\n// Address range: 0x6628 - 0x6644\nint64_t function_6628(void) {\n    // 0x6628\n    return function_8010000000000003();\n}\n\n// Address range: 0x6644 - 0x6664\nint64_t function_6644(void) {\n    // 0x6644\n    int64_t v1; // 0x6644\n    *(int64_t *)(v1 - 104) = function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6664 - 0x6684\nint64_t function_6664(void) {\n    // 0x6664\n    int64_t v1; // 0x6664\n    *(int64_t *)(v1 - 112) = function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6684 - 0x66a4\nint64_t function_6684(void) {\n    // 0x6684\n    int64_t v1; // 0x6684\n    *(int64_t *)(v1 - 96) = function_6998(v1);\n    return function_801000000000000a();\n}\n\n// Address range: 0x66a4 - 0x66b4\nint64_t function_66a4(void) {\n    // 0x66a4\n    return function_801000000000000a();\n}\n\n// Address range: 0x66b4 - 0x66d0\nint64_t function_66b4(void) {\n    // 0x66b4\n    return function_8010000000000003();\n}\n\n// Address range: 0x66d0 - 0x66e8\nint64_t function_66d0(void) {\n    // 0x66d0\n    int64_t v1; // 0x66d0\n    function_6998(v1);\n    return function_801000000000000a();\n}\n\n// Address range: 0x66e8 - 0x676c\nint64_t function_66e8(int64_t a1) {\n    // 0x66e8\n    return function_8010000000000003();\n}\n\n// Address range: 0x676c - 0x67b0\nint64_t function_676c(int64_t a1, int64_t a2, int64_t a3) {\n    // 0x676c\n    function_698c((int64_t *)a1, a3);\n    int64_t v1; // 0x676c\n    function_698c((int64_t *)(v1 - 56), a3);\n    function_698c((int64_t *)a2, a3);\n    return function_698c((int64_t *)(v1 - 32), a3);\n}\n\n// Address range: 0x67b0 - 0x6800\nint64_t ___showPopup_block_invoke_3(void) {\n    int64_t v1 = 0; // bp-32, 0x67d4\n    int64_t v2; // 0x67b0\n    function_698c(&v1, v2);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6800 - 0x6830\nint64_t function_6800(int64_t a1) {\n    // 0x6800\n    int64_t v1; // 0x6800\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6830 - 0x6868\nint64_t function_6830(int64_t a1) {\n    // 0x6830\n    int64_t v1; // 0x6830\n    function_6998(v1);\n    return function_8010000000000003();\n}\n\n// Address range: 0x6868 - 0x6878\nint64_t function_6868(int64_t a1) {\n    // 0x6868\n    return function_801000000000000a();\n}\n\n// Address range: 0x6878 - 0x6888\nint64_t function_6878(int64_t a1) {\n    // 0x6878\n    return function_801000000000000a();\n}\n\n// Address range: 0x6888 - 0x68a0\nint64_t function_6888(int64_t a1, int64_t a2) {\n    // 0x6888\n    return function_698c((int64_t *)a1, a2);\n}\n\n// Address range: 0x68a0 - 0x68d8\nint64_t ___copy_helper_block_e8_32s(void) {\n    // 0x68a0\n    int64_t v1; // 0x68a0\n    int64_t * v2 = (int64_t *)(v1 + 32); // 0x68c4\n    *v2 = 0;\n    return function_698c(v2, *(int64_t *)(v1 + 32));\n}\n\n// Address range: 0x68d8 - 0x6930\nint64_t ___copy_helper_block_e8_32s40s(void) {\n    // 0x68d8\n    int64_t v1; // 0x68d8\n    int64_t * v2 = (int64_t *)(v1 + 32); // 0x6904\n    *v2 = 0;\n    function_698c(v2, *(int64_t *)(v1 + 32));\n    int64_t * v3 = (int64_t *)(v1 + 40); // 0x691c\n    *v3 = 0;\n    return function_698c(v3, *(int64_t *)(v1 + 40));\n}\n\n// Address range: 0x6930 - 0x6974\nint64_t ___destroy_helper_block_e8_32s40s(void) {\n    // 0x6930\n    int64_t v1; // 0x6930\n    function_698c((int64_t *)(v1 + 40), 0);\n    return function_698c((int64_t *)(v1 + 32), 0);\n}\n\n// Address range: 0x6974 - 0x6980\nint64_t function_6974(int64_t a1, int64_t a2, int64_t a3, int64_t * a4) {\n    // 0x6974\n    return function_8010000000000000();\n}\n\n// Address range: 0x6980 - 0x698c\nint64_t function_6980(char * a1) {\n    // 0x6980\n    return function_8010000000000001();\n}\n\n// Address range: 0x698c - 0x6998\nint64_t function_698c(int64_t * a1, int64_t a2) {\n    // 0x698c\n    return function_8010000000000002();\n}\n\n// Address range: 0x6998 - 0x69a4\nint64_t function_6998(int64_t a1) {\n    // 0x6998\n    return function_8010000000000004();\n}\n\n// Address range: 0x69a4 - 0x69b0\nint64_t function_69a4(int64_t a1) {\n    // 0x69a4\n    return function_8010000000000005();\n}\n\n// Address range: 0x69b0 - 0x69bc\nint64_t function_69b0(int64_t a1) {\n    // 0x69b0\n    return function_8010000000000008();\n}\n\n// Address range: 0x69bc - 0x69c8\nint64_t function_69bc(int64_t a1) {\n    // 0x69bc\n    return function_801000000000000b();\n}\n\n// Address range: 0x69c8 - 0x69d4\nint64_t function_69c8(int64_t * a1, int64_t a2, int64_t a3) {\n    // 0x69c8\n    return function_801000000000000c();\n}\n\n// Address range: 0x69d4 - 0x69e0\nint64_t function_69d4(int64_t a1) {\n    // 0x69d4\n    return function_801000000000000d();\n}\n\n// Address range: 0x69e0 - 0x69ec\nint64_t function_69e0(int64_t a1) {\n    // 0x69e0\n    return function_801000000000000e();\n}\n\n// Address range: 0x69ec - 0x69f8\nint64_t function_69ec(int64_t a1) {\n    // 0x69ec\n    return function_801000000000000f();\n}\n\n// Address range: 0x69f8 - 0x6a04\nint64_t function_69f8(int64_t * a1) {\n    // 0x69f8\n    return function_8010000000000010();\n}\n\n// Address range: 0x6a04 - 0x6a10\nint64_t function_6a04(int64_t a1, int64_t a2) {\n    // 0x6a04\n    return function_8010000000000011();\n}\n\n// Address range: 0x6a10 - 0x6a1c\nint64_t function_6a10(void) {\n    // 0x6a10\n    return function_8010000000000012();\n}\n\n// Address range: 0x6a1c - 0x6a28\nint64_t function_6a1c(int64_t a1, int64_t a2, int64_t a3) {\n    // 0x6a1c\n    return function_8010000000000014();\n}\n\n// Address range: 0x8010000000000000 - 0x8010000000000001\nint64_t function_8010000000000000(void) {\n    // 0x8010000000000000\n    int64_t result; // 0x8010000000000000\n    return result;\n}\n\n// Address range: 0x8010000000000001 - 0x8010000000000002\nint64_t function_8010000000000001(void) {\n    // 0x8010000000000001\n    int64_t result; // 0x8010000000000001\n    return result;\n}\n\n// Address range: 0x8010000000000002 - 0x8010000000000003\nint64_t function_8010000000000002(void) {\n    // 0x8010000000000002\n    int64_t result; // 0x8010000000000002\n    return result;\n}\n\n// Address range: 0x8010000000000003 - 0x8010000000000004\nint64_t function_8010000000000003(void) {\n    // 0x8010000000000003\n    int64_t result; // 0x8010000000000003\n    return result;\n}\n\n// Address range: 0x8010000000000004 - 0x8010000000000005\nint64_t function_8010000000000004(void) {\n    // 0x8010000000000004\n    int64_t result; // 0x8010000000000004\n    return result;\n}\n\n// Address range: 0x8010000000000005 - 0x8010000000000006\nint64_t function_8010000000000005(void) {\n    // 0x8010000000000005\n    int64_t result; // 0x8010000000000005\n    return result;\n}\n\n// Address range: 0x8010000000000006 - 0x8010000000000007\nint64_t function_8010000000000006(void) {\n    // 0x8010000000000006\n    int64_t result; // 0x8010000000000006\n    return result;\n}\n\n// Address range: 0x8010000000000008 - 0x8010000000000009\nint64_t function_8010000000000008(void) {\n    // 0x8010000000000008\n    int64_t result; // 0x8010000000000008\n    return result;\n}\n\n// Address range: 0x801000000000000a - 0x801000000000000b\nint64_t function_801000000000000a(void) {\n    // 0x801000000000000a\n    int64_t result; // 0x801000000000000a\n    return result;\n}\n\n// Address range: 0x801000000000000b - 0x801000000000000c\nint64_t function_801000000000000b(void) {\n    // 0x801000000000000b\n    int64_t result; // 0x801000000000000b\n    return result;\n}\n\n// Address range: 0x801000000000000c - 0x801000000000000d\nint64_t function_801000000000000c(void) {\n    // 0x801000000000000c\n    int64_t result; // 0x801000000000000c\n    return result;\n}\n\n// Address range: 0x801000000000000d - 0x801000000000000e\nint64_t function_801000000000000d(void) {\n    // 0x801000000000000d\n    int64_t result; // 0x801000000000000d\n    return result;\n}\n\n// Address range: 0x801000000000000e - 0x801000000000000f\nint64_t function_801000000000000e(void) {\n    // 0x801000000000000e\n    int64_t result; // 0x801000000000000e\n    return result;\n}\n\n// Address range: 0x801000000000000f - 0x8010000000000010\nint64_t function_801000000000000f(void) {\n    // 0x801000000000000f\n    int64_t result; // 0x801000000000000f\n    return result;\n}\n\n// Address range: 0x8010000000000010 - 0x8010000000000011\nint64_t function_8010000000000010(void) {\n    // 0x8010000000000010\n    int64_t result; // 0x8010000000000010\n    return result;\n}\n\n// Address range: 0x8010000000000011 - 0x8010000000000012\nint64_t function_8010000000000011(void) {\n    // 0x8010000000000011\n    int64_t result; // 0x8010000000000011\n    return result;\n}\n\n// Address range: 0x8010000000000012 - 0x8010000000000013\nint64_t function_8010000000000012(void) {\n    // 0x8010000000000012\n    int64_t result; // 0x8010000000000012\n    return result;\n}\n\n// Address range: 0x8010000000000014 - 0x8010000000000015\nint64_t function_8010000000000014(void) {\n    // 0x8010000000000014\n    int64_t result; // 0x8010000000000014\n    return result;\n}\n\n// --------------------- Meta-Information ---------------------\n\n// Detected functions: 104\n\n",
+  "objc_headers": "// No Objective-C class metadata found in this binary."
+}
