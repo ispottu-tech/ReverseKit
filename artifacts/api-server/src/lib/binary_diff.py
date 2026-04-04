@@ -474,6 +474,349 @@ def generate_insights(result):
     return insights
 
 
+def extract_network_footprint(strings):
+    """Extract all URLs, domains, IPs from a set of strings"""
+    import re
+    urls = set()
+    domains = set()
+    ips = set()
+
+    url_re = re.compile(r'https?://[^\s"\'<>]+')
+    domain_re = re.compile(r'\b(?:[a-zA-Z0-9-]+\.)+(?:com|io|net|org|app|dev|co|me|ai|cloud|run|xyz|info|biz|us|uk|de|fr|cn|jp|kr|br|ru|au|in|ca)\b')
+    ip_re = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b')
+
+    for s in strings:
+        for u in url_re.findall(s):
+            u = u.rstrip('.,;:)]}')
+            urls.add(u)
+            try:
+                from urllib.parse import urlparse
+                parsed = urlparse(u)
+                if parsed.hostname:
+                    domains.add(parsed.hostname)
+            except Exception:
+                pass
+        for d in domain_re.findall(s):
+            domains.add(d)
+        for ip in ip_re.findall(s):
+            if not ip.startswith('0.') and not ip.startswith('127.'):
+                ips.add(ip)
+
+    return {
+        "urls": sorted(urls),
+        "domains": sorted(domains),
+        "ips": sorted(ips),
+    }
+
+
+def analyze_network_diff(strings1, strings2):
+    """Compare network footprint between two versions"""
+    net1 = extract_network_footprint(strings1)
+    net2 = extract_network_footprint(strings2)
+
+    return {
+        "urls": {
+            "added": sorted(set(net2["urls"]) - set(net1["urls"])),
+            "removed": sorted(set(net1["urls"]) - set(net2["urls"])),
+            "common_count": len(set(net1["urls"]) & set(net2["urls"])),
+        },
+        "domains": {
+            "added": sorted(set(net2["domains"]) - set(net1["domains"])),
+            "removed": sorted(set(net1["domains"]) - set(net2["domains"])),
+            "old_count": len(net1["domains"]),
+            "new_count": len(net2["domains"]),
+            "common": sorted(set(net1["domains"]) & set(net2["domains"])),
+        },
+        "ips": {
+            "added": sorted(set(net2["ips"]) - set(net1["ips"])),
+            "removed": sorted(set(net1["ips"]) - set(net2["ips"])),
+        },
+    }
+
+
+def analyze_privacy_impact(libs_added, libs_removed, strings_added, strings_removed, classes_added):
+    """Analyze privacy impact of changes between versions"""
+    import re
+
+    tracking_frameworks = {
+        "AdSupport": "Advertising ID tracking",
+        "AppTrackingTransparency": "ATT prompt (tracking consent)",
+        "AdServices": "Apple Search Ads attribution",
+        "StoreKit": "In-app purchases / subscriptions",
+        "CoreLocation": "GPS location access",
+        "Contacts": "Contacts access",
+        "Photos": "Photo library access",
+        "PhotosUI": "Photo picker access",
+        "AVFoundation": "Camera/microphone access",
+        "CoreBluetooth": "Bluetooth scanning",
+        "CoreMotion": "Motion/accelerometer data",
+        "HealthKit": "Health data access",
+        "HomeKit": "Home automation data",
+        "Speech": "Speech recognition",
+        "LocalAuthentication": "Biometric data (Face ID/Touch ID)",
+        "UserNotifications": "Push notifications",
+        "CoreTelephony": "Carrier/network info",
+        "NetworkExtension": "VPN/network configuration",
+        "WebKit": "Web browsing capability",
+    }
+
+    tracking_sdks = {
+        "Firebase": "Google Analytics/Firebase",
+        "facebook": "Facebook SDK",
+        "FBSDKCore": "Facebook SDK",
+        "Adjust": "Adjust attribution",
+        "AppsFlyer": "AppsFlyer attribution",
+        "Branch": "Branch deep linking",
+        "Mixpanel": "Mixpanel analytics",
+        "Amplitude": "Amplitude analytics",
+        "Segment": "Segment analytics",
+        "Flurry": "Flurry analytics",
+        "Crashlytics": "Crash reporting",
+        "Sentry": "Error tracking",
+        "RevenueCat": "Subscription tracking",
+        "OneSignal": "Push notification service",
+        "Braze": "Braze engagement",
+        "CleverTap": "CleverTap analytics",
+        "MoEngage": "MoEngage analytics",
+        "Singular": "Singular attribution",
+        "Kochava": "Kochava attribution",
+    }
+
+    privacy_flags = []
+    data_access_added = []
+    data_access_removed = []
+    trackers_added = []
+    trackers_removed = []
+
+    seen_added = set()
+    for lib in libs_added:
+        lib_name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "").replace("libswift", "")
+        if lib_name in tracking_frameworks and lib_name not in seen_added:
+            seen_added.add(lib_name)
+            data_access_added.append({
+                "framework": lib_name,
+                "description": tracking_frameworks[lib_name],
+                "risk": "high" if lib_name in ("AdSupport", "CoreLocation", "Contacts", "HealthKit") else "medium",
+            })
+
+    seen_removed = set()
+    for lib in libs_removed:
+        lib_name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "").replace("libswift", "")
+        if lib_name in tracking_frameworks and lib_name not in seen_removed:
+            seen_removed.add(lib_name)
+            data_access_removed.append({
+                "framework": lib_name,
+                "description": tracking_frameworks[lib_name],
+            })
+
+    all_added_str = " ".join(strings_added) + " ".join(classes_added)
+    all_removed_str = " ".join(strings_removed)
+    for sdk, desc in tracking_sdks.items():
+        if sdk.lower() in all_added_str.lower() and sdk.lower() not in all_removed_str.lower():
+            trackers_added.append({"sdk": sdk, "description": desc})
+        elif sdk.lower() in all_removed_str.lower() and sdk.lower() not in all_added_str.lower():
+            trackers_removed.append({"sdk": sdk, "description": desc})
+
+    fingerprint_strings = [
+        "IDFA", "IDFV", "advertisingIdentifier", "identifierForVendor",
+        "deviceFingerprint", "fingerprint", "device_id", "uniqueIdentifier",
+        "carrier", "mobileCountryCode", "mobileNetworkCode",
+    ]
+    for fp in fingerprint_strings:
+        if any(fp.lower() in s.lower() for s in strings_added) and not any(fp.lower() in s.lower() for s in strings_removed):
+            privacy_flags.append(f"New device fingerprinting: {fp}")
+
+    data_collection_patterns = {
+        "clipboard": "Clipboard data access (UIPasteboard)",
+        "pasteboard": "Clipboard data access (UIPasteboard)",
+        "SSID": "WiFi network name collection",
+        "deviceModel": "Device model collection",
+        "systemVersion": "OS version collection",
+        "batteryLevel": "Battery level monitoring",
+        "diskSpace": "Storage space monitoring",
+        "jailbreak": "Jailbreak detection added",
+    }
+    for pattern, desc in data_collection_patterns.items():
+        if any(pattern.lower() in s.lower() for s in strings_added):
+            privacy_flags.append(desc)
+
+    risk_score = 0
+    risk_score += len(data_access_added) * 15
+    risk_score += len(trackers_added) * 10
+    risk_score += len(privacy_flags) * 5
+    risk_score -= len(data_access_removed) * 10
+    risk_score -= len(trackers_removed) * 8
+    risk_score = max(0, min(100, risk_score))
+
+    if risk_score == 0 and not data_access_added and not trackers_added and not privacy_flags:
+        risk_level = "none"
+    elif risk_score <= 20:
+        risk_level = "low"
+    elif risk_score <= 50:
+        risk_level = "medium"
+    elif risk_score <= 75:
+        risk_level = "high"
+    else:
+        risk_level = "critical"
+
+    return {
+        "risk_score": risk_score,
+        "risk_level": risk_level,
+        "data_access_added": data_access_added,
+        "data_access_removed": data_access_removed,
+        "trackers_added": trackers_added,
+        "trackers_removed": trackers_removed,
+        "privacy_flags": privacy_flags,
+    }
+
+
+def generate_security_assessment(result):
+    """Generate security risk assessment from all diff data"""
+    risks = []
+    score = 0
+
+    libs_added = result.get("libraries", {}).get("added", [])
+    libs_removed = result.get("libraries", {}).get("removed", [])
+
+    security_frameworks = {
+        "Security": "low",
+        "CryptoKit": "low",
+        "LocalAuthentication": "low",
+        "DeviceCheck": "low",
+    }
+    dangerous_frameworks = {
+        "JavaScriptCore": "Can execute arbitrary JS code",
+        "WebKit": "Web content rendering — potential XSS/injection",
+        "NetworkExtension": "VPN/proxy — can intercept network traffic",
+        "IOKit": "Low-level hardware access",
+    }
+
+    for lib in libs_added:
+        name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "").replace("libswift", "")
+        if name in dangerous_frameworks:
+            risks.append({
+                "type": "framework",
+                "severity": "warning",
+                "title": f"Added {name}",
+                "detail": dangerous_frameworks[name],
+            })
+            score += 15
+
+    for lib in libs_removed:
+        name = lib.split("/")[-1].replace(".framework", "").replace(".dylib", "").replace("libswift", "")
+        if name in security_frameworks:
+            risks.append({
+                "type": "regression",
+                "severity": "critical",
+                "title": f"Removed {name} framework",
+                "detail": "Security framework removed — possible security downgrade",
+            })
+            score += 25
+
+    all_added_strings = set(result.get("strings", {}).get("added", []))
+    all_removed_strings = set(result.get("strings", {}).get("removed", []))
+
+    ssl_pinning_keywords = ["ssl_pin", "SSLPinning", "TrustKit", "pinned_certificates", "pinnedCertificates",
+                            "evaluateServerTrust", "SecTrustEvaluate", "URLAuthenticationChallenge"]
+    pinning_added = any(any(kw.lower() in s.lower() for kw in ssl_pinning_keywords) for s in all_added_strings)
+    pinning_removed = any(any(kw.lower() in s.lower() for kw in ssl_pinning_keywords) for s in all_removed_strings)
+
+    if pinning_removed and not pinning_added:
+        risks.append({
+            "type": "regression",
+            "severity": "critical",
+            "title": "SSL Pinning possibly removed",
+            "detail": "Certificate pinning strings were removed — network traffic may be interceptable",
+        })
+        score += 30
+    elif pinning_added:
+        risks.append({
+            "type": "improvement",
+            "severity": "info",
+            "title": "SSL Pinning added/updated",
+            "detail": "Certificate pinning strings added — improved MITM protection",
+        })
+
+    antidebug_keywords = ["ptrace", "sysctl", "P_TRACED", "PT_DENY_ATTACH", "csops", "getppid"]
+    debug_removed = any(any(kw in s for kw in antidebug_keywords) for s in all_removed_strings)
+    debug_added = any(any(kw in s for kw in antidebug_keywords) for s in all_added_strings)
+    if debug_removed and not debug_added:
+        risks.append({
+            "type": "regression",
+            "severity": "warning",
+            "title": "Anti-debug checks possibly removed",
+            "detail": "Debug protection strings removed — easier to attach debuggers",
+        })
+        score += 15
+    elif debug_added and not debug_removed:
+        risks.append({
+            "type": "improvement",
+            "severity": "info",
+            "title": "Anti-debug protection added",
+            "detail": "New anti-debugging measures detected",
+        })
+
+    jb_keywords = ["Cydia", "jailbreak", "checkra1n", "unc0ver", "sileo", "/Applications/Cydia.app",
+                    "/private/var/lib/apt", "substrate", "substitute"]
+    jb_removed = any(any(kw.lower() in s.lower() for kw in jb_keywords) for s in all_removed_strings)
+    jb_added = any(any(kw.lower() in s.lower() for kw in jb_keywords) for s in all_added_strings)
+    if jb_removed and not jb_added:
+        risks.append({
+            "type": "regression",
+            "severity": "warning",
+            "title": "Jailbreak detection possibly removed",
+            "detail": "Jailbreak detection strings removed — app may run on compromised devices without checks",
+        })
+        score += 15
+
+    encryption_keywords = ["AES", "RSA", "CCCrypt", "CommonCrypto", "kCCAlgorithm", "SecKeyEncrypt"]
+    enc_changed = any(any(kw in s for kw in encryption_keywords) for s in all_added_strings)
+    enc_removed = any(any(kw in s for kw in encryption_keywords) for s in all_removed_strings)
+    if enc_removed and not enc_changed:
+        risks.append({
+            "type": "regression",
+            "severity": "warning",
+            "title": "Encryption references removed",
+            "detail": "Cryptographic function references removed — possible weakened data protection",
+        })
+        score += 10
+
+    new_api_count = len(result.get("network", {}).get("urls", {}).get("added", []))
+    if new_api_count > 5:
+        risks.append({
+            "type": "expansion",
+            "severity": "warning",
+            "title": f"{new_api_count} new API endpoints",
+            "detail": "Significant expansion of network communication — review new endpoints for data leakage",
+        })
+        score += 10
+    elif new_api_count > 0:
+        risks.append({
+            "type": "expansion",
+            "severity": "info",
+            "title": f"{new_api_count} new API endpoint(s)",
+            "detail": "New network endpoints detected — data may be sent to new servers",
+        })
+
+    score = max(0, min(100, score))
+    if score == 0 and not risks:
+        risk_level = "none"
+    elif score <= 15:
+        risk_level = "low"
+    elif score <= 40:
+        risk_level = "medium"
+    elif score <= 70:
+        risk_level = "high"
+    else:
+        risk_level = "critical"
+
+    return {
+        "risk_score": score,
+        "risk_level": risk_level,
+        "findings": risks,
+    }
+
+
 def diff_binaries(path1, path2, name1, name2):
     result = {
         "file1": {"name": name1, "size": os.path.getsize(path1), "sha256": file_hash(path1)},
@@ -580,7 +923,19 @@ def diff_binaries(path1, path2, name1, name2):
     if removed_strings: changes.append(f"-{len(removed_strings)} strings")
     result["summary"] = ", ".join(changes) if changes else "Minor binary differences"
 
+    result["network"] = analyze_network_diff(strings1, strings2)
+
+    result["privacy"] = analyze_privacy_impact(
+        result["libraries"].get("added", []),
+        result["libraries"].get("removed", []),
+        sorted(list(added_strings)),
+        sorted(list(removed_strings)),
+        result["classes"].get("added", []),
+    )
+
     result["insights"] = generate_insights(result)
+
+    result["security"] = generate_security_assessment(result)
 
     return result
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw } from "lucide-react";
+import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw, Shield, Globe, Eye, AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "").replace(/\/[^/]+$/, "") + "/api";
@@ -151,66 +151,215 @@ export default function BinaryDiff() {
                 {result.strings && <DiffBadge added={result.strings.added_count} removed={result.strings.removed_count} label="Strings" />}
               </div>
 
-              {result.libraries && (result.libraries.added?.length > 0 || result.libraries.removed?.length > 0) && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Library Changes</h3>
-                  {result.libraries.added?.map((lib: string, i: number) => (
-                    <div key={`a${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-emerald-500/5 border border-emerald-500/15">
-                      <Plus className="w-3 h-3 text-emerald-400" /><span className="text-emerald-400">{lib}</span>
+              {/* Security Assessment Panel */}
+              {result.security && (
+                <div className={cn(
+                  "p-4 rounded-xl border-2",
+                  result.security.risk_level === "critical" ? "bg-red-500/5 border-red-500/30" :
+                  result.security.risk_level === "high" ? "bg-orange-500/5 border-orange-500/30" :
+                  result.security.risk_level === "medium" ? "bg-amber-500/5 border-amber-500/30" :
+                  result.security.risk_level === "low" ? "bg-blue-500/5 border-blue-500/30" :
+                  "bg-emerald-500/5 border-emerald-500/30"
+                )}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      Security Assessment
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "text-xs font-bold px-2 py-1 rounded-full uppercase",
+                        result.security.risk_level === "critical" ? "bg-red-500/20 text-red-400" :
+                        result.security.risk_level === "high" ? "bg-orange-500/20 text-orange-400" :
+                        result.security.risk_level === "medium" ? "bg-amber-500/20 text-amber-400" :
+                        result.security.risk_level === "low" ? "bg-blue-500/20 text-blue-400" :
+                        "bg-emerald-500/20 text-emerald-400"
+                      )}>
+                        {result.security.risk_level} risk
+                      </span>
+                      <span className="text-xs text-muted-foreground">{result.security.risk_score}/100</span>
                     </div>
-                  ))}
-                  {result.libraries.removed?.map((lib: string, i: number) => (
-                    <div key={`r${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-red-500/5 border border-red-500/15">
-                      <Minus className="w-3 h-3 text-red-400" /><span className="text-red-400">{lib}</span>
+                  </div>
+                  {result.security.findings?.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {result.security.findings.map((f: any, i: number) => (
+                        <div key={i} className={cn(
+                          "flex items-start gap-2 p-2.5 rounded-lg text-xs border",
+                          f.severity === "critical" ? "bg-red-500/5 border-red-500/20" :
+                          f.severity === "warning" ? "bg-amber-500/5 border-amber-500/20" :
+                          "bg-primary/5 border-primary/20"
+                        )}>
+                          {f.severity === "critical" ? <AlertTriangle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" /> :
+                           f.severity === "warning" ? <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" /> :
+                           f.type === "improvement" ? <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" /> :
+                           <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />}
+                          <div>
+                            <div className={cn(
+                              "font-semibold",
+                              f.severity === "critical" ? "text-red-400" :
+                              f.severity === "warning" ? "text-amber-400" :
+                              f.type === "improvement" ? "text-emerald-400" : "text-primary"
+                            )}>{f.title}</div>
+                            <div className="text-muted-foreground mt-0.5">{f.detail}</div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <div className="text-xs text-emerald-400 flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      No security regressions detected
+                    </div>
+                  )}
                 </div>
               )}
 
-              {result.classes?.added?.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Added Classes ({result.classes.added_count})</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {result.classes.added.map((c: string, i: number) => (
-                      <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">{c}</span>
+              {/* Privacy Impact Panel */}
+              {result.privacy && (
+                <div className={cn(
+                  "p-4 rounded-xl border-2",
+                  result.privacy.risk_level === "critical" ? "bg-red-500/5 border-red-500/30" :
+                  result.privacy.risk_level === "high" ? "bg-orange-500/5 border-orange-500/30" :
+                  result.privacy.risk_level === "medium" ? "bg-amber-500/5 border-amber-500/30" :
+                  result.privacy.risk_level === "low" ? "bg-blue-500/5 border-blue-500/30" :
+                  "bg-emerald-500/5 border-emerald-500/30"
+                )}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Privacy Impact
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "text-xs font-bold px-2 py-1 rounded-full uppercase",
+                        result.privacy.risk_level === "critical" ? "bg-red-500/20 text-red-400" :
+                        result.privacy.risk_level === "high" ? "bg-orange-500/20 text-orange-400" :
+                        result.privacy.risk_level === "medium" ? "bg-amber-500/20 text-amber-400" :
+                        result.privacy.risk_level === "low" ? "bg-blue-500/20 text-blue-400" :
+                        "bg-emerald-500/20 text-emerald-400"
+                      )}>
+                        {result.privacy.risk_level}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{result.privacy.risk_score}/100</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {result.privacy.data_access_added?.map((da: any, i: number) => (
+                      <div key={`da${i}`} className="flex items-center gap-2 text-xs p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                        <Plus className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span className="text-amber-400 font-semibold">{da.framework}</span>
+                        <span className="text-muted-foreground">{da.description}</span>
+                        <span className={cn("ml-auto text-[10px] px-1.5 py-0.5 rounded-full",
+                          da.risk === "high" ? "bg-red-500/20 text-red-400" : "bg-amber-500/20 text-amber-400"
+                        )}>{da.risk}</span>
+                      </div>
                     ))}
+                    {result.privacy.data_access_removed?.map((da: any, i: number) => (
+                      <div key={`dr${i}`} className="flex items-center gap-2 text-xs p-2 rounded bg-emerald-500/5 border border-emerald-500/15">
+                        <Minus className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span className="text-emerald-400 font-semibold">{da.framework}</span>
+                        <span className="text-muted-foreground">{da.description}</span>
+                      </div>
+                    ))}
+                    {result.privacy.trackers_added?.map((t: any, i: number) => (
+                      <div key={`ta${i}`} className="flex items-center gap-2 text-xs p-2 rounded bg-red-500/5 border border-red-500/15">
+                        <Plus className="w-3 h-3 text-red-400 shrink-0" />
+                        <span className="text-red-400 font-semibold">{t.sdk}</span>
+                        <span className="text-muted-foreground">{t.description}</span>
+                      </div>
+                    ))}
+                    {result.privacy.trackers_removed?.map((t: any, i: number) => (
+                      <div key={`tr${i}`} className="flex items-center gap-2 text-xs p-2 rounded bg-emerald-500/5 border border-emerald-500/15">
+                        <Minus className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span className="text-emerald-400 font-semibold">{t.sdk}</span>
+                        <span className="text-muted-foreground">{t.description}</span>
+                      </div>
+                    ))}
+                    {result.privacy.privacy_flags?.map((f: string, i: number) => (
+                      <div key={`pf${i}`} className="flex items-center gap-2 text-xs p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                        <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span className="text-amber-300">{f}</span>
+                      </div>
+                    ))}
+                    {!result.privacy.data_access_added?.length && !result.privacy.trackers_added?.length && !result.privacy.privacy_flags?.length && !result.privacy.data_access_removed?.length && !result.privacy.trackers_removed?.length && (
+                      <div className="text-xs text-emerald-400 flex items-center gap-2">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        No significant privacy changes detected
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {result.classes?.removed?.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Removed Classes ({result.classes.removed_count})</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {result.classes.removed.map((c: string, i: number) => (
-                      <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15">{c}</span>
-                    ))}
+              {/* Network Footprint Panel */}
+              {result.network && (result.network.urls?.added?.length > 0 || result.network.urls?.removed?.length > 0 || result.network.domains?.added?.length > 0 || result.network.domains?.removed?.length > 0) && (
+                <div className="p-4 rounded-xl bg-secondary/5 border-2 border-border/30">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Globe className="w-4 h-4" />
+                    Network Footprint
+                    <span className="text-xs text-muted-foreground font-normal ml-auto">
+                      {result.network.domains?.old_count} → {result.network.domains?.new_count} domains
+                    </span>
+                  </h3>
+                  <div className="space-y-3">
+                    {(result.network.domains?.added?.length > 0 || result.network.domains?.removed?.length > 0) && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Domains</div>
+                        {result.network.domains.added?.map((d: string, i: number) => (
+                          <div key={`da${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-emerald-500/5 border border-emerald-500/15 mb-1">
+                            <Plus className="w-3 h-3 text-emerald-400" /><span className="text-emerald-400">{d}</span>
+                          </div>
+                        ))}
+                        {result.network.domains.removed?.map((d: string, i: number) => (
+                          <div key={`dr${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-red-500/5 border border-red-500/15 mb-1">
+                            <Minus className="w-3 h-3 text-red-400" /><span className="text-red-400">{d}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {result.network.urls?.added?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">New API Endpoints ({result.network.urls.added.length})</div>
+                        <div className="space-y-1">
+                          {result.network.urls.added.map((u: string, i: number) => (
+                            <div key={i} className="text-[10px] font-mono text-emerald-400 p-1.5 rounded bg-emerald-500/5 border border-emerald-500/10 break-all">
+                              + {u}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {result.network.urls?.removed?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Removed Endpoints ({result.network.urls.removed.length})</div>
+                        <div className="space-y-1">
+                          {result.network.urls.removed.map((u: string, i: number) => (
+                            <div key={i} className="text-[10px] font-mono text-red-400 p-1.5 rounded bg-red-500/5 border border-red-500/10 break-all">
+                              - {u}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {result.network.ips?.added?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">New IP Addresses</div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.network.ips.added.map((ip: string, i: number) => (
+                            <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/15">{ip}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {result.classes?.modified?.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground">Modified Classes ({result.classes.modified_count})</h3>
-                  {result.classes.modified.map((cls: any, i: number) => (
-                    <div key={i} className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
-                      <div className="text-xs font-mono font-semibold text-amber-400 mb-1">{cls.class}</div>
-                      {cls.added_methods?.map((m: string, j: number) => (
-                        <div key={`a${j}`} className="text-[10px] font-mono text-emerald-400 pl-2">+ {m}</div>
-                      ))}
-                      {cls.removed_methods?.map((m: string, j: number) => (
-                        <div key={`r${j}`} className="text-[10px] font-mono text-red-400 pl-2">- {m}</div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Insights — Human-readable summary */}
+              {/* Key Insights */}
               {result.insights?.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px]">!</span>
+                    <Info className="w-4 h-4 text-primary" />
                     Key Insights
                   </h3>
                   <div className="space-y-1.5">
@@ -228,30 +377,92 @@ export default function BinaryDiff() {
                 </div>
               )}
 
-              {/* Smart String Categories */}
-              {result.strings?.categories && Object.keys(result.strings.categories).length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-foreground">What Changed (Smart Analysis)</h3>
-                  {Object.entries(result.strings.categories).map(([key, cat]: [string, any]) => (
-                    <div key={key} className="p-3 rounded-lg bg-secondary/10 border border-border/20">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-semibold text-foreground">{cat.label}</span>
-                        {cat.added?.length > 0 && <span className="text-[10px] text-emerald-400">+{cat.added.length}</span>}
-                        {cat.removed?.length > 0 && <span className="text-[10px] text-red-400">-{cat.removed.length}</span>}
+              {/* Library Changes */}
+              {result.libraries && (result.libraries.added?.length > 0 || result.libraries.removed?.length > 0) && (
+                <details className="group" open>
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
+                    Library Changes (+{result.libraries.added?.length || 0} / -{result.libraries.removed?.length || 0})
+                  </summary>
+                  <div className="mt-2 space-y-1">
+                    {result.libraries.added?.map((lib: string, i: number) => (
+                      <div key={`a${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-emerald-500/5 border border-emerald-500/15">
+                        <Plus className="w-3 h-3 text-emerald-400" /><span className="text-emerald-400">{lib}</span>
                       </div>
-                      <div className="space-y-0.5">
-                        {cat.added?.map((s: string, j: number) => (
-                          <div key={`a${j}`} className="text-[10px] font-mono text-emerald-400 break-all pl-2">+ {s}</div>
-                        ))}
-                        {cat.removed?.map((s: string, j: number) => (
-                          <div key={`r${j}`} className="text-[10px] font-mono text-red-400 break-all pl-2">- {s}</div>
-                        ))}
+                    ))}
+                    {result.libraries.removed?.map((lib: string, i: number) => (
+                      <div key={`r${i}`} className="flex items-center gap-2 text-xs font-mono p-1.5 rounded bg-red-500/5 border border-red-500/15">
+                        <Minus className="w-3 h-3 text-red-400" /><span className="text-red-400">{lib}</span>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </details>
               )}
 
+              {/* Classes */}
+              {(result.classes?.added?.length > 0 || result.classes?.removed?.length > 0 || result.classes?.modified?.length > 0) && (
+                <details className="group">
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
+                    Class Changes (+{result.classes.added_count} / -{result.classes.removed_count} / ~{result.classes.modified_count})
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {result.classes.added?.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {result.classes.added.map((c: string, i: number) => (
+                          <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">{c}</span>
+                        ))}
+                      </div>
+                    )}
+                    {result.classes.removed?.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {result.classes.removed.map((c: string, i: number) => (
+                          <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15">{c}</span>
+                        ))}
+                      </div>
+                    )}
+                    {result.classes.modified?.map((cls: any, i: number) => (
+                      <div key={i} className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
+                        <div className="text-xs font-mono font-semibold text-amber-400 mb-1">{cls.class}</div>
+                        {cls.added_methods?.map((m: string, j: number) => (
+                          <div key={`a${j}`} className="text-[10px] font-mono text-emerald-400 pl-2">+ {m}</div>
+                        ))}
+                        {cls.removed_methods?.map((m: string, j: number) => (
+                          <div key={`r${j}`} className="text-[10px] font-mono text-red-400 pl-2">- {m}</div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+
+              {/* Smart String Categories */}
+              {result.strings?.categories && Object.keys(result.strings.categories).length > 0 && (
+                <details className="group" open>
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
+                    What Changed (Smart Analysis)
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {Object.entries(result.strings.categories).map(([key, cat]: [string, any]) => (
+                      <div key={key} className="p-3 rounded-lg bg-secondary/10 border border-border/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-semibold text-foreground">{cat.label}</span>
+                          {cat.added?.length > 0 && <span className="text-[10px] text-emerald-400">+{cat.added.length}</span>}
+                          {cat.removed?.length > 0 && <span className="text-[10px] text-red-400">-{cat.removed.length}</span>}
+                        </div>
+                        <div className="space-y-0.5">
+                          {cat.added?.map((s: string, j: number) => (
+                            <div key={`a${j}`} className="text-[10px] font-mono text-emerald-400 break-all pl-2">+ {s}</div>
+                          ))}
+                          {cat.removed?.map((s: string, j: number) => (
+                            <div key={`r${j}`} className="text-[10px] font-mono text-red-400 break-all pl-2">- {s}</div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+
+              {/* Section Changes */}
               {result.sections?.length > 0 && (
                 <details className="group">
                   <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
@@ -277,6 +488,7 @@ export default function BinaryDiff() {
                   </div>
                 </details>
               )}
+
               {/* Raw strings fallback */}
               {(result.strings?.added_count > 0 || result.strings?.removed_count > 0) && (
                 <details className="group">
