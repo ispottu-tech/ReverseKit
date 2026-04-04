@@ -104,6 +104,206 @@ def extract_binary_from_deb(deb_path):
         return None, None, extract_dir
 
 
+def _extract_info_plist_metadata(data):
+    """Extract Info.plist metadata into _info_plist dict"""
+    import plistlib
+    try:
+        info = plistlib.loads(data)
+        ats = info.get('NSAppTransportSecurity', {})
+        bg_modes = info.get('UIBackgroundModes', [])
+        url_schemes = []
+        for ut in info.get('CFBundleURLTypes', []):
+            url_schemes.extend(ut.get('CFBundleURLSchemes', []))
+        privacy_keys = {k: v for k, v in info.items() if k.startswith('NS') and k.endswith('UsageDescription')}
+        if ats or bg_modes or url_schemes or privacy_keys:
+            return {
+                'app_transport_security': ats,
+                'background_modes': bg_modes,
+                'url_schemes': url_schemes,
+                'privacy_descriptions': privacy_keys,
+                'bundle_id': info.get('CFBundleIdentifier', ''),
+                'min_os': info.get('MinimumOSVersion', ''),
+            }
+    except Exception:
+        pass
+    return None
+
+
+def _extract_entitlements_from_provision(data):
+    """Extract entitlements from embedded.mobileprovision"""
+    import plistlib
+    try:
+        start = data.find(b'<?xml')
+        end = data.find(b'</plist>') + len(b'</plist>')
+        if start >= 0 and end > start:
+            plist = plistlib.loads(data[start:end])
+            return plist.get('Entitlements', {})
+    except Exception:
+        pass
+    return {}
+
+
+def extract_entitlements_from_archive(archive_path, original_name):
+    """Extract entitlements from IPA/deb/zip archives — aggregates all sources"""
+    import plistlib
+    lower = original_name.lower()
+    entitlements = {}
+
+    try:
+        if lower.endswith(".ipa") or lower.endswith(".zip"):
+            import zipfile
+            with zipfile.ZipFile(archive_path, 'r') as zf:
+                for name in zf.namelist():
+                    if name.endswith('.xcent') or 'entitlements' in name.lower():
+                        try:
+                            data = zf.read(name)
+                            parsed = plistlib.loads(data)
+                            entitlements.update(parsed)
+                        except Exception:
+                            pass
+
+                if not entitlements:
+                    for name in zf.namelist():
+                        if name.endswith('embedded.mobileprovision'):
+                            ent = _extract_entitlements_from_provision(zf.read(name))
+                            if ent:
+                                entitlements.update(ent)
+                            break
+
+                for name in zf.namelist():
+                    if name.endswith('Info.plist') and 'Payload/' in name:
+                        meta = _extract_info_plist_metadata(zf.read(name))
+                        if meta:
+                            entitlements['_info_plist'] = meta
+                        break
+
+        elif lower.endswith(".deb"):
+            extract_dir = tempfile.mkdtemp(prefix="diff_ent_")
+            try:
+                subprocess.run(["ar", "x", archive_path], cwd=extract_dir, capture_output=True, timeout=30)
+                data_tar = None
+                for name in os.listdir(extract_dir):
+                    if name.startswith("data.tar"):
+                        data_tar = os.path.join(extract_dir, name)
+                        break
+
+                if data_tar:
+                    if data_tar.endswith(".zst"):
+                        try:
+                            import zstandard
+                            decompressed = data_tar.replace(".zst", "")
+                            with open(data_tar, "rb") as fin:
+                                dctx = zstandard.ZstdDecompressor()
+                                with open(decompressed, "wb") as fout:
+                                    dctx.copy_stream(fin, fout)
+                            data_tar = decompressed
+                        except ImportError:
+                            data_tar = None
+                    elif data_tar.endswith(".xz"):
+                        import lzma
+                        decompressed = data_tar.replace(".xz", "")
+                        with lzma.open(data_tar) as fin:
+                            with open(decompressed, "wb") as fout:
+                                fout.write(fin.read())
+                        data_tar = decompressed
+
+                if data_tar:
+                    import tarfile
+                    with tarfile.open(data_tar) as tf:
+                        for member in tf.getmembers():
+                            mlower = member.name.lower()
+                            if mlower.endswith('.xcent') or 'entitlements' in mlower:
+                                try:
+                                    f = tf.extractfile(member)
+                                    if f:
+                                        parsed = plistlib.loads(f.read())
+                                        entitlements.update(parsed)
+                                except Exception:
+                                    pass
+                            elif mlower.endswith('embedded.mobileprovision') and not entitlements:
+                                try:
+                                    f = tf.extractfile(member)
+                                    if f:
+                                        ent = _extract_entitlements_from_provision(f.read())
+                                        if ent:
+                                            entitlements.update(ent)
+                                except Exception:
+                                    pass
+                            elif mlower.endswith('info.plist') and '_info_plist' not in entitlements:
+                                try:
+                                    f = tf.extractfile(member)
+                                    if f:
+                                        meta = _extract_info_plist_metadata(f.read())
+                                        if meta:
+                                            entitlements['_info_plist'] = meta
+                                except Exception:
+                                    pass
+            finally:
+                shutil.rmtree(extract_dir, ignore_errors=True)
+    except Exception:
+        pass
+
+    return entitlements
+
+
+def diff_entitlements(ent1, ent2):
+    """Compare entitlements between two versions"""
+    all_keys = set(list(ent1.keys()) + list(ent2.keys()))
+    all_keys.discard('_info_plist')
+
+    added = {}
+    removed = {}
+    changed = {}
+    unchanged_count = 0
+
+    for key in sorted(all_keys):
+        v1 = ent1.get(key)
+        v2 = ent2.get(key)
+        if v1 is None and v2 is not None:
+            added[key] = v2
+        elif v2 is None and v1 is not None:
+            removed[key] = v1
+        elif v1 != v2:
+            changed[key] = {"old": v1, "new": v2}
+        else:
+            unchanged_count += 1
+
+    info1 = ent1.get('_info_plist', {})
+    info2 = ent2.get('_info_plist', {})
+    info_changes = {}
+    if info1 or info2:
+        priv1 = info1.get('privacy_descriptions', {})
+        priv2 = info2.get('privacy_descriptions', {})
+        priv_added = {k: v for k, v in priv2.items() if k not in priv1}
+        priv_removed = {k: v for k, v in priv1.items() if k not in priv2}
+        schemes1 = set(info1.get('url_schemes', []))
+        schemes2 = set(info2.get('url_schemes', []))
+        bg1 = set(info1.get('background_modes', []))
+        bg2 = set(info2.get('background_modes', []))
+        ats1 = info1.get('app_transport_security', {})
+        ats2 = info2.get('app_transport_security', {})
+
+        if priv_added or priv_removed or schemes1 != schemes2 or bg1 != bg2 or ats1 != ats2:
+            info_changes = {
+                "privacy_added": {k: str(v) for k, v in priv_added.items()},
+                "privacy_removed": {k: str(v) for k, v in priv_removed.items()},
+                "url_schemes_added": sorted(schemes2 - schemes1),
+                "url_schemes_removed": sorted(schemes1 - schemes2),
+                "background_modes_added": sorted(bg2 - bg1),
+                "background_modes_removed": sorted(bg1 - bg2),
+                "ats_changed": ats1 != ats2,
+            }
+
+    return {
+        "added": {k: str(v) for k, v in added.items()},
+        "removed": {k: str(v) for k, v in removed.items()},
+        "changed": {k: {"old": str(v["old"]), "new": str(v["new"])} for k, v in changed.items()},
+        "unchanged_count": unchanged_count,
+        "info_plist": info_changes,
+        "has_changes": bool(added or removed or changed or info_changes),
+    }
+
+
 def resolve_binary(path, original_name):
     """If path is an archive (.ipa/.deb/.zip), extract the main binary. Otherwise return as-is."""
     lower = original_name.lower()
@@ -971,6 +1171,13 @@ if __name__ == "__main__":
             result["file1"]["extracted_binary"] = real_name1
         if real_name2 != n2:
             result["file2"]["extracted_binary"] = real_name2
+
+        ent1 = extract_entitlements_from_archive(p1, n1)
+        ent2 = extract_entitlements_from_archive(p2, n2)
+        if ent1 or ent2:
+            result["entitlements"] = diff_entitlements(ent1, ent2)
+        else:
+            result["entitlements"] = {"has_changes": False, "added": {}, "removed": {}, "changed": {}, "unchanged_count": 0, "info_plist": {}}
 
         print(json.dumps(result, ensure_ascii=False, default=str))
     except Exception as e:

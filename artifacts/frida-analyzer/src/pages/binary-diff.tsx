@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw, Shield, Globe, Eye, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw, Shield, Globe, Eye, AlertTriangle, CheckCircle, Info, Download, FileText, Key } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "").replace(/\/[^/]+$/, "") + "/api";
@@ -34,6 +34,108 @@ export default function BinaryDiff() {
       setLoading(false);
     }
   }, [file1, file2]);
+
+  const exportJSON = useCallback(() => {
+    if (!result) return;
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `diff-report-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [result]);
+
+  const exportHTML = useCallback(() => {
+    if (!result) return;
+    const esc = (s: any) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const riskColor = (level: string) =>
+      level === "critical" ? "#ef4444" : level === "high" ? "#f97316" : level === "medium" ? "#f59e0b" : level === "low" ? "#3b82f6" : "#10b981";
+
+    const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Binary Diff Report</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0a0e17;color:#e2e8f0;padding:40px;max-width:900px;margin:0 auto}
+h1{font-size:24px;margin-bottom:4px}h2{font-size:16px;margin:24px 0 12px;color:#94a3b8;border-bottom:1px solid #1e293b;padding-bottom:6px}h3{font-size:13px;color:#64748b;margin:12px 0 6px}
+.meta{color:#64748b;font-size:12px;margin-bottom:24px}.panel{padding:16px;border-radius:12px;border:2px solid;margin-bottom:16px}
+.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;text-transform:uppercase}
+.row{display:flex;gap:12px;margin-bottom:12px}.col{flex:1;padding:12px;border-radius:8px;background:#111827;border:1px solid #1e293b}
+.add{color:#34d399}.rem{color:#f87171}.chg{color:#fbbf24}.mono{font-family:ui-monospace,monospace;font-size:11px}.item{padding:6px 8px;border-radius:6px;font-size:11px;margin-bottom:4px;font-family:ui-monospace,monospace}
+.item-add{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);color:#34d399}.item-rem{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);color:#f87171}
+.item-chg{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);color:#fbbf24}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:6px 10px;border-bottom:1px solid #1e293b}th{color:#64748b;font-weight:600}
+</style></head><body>
+<h1>Binary Diff Report</h1>
+<p class="meta">Generated ${new Date().toISOString()} by ReverseKit</p>
+
+<div class="row">
+<div class="col"><div style="font-size:10px;color:#3b82f6;text-transform:uppercase;font-weight:600;margin-bottom:4px">Old</div>
+<div class="mono">${esc(result.file1?.name || "—")}</div>
+<div style="font-size:11px;color:#64748b">${((result.file1?.size || 0) / 1024).toFixed(1)} KB</div></div>
+<div class="col"><div style="font-size:10px;color:#34d399;text-transform:uppercase;font-weight:600;margin-bottom:4px">New</div>
+<div class="mono">${esc(result.file2?.name || "—")}</div>
+<div style="font-size:11px;color:#64748b">${((result.file2?.size || 0) / 1024).toFixed(1)} KB</div></div>
+</div>
+<p style="text-align:center;font-size:13px;margin-bottom:16px">Size: ${result.size_diff > 0 ? "+" : ""}${result.size_diff} bytes (${result.size_diff_pct > 0 ? "+" : ""}${result.size_diff_pct}%) — ${esc(result.summary)}</p>
+
+${result.security ? `<div class="panel" style="border-color:${riskColor(result.security.risk_level)}30;background:${riskColor(result.security.risk_level)}08">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<h3 style="margin:0;color:#e2e8f0;font-size:14px">🛡 Security Assessment</h3>
+<span class="badge" style="background:${riskColor(result.security.risk_level)}30;color:${riskColor(result.security.risk_level)}">${result.security.risk_level} risk — ${result.security.risk_score}/100</span>
+</div>
+${(result.security.findings || []).map((f: any) => `<div class="item item-${f.severity === "critical" ? "rem" : "chg"}"><strong>${esc(f.title)}</strong>: ${esc(f.detail)}</div>`).join("")}
+${!result.security.findings?.length ? '<div class="item item-add">No security regressions detected</div>' : ""}
+</div>` : ""}
+
+${result.privacy ? `<div class="panel" style="border-color:${riskColor(result.privacy.risk_level)}30;background:${riskColor(result.privacy.risk_level)}08">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<h3 style="margin:0;color:#e2e8f0;font-size:14px">👁 Privacy Impact</h3>
+<span class="badge" style="background:${riskColor(result.privacy.risk_level)}30;color:${riskColor(result.privacy.risk_level)}">${result.privacy.risk_level} — ${result.privacy.risk_score}/100</span>
+</div>
+${(result.privacy.data_access_added || []).map((d: any) => `<div class="item item-chg">+ ${esc(d.framework)}: ${esc(d.description)}</div>`).join("")}
+${(result.privacy.trackers_added || []).map((t: any) => `<div class="item item-rem">+ Tracker: ${esc(t.sdk)} — ${esc(t.description)}</div>`).join("")}
+${(result.privacy.data_access_removed || []).map((d: any) => `<div class="item item-add">- ${esc(d.framework)}: ${esc(d.description)}</div>`).join("")}
+</div>` : ""}
+
+${result.entitlements?.has_changes ? `<div class="panel" style="border-color:#8b5cf630;background:#8b5cf608">
+<h3 style="margin:0 0 10px;color:#e2e8f0;font-size:14px">🔑 Entitlements Changes</h3>
+${Object.entries(result.entitlements.added || {}).map(([k, v]) => `<div class="item item-add">+ ${esc(k)}: ${esc(v)}</div>`).join("")}
+${Object.entries(result.entitlements.removed || {}).map(([k, v]) => `<div class="item item-rem">- ${esc(k)}: ${esc(v)}</div>`).join("")}
+${Object.entries(result.entitlements.changed || {}).map(([k, v]: [string, any]) => `<div class="item item-chg">~ ${esc(k)}: ${esc(v.old)} → ${esc(v.new)}</div>`).join("")}
+</div>` : ""}
+
+${result.network && (result.network.domains?.added?.length || result.network.domains?.removed?.length) ? `<h2>🌐 Network Footprint</h2>
+${(result.network.domains?.added || []).map((d: string) => `<div class="item item-add">+ ${esc(d)}</div>`).join("")}
+${(result.network.domains?.removed || []).map((d: string) => `<div class="item item-rem">- ${esc(d)}</div>`).join("")}
+${(result.network.urls?.added || []).map((u: string) => `<div class="item item-add">+ ${esc(u)}</div>`).join("")}
+` : ""}
+
+<h2>Library Changes</h2>
+${(result.libraries?.added || []).map((l: string) => `<div class="item item-add">+ ${esc(l)}</div>`).join("")}
+${(result.libraries?.removed || []).map((l: string) => `<div class="item item-rem">- ${esc(l)}</div>`).join("")}
+${!result.libraries?.added?.length && !result.libraries?.removed?.length ? "<p style='color:#64748b;font-size:12px'>No library changes</p>" : ""}
+
+<h2>Class Changes (+${result.classes?.added_count || 0} / -${result.classes?.removed_count || 0} / ~${result.classes?.modified_count || 0})</h2>
+${(result.classes?.added || []).map((c: string) => `<div class="item item-add">+ ${esc(c)}</div>`).join("")}
+${(result.classes?.removed || []).map((c: string) => `<div class="item item-rem">- ${esc(c)}</div>`).join("")}
+${(result.classes?.modified || []).map((m: any) => `<div class="item item-chg">~ ${esc(m.class)} (+${m.added_methods?.length || 0} / -${m.removed_methods?.length || 0} methods)</div>`).join("")}
+
+<h2>Section Changes</h2>
+${result.sections?.length ? `<table><tr><th>Section</th><th>Change</th><th>Size</th></tr>
+${result.sections.map((s: any) => `<tr><td class="mono">${esc(s.name)}</td><td>${esc(s.change)}</td><td class="mono">${s.change === "resized" ? `${s.old_size?.toLocaleString()} → ${s.new_size?.toLocaleString()} (${s.diff > 0 ? "+" : ""}${s.diff?.toLocaleString()})` : s.size?.toLocaleString() || "—"}</td></tr>`).join("")}
+</table>` : "<p style='color:#64748b;font-size:12px'>No section changes</p>"}
+
+<p style="text-align:center;color:#475569;font-size:11px;margin-top:40px">ReverseKit — iOS Analysis Platform</p>
+</body></html>`;
+
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `diff-report-${Date.now()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [result]);
 
   const DropZone = ({ label, file, setFile, inputRef, color }: { label: string; file: File | null; setFile: (f: File | null) => void; inputRef: any; color: string }) => (
     <div
@@ -138,11 +240,21 @@ export default function BinaryDiff() {
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-secondary/20 border border-border/30 text-center">
-                <span className={cn("text-sm font-semibold", result.size_diff > 0 ? "text-emerald-400" : result.size_diff < 0 ? "text-red-400" : "text-muted-foreground")}>
-                  Size: {result.size_diff > 0 ? "+" : ""}{result.size_diff} bytes ({result.size_diff_pct > 0 ? "+" : ""}{result.size_diff_pct}%)
-                </span>
-                <p className="text-xs text-muted-foreground mt-1">{result.summary}</p>
+              <div className="p-3 rounded-lg bg-secondary/20 border border-border/30 flex items-center justify-between">
+                <div className="text-center flex-1">
+                  <span className={cn("text-sm font-semibold", result.size_diff > 0 ? "text-emerald-400" : result.size_diff < 0 ? "text-red-400" : "text-muted-foreground")}>
+                    Size: {result.size_diff > 0 ? "+" : ""}{result.size_diff} bytes ({result.size_diff_pct > 0 ? "+" : ""}{result.size_diff_pct}%)
+                  </span>
+                  <p className="text-xs text-muted-foreground mt-1">{result.summary}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 ml-4">
+                  <button onClick={exportJSON} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-colors">
+                    <Download className="w-3 h-3" /> JSON
+                  </button>
+                  <button onClick={exportHTML} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 border border-violet-500/20 transition-colors">
+                    <FileText className="w-3 h-3" /> Report
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -349,6 +461,75 @@ export default function BinaryDiff() {
                             <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/15">{ip}</span>
                           ))}
                         </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Entitlements Diff Panel */}
+              {result.entitlements?.has_changes && (
+                <div className="p-4 rounded-xl bg-violet-500/5 border-2 border-violet-500/30">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Key className="w-4 h-4 text-violet-400" />
+                    Entitlements Changes
+                    <span className="text-xs text-muted-foreground font-normal ml-auto">
+                      +{Object.keys(result.entitlements.added || {}).length} / -{Object.keys(result.entitlements.removed || {}).length} / ~{Object.keys(result.entitlements.changed || {}).length}
+                    </span>
+                  </h3>
+                  <div className="space-y-1.5">
+                    {Object.entries(result.entitlements.added || {}).map(([key, val]: [string, any]) => (
+                      <div key={`ea-${key}`} className="flex items-start gap-2 text-xs font-mono p-2 rounded bg-emerald-500/5 border border-emerald-500/15">
+                        <Plus className="w-3 h-3 text-emerald-400 mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-emerald-400 font-semibold">{key}</span>
+                          <span className="text-muted-foreground ml-2">{String(val)}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {Object.entries(result.entitlements.removed || {}).map(([key, val]: [string, any]) => (
+                      <div key={`er-${key}`} className="flex items-start gap-2 text-xs font-mono p-2 rounded bg-red-500/5 border border-red-500/15">
+                        <Minus className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-red-400 font-semibold">{key}</span>
+                          <span className="text-muted-foreground ml-2">{String(val)}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {Object.entries(result.entitlements.changed || {}).map(([key, val]: [string, any]) => (
+                      <div key={`ec-${key}`} className="flex items-start gap-2 text-xs font-mono p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                        <ArrowLeftRight className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
+                        <div className="break-all">
+                          <span className="text-amber-400 font-semibold">{key}</span>
+                          <div className="text-red-400/70 mt-0.5">- {val.old}</div>
+                          <div className="text-emerald-400/70">+ {val.new}</div>
+                        </div>
+                      </div>
+                    ))}
+                    {result.entitlements.info_plist && Object.keys(result.entitlements.info_plist).length > 0 && (
+                      <div className="mt-2 p-3 rounded-lg bg-secondary/10 border border-border/20">
+                        <div className="text-xs font-semibold text-violet-400 mb-2">Info.plist Changes</div>
+                        {Object.entries(result.entitlements.info_plist.privacy_added || {}).map(([k, v]: [string, any]) => (
+                          <div key={`pa-${k}`} className="text-[10px] font-mono text-emerald-400 mb-0.5">+ {k}: {v}</div>
+                        ))}
+                        {Object.entries(result.entitlements.info_plist.privacy_removed || {}).map(([k, v]: [string, any]) => (
+                          <div key={`pr-${k}`} className="text-[10px] font-mono text-red-400 mb-0.5">- {k}: {v}</div>
+                        ))}
+                        {result.entitlements.info_plist.url_schemes_added?.map((s: string, i: number) => (
+                          <div key={`us-${i}`} className="text-[10px] font-mono text-emerald-400 mb-0.5">+ URL Scheme: {s}</div>
+                        ))}
+                        {result.entitlements.info_plist.url_schemes_removed?.map((s: string, i: number) => (
+                          <div key={`ur-${i}`} className="text-[10px] font-mono text-red-400 mb-0.5">- URL Scheme: {s}</div>
+                        ))}
+                        {result.entitlements.info_plist.background_modes_added?.map((m: string, i: number) => (
+                          <div key={`ba-${i}`} className="text-[10px] font-mono text-emerald-400 mb-0.5">+ Background Mode: {m}</div>
+                        ))}
+                        {result.entitlements.info_plist.background_modes_removed?.map((m: string, i: number) => (
+                          <div key={`br-${i}`} className="text-[10px] font-mono text-red-400 mb-0.5">- Background Mode: {m}</div>
+                        ))}
+                        {result.entitlements.info_plist.ats_changed && (
+                          <div className="text-[10px] font-mono text-amber-400 mb-0.5">~ App Transport Security settings changed</div>
+                        )}
                       </div>
                     )}
                   </div>
