@@ -519,14 +519,17 @@ export default function BinaryAnalyzer() {
               <TabsContent value="ghidra" className="mt-4">
                 {result.ghidra?.error && (
                   <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs mb-3">
-                    {result.ghidra.error}
+                    <span className="font-semibold">⚠ Ghidra:</span> {result.ghidra.error}
+                    {!result.ghidra?.source && result.pseudo_c && (
+                      <span className="block mt-1 text-emerald-400">✓ radare2 pseudo-C is available in the "Source Code" tab as fallback.</span>
+                    )}
                   </div>
                 )}
                 <CodeViewer
-                  code={result.ghidra?.source || "// Ghidra decompilation produced no output.\n// Binary may not contain standard function prologues."}
+                  code={result.ghidra?.source || "// Ghidra decompilation produced no output.\n// All processor configurations were attempted (AppleSilicon, v8A, auto-detect).\n// Check the radare2 'Source Code' tab for pseudo-C output."}
                   language="c"
                   filename={`${result.filename || "binary"}_ghidra.c`}
-                  engine={`Ghidra 11.3.2 — ${result.ghidra?.functions_decompiled ?? 0} functions`}
+                  engine={result.ghidra?.engine || `Ghidra 11.3.2 — ${result.ghidra?.functions_decompiled ?? 0} functions`}
                   accentColor="violet"
                   downloadLabel=".c"
                   onDownload={result.ghidra?.source ? () => {
@@ -543,11 +546,14 @@ export default function BinaryAnalyzer() {
               <TabsContent value="retdec" className="mt-4">
                 {result.retdec?.error && (
                   <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs mb-3">
-                    {result.retdec.error}
+                    <span className="font-semibold">⚠ RetDec:</span> {result.retdec.error}
+                    {!result.retdec?.source && result.pseudo_c && (
+                      <span className="block mt-1 text-emerald-400">✓ radare2 pseudo-C is available in the "Source Code" tab as fallback.</span>
+                    )}
                   </div>
                 )}
                 <CodeViewer
-                  code={result.retdec?.source || "// RetDec decompilation produced no output."}
+                  code={result.retdec?.source || "// RetDec decompilation produced no output.\n// Both arch-specific and auto-detect modes were attempted.\n// Check the radare2 'Source Code' tab for pseudo-C output."}
                   language="c"
                   filename={`${result.filename || "binary"}_retdec.c`}
                   engine="RetDec 5.0"

@@ -420,54 +420,140 @@ def extract_thin_arm64(path):
         return path, None
 
 
+def detect_binary_arch(path):
+    """Detect binary architecture from Mach-O header"""
+    try:
+        with open(path, "rb") as f:
+            magic = f.read(4)
+            if magic in (b'\xcf\xfa\xed\xfe', b'\xfe\xed\xfa\xcf'):
+                f.seek(4)
+                cpu_type = struct.unpack('<I', f.read(4))[0]
+                if cpu_type == 0x0100000c:
+                    return "AARCH64", "LE", "64"
+                elif cpu_type == 0x0c:
+                    return "ARM", "LE", "32"
+                elif cpu_type == 0x01000007:
+                    return "x86", "LE", "64"
+            elif magic in (b'\xce\xfa\xed\xfe', b'\xfe\xed\xfa\xce'):
+                f.seek(4)
+                cpu_type = struct.unpack('<I', f.read(4))[0]
+                if cpu_type == 0x0c:
+                    return "ARM", "LE", "32"
+    except Exception:
+        pass
+    return "AARCH64", "LE", "64"
+
+
+def _compute_timeout(path, base=120):
+    """Compute timeout based on file size — larger binaries need more time"""
+    try:
+        size_mb = os.path.getsize(path) / (1024 * 1024)
+        if size_mb > 5:
+            return min(base + int(size_mb * 30), 300)
+        elif size_mb > 1:
+            return min(base + int(size_mb * 15), 240)
+        return base
+    except Exception:
+        return base
+
+
+def _extract_ghidra_error(stdout, stderr):
+    """Extract meaningful error from Ghidra output"""
+    diagnostics = []
+    for line in (stderr or "").splitlines():
+        ll = line.lower()
+        if any(k in ll for k in ["error", "exception", "fail", "unable", "cannot", "invalid"]):
+            clean = line.strip()
+            if clean and len(clean) < 300:
+                diagnostics.append(clean)
+    for line in (stdout or "").splitlines():
+        ll = line.lower()
+        if any(k in ll for k in ["error", "exception", "import failed", "not a valid"]):
+            clean = line.strip()
+            if clean and len(clean) < 300:
+                diagnostics.append(clean)
+    return "; ".join(diagnostics[:5]) if diagnostics else ""
+
+
+GHIDRA_PROCESSOR_CONFIGS = [
+    ["AARCH64:LE:64:AppleSilicon"],
+    ["AARCH64:LE:64:v8A"],
+    [],
+]
+
+
 def ghidra_decompile(path):
-    """Run Ghidra headless decompiler to produce C source code"""
+    """Run Ghidra headless decompiler with auto-retry on different processor configs"""
     thin_path, lipo_dir = extract_thin_arm64(path)
+    timeout = _compute_timeout(thin_path, base=120)
     try:
         if not os.path.exists(GHIDRA_HEADLESS):
             return {"error": "Ghidra not available", "source": ""}
 
-        tmp_dir = tempfile.mkdtemp(prefix="ghidra_")
-        output_file = os.path.join(tmp_dir, "decompiled.c")
-        project_dir = os.path.join(tmp_dir, "project")
-        os.makedirs(project_dir, exist_ok=True)
+        arch, endian, bits = detect_binary_arch(thin_path)
+        last_error = ""
 
-        env = os.environ.copy()
-        env["REVERSEKIT_OUTPUT"] = output_file
+        for attempt, proc_config in enumerate(GHIDRA_PROCESSOR_CONFIGS):
+            tmp_dir = tempfile.mkdtemp(prefix="ghidra_")
+            output_file = os.path.join(tmp_dir, "decompiled.c")
+            project_dir = os.path.join(tmp_dir, "project")
+            os.makedirs(project_dir, exist_ok=True)
 
-        cmd_analyze = [
-            GHIDRA_HEADLESS,
-            project_dir, "ReverseKit",
-            "-import", thin_path,
-            "-postScript", GHIDRA_SCRIPT,
-            "-scriptPath", os.path.dirname(GHIDRA_SCRIPT),
-            "-deleteProject",
-        ]
+            env = os.environ.copy()
+            env["REVERSEKIT_OUTPUT"] = output_file
 
-        r = subprocess.run(cmd_analyze, capture_output=True, text=True, timeout=120, env=env, errors="replace")
+            cmd_analyze = [
+                GHIDRA_HEADLESS,
+                project_dir, "ReverseKit",
+                "-import", thin_path,
+                "-postScript", GHIDRA_SCRIPT,
+                "-scriptPath", os.path.dirname(GHIDRA_SCRIPT),
+                "-deleteProject",
+            ]
 
-        source = ""
-        func_count = 0
-        if os.path.exists(output_file):
-            with open(output_file, "r", errors="replace") as f:
-                source = f.read()
-            for line in r.stdout.splitlines():
-                if "REVERSEKIT_DECOMPILED:" in line:
-                    try:
-                        func_count = int(line.split(":")[1].split()[0])
-                    except Exception:
-                        pass
+            if proc_config:
+                cmd_analyze.extend(["-processor", proc_config[0]])
 
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+            try:
+                r = subprocess.run(
+                    cmd_analyze, capture_output=True, text=True,
+                    timeout=timeout, env=env, errors="replace"
+                )
 
-        return {
-            "source": source[:50000],
-            "functions_decompiled": func_count,
-            "engine": "Ghidra 11.3.2",
-        }
-    except subprocess.TimeoutExpired:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        return {"error": "Ghidra decompilation timed out (120s limit)", "source": ""}
+                source = ""
+                func_count = 0
+                if os.path.exists(output_file):
+                    with open(output_file, "r", errors="replace") as f:
+                        source = f.read()
+                    for line in r.stdout.splitlines():
+                        if "REVERSEKIT_DECOMPILED:" in line:
+                            try:
+                                func_count = int(line.split(":")[1].split()[0])
+                            except Exception:
+                                pass
+
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+
+                if source.strip():
+                    proc_label = proc_config[0] if proc_config else "auto-detect"
+                    return {
+                        "source": source[:50000],
+                        "functions_decompiled": func_count,
+                        "engine": f"Ghidra 11.3.2 ({proc_label})",
+                    }
+
+                last_error = _extract_ghidra_error(r.stdout, r.stderr)
+                if not last_error:
+                    last_error = f"Ghidra produced no output (exit code {r.returncode})"
+
+            except subprocess.TimeoutExpired:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                last_error = f"Ghidra timed out ({timeout}s) on attempt {attempt+1}"
+            except Exception as e:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                last_error = str(e)
+
+        return {"error": last_error or "All Ghidra processor configurations failed", "source": ""}
     except Exception as e:
         return {"error": str(e), "source": ""}
     finally:
@@ -476,37 +562,58 @@ def ghidra_decompile(path):
 
 
 def retdec_decompile(path):
-    """Run RetDec decompiler to produce C source code"""
+    """Run RetDec decompiler with architecture auto-detection and retry"""
     thin_path, lipo_dir = extract_thin_arm64(path)
+    timeout = _compute_timeout(thin_path, base=120)
     try:
         if not os.path.exists(RETDEC_BIN):
             return {"error": "RetDec not available", "source": ""}
 
-        tmp_dir = tempfile.mkdtemp(prefix="retdec_")
-        output_file = os.path.join(tmp_dir, "decompiled.c")
+        arch, endian, bits = detect_binary_arch(thin_path)
 
-        cmd = [
-            RETDEC_BIN,
-            thin_path,
-            "-o", output_file,
+        retdec_configs = [
+            ["--arch", "arm", "--file-format", "macho"],
+            [],
         ]
 
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120, errors="replace")
+        last_error = ""
+        for attempt, extra_args in enumerate(retdec_configs):
+            tmp_dir = tempfile.mkdtemp(prefix="retdec_")
+            output_file = os.path.join(tmp_dir, "decompiled.c")
 
-        source = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", errors="replace") as f:
-                source = f.read()
+            cmd = [RETDEC_BIN, thin_path, "-o", output_file] + extra_args
 
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+            try:
+                r = subprocess.run(
+                    cmd, capture_output=True, text=True,
+                    timeout=timeout, errors="replace"
+                )
 
-        return {
-            "source": source[:50000],
-            "engine": "RetDec 5.0",
-        }
-    except subprocess.TimeoutExpired:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        return {"error": "RetDec decompilation timed out (120s limit)", "source": ""}
+                source = ""
+                if os.path.exists(output_file):
+                    with open(output_file, "r", errors="replace") as f:
+                        source = f.read()
+
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+
+                if source.strip():
+                    return {
+                        "source": source[:50000],
+                        "engine": "RetDec 5.0",
+                    }
+
+                stderr_lines = [l.strip() for l in (r.stderr or "").splitlines()
+                                if any(k in l.lower() for k in ["error", "fail", "unsupported", "cannot"])]
+                last_error = "; ".join(stderr_lines[:3]) if stderr_lines else f"RetDec produced no output (exit {r.returncode})"
+
+            except subprocess.TimeoutExpired:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                last_error = f"RetDec timed out ({timeout}s) on attempt {attempt+1}"
+            except Exception as e:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                last_error = str(e)
+
+        return {"error": last_error or "All RetDec configurations failed", "source": ""}
     except Exception as e:
         return {"error": str(e), "source": ""}
     finally:
@@ -613,7 +720,7 @@ def extract_objc_headers(path):
 
 
 def radare2_full_decompile(path):
-    """Enhanced r2 decompilation — decompile ALL functions with pdc"""
+    """Enhanced r2 decompilation — decompile ALL functions with pdc, prioritize interesting ones"""
     try:
         import r2pipe
         r2 = r2pipe.open(path, flags=["-2"])
@@ -621,13 +728,33 @@ def radare2_full_decompile(path):
         r2.cmd("aaa")
 
         funcs = r2.cmdj("aflj") or []
-        func_list = [{"name": f.get("name",""), "size": f.get("size",0), "addr": hex(f.get("offset",0))} for f in funcs[:100]]
+        func_list = [{"name": f.get("name",""), "size": f.get("size",0), "addr": hex(f.get("offset",0))} for f in funcs[:200]]
 
         entries = r2.cmdj("iej") or []
 
+        priority_keywords = ["init", "hook", "logos", "bypass", "patch", "main", "load", "setup",
+                             "inject", "fake", "spoof", "intercept", "swizzle", "replace", "override"]
+        priority_funcs = []
+        other_funcs = []
+        for fn in funcs:
+            name = fn.get("name", "").lower()
+            if name.startswith("sym.imp."):
+                continue
+            if any(k in name for k in priority_keywords):
+                priority_funcs.append(fn)
+            else:
+                other_funcs.append(fn)
+
+        ordered = priority_funcs + other_funcs
+
         all_pseudo_c = []
         decompiled_count = 0
-        for fn in funcs[:50]:
+        total_chars = 0
+        max_chars = 50000
+
+        for fn in ordered[:80]:
+            if total_chars >= max_chars:
+                break
             name = fn.get("name", "")
             offset = fn.get("offset", 0)
             try:
@@ -635,9 +762,11 @@ def radare2_full_decompile(path):
                 pdc = r2.cmd("pdc") or ""
                 clean = "\n".join(l for l in pdc.splitlines() if not l.startswith(("INFO", "WARN", "ERROR")))
                 if clean.strip():
-                    all_pseudo_c.append(f"// --- {name} @ {hex(offset)} ---")
+                    header = f"// --- {name} @ {hex(offset)} ---"
+                    all_pseudo_c.append(header)
                     all_pseudo_c.append(clean)
                     all_pseudo_c.append("")
+                    total_chars += len(header) + len(clean) + 2
                     decompiled_count += 1
             except Exception:
                 pass
@@ -646,7 +775,7 @@ def radare2_full_decompile(path):
         return {
             "functions": func_list,
             "entrypoints": entries,
-            "pseudo_c": "\n".join(all_pseudo_c)[:30000],
+            "pseudo_c": "\n".join(all_pseudo_c)[:max_chars],
             "functions_decompiled": decompiled_count,
         }
     except Exception as e:
