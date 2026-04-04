@@ -442,6 +442,309 @@ def get_sections(path, parsed=None):
         return {}
 
 
+def get_functions(path, parsed=None):
+    """Extract function names and sizes from binary"""
+    try:
+        main = parsed or parse_binary(path)
+        if main is None:
+            return {}
+        funcs = {}
+        try:
+            for sym in main.symbols:
+                name = str(sym.name)
+                if sym.value > 0 and sym.size > 0 and not name.startswith('_OBJC_'):
+                    funcs[name] = sym.size
+        except Exception:
+            pass
+
+        if not funcs:
+            try:
+                out = subprocess.run(["llvm-nm", "--defined-only", "--print-size", path],
+                                     capture_output=True, text=True, timeout=15)
+                if out.stdout:
+                    for line in out.stdout.strip().split("\n"):
+                        parts = line.strip().split()
+                        if len(parts) >= 4:
+                            try:
+                                size = int(parts[1], 16)
+                                name = parts[3]
+                                if size > 0 and parts[2].lower() in ('t', 'T'):
+                                    funcs[name] = size
+                            except (ValueError, IndexError):
+                                pass
+            except Exception:
+                pass
+        return funcs
+    except Exception:
+        return {}
+
+
+def get_macho_headers(path, parsed=None):
+    """Extract Mach-O header info for comparison"""
+    try:
+        import lief
+        main = parsed or parse_binary(path)
+        if main is None:
+            return {}
+
+        result = {}
+
+        try:
+            header = main.header
+            result["magic"] = str(header.magic).split(".")[-1] if hasattr(header, 'magic') else ""
+            result["cpu_type"] = str(header.cpu_type).split(".")[-1] if hasattr(header, 'cpu_type') else ""
+            result["file_type"] = str(header.file_type).split(".")[-1] if hasattr(header, 'file_type') else ""
+            flags = []
+            try:
+                for f in header.flags_list:
+                    flags.append(str(f).split(".")[-1])
+            except Exception:
+                pass
+            result["flags"] = sorted(flags)
+        except Exception:
+            pass
+
+        load_commands = []
+        try:
+            for cmd in main.commands:
+                cmd_type = str(cmd.command).split(".")[-1]
+                load_commands.append(cmd_type)
+        except Exception:
+            pass
+        result["load_commands"] = sorted(load_commands)
+
+        try:
+            if hasattr(main, 'build_version') and main.build_version:
+                bv = main.build_version
+                result["min_os"] = f"{bv.minos[0]}.{bv.minos[1]}.{bv.minos[2]}" if hasattr(bv, 'minos') else ""
+                result["sdk"] = f"{bv.sdk[0]}.{bv.sdk[1]}.{bv.sdk[2]}" if hasattr(bv, 'sdk') else ""
+                result["platform"] = str(bv.platform).split(".")[-1] if hasattr(bv, 'platform') else ""
+        except Exception:
+            pass
+
+        try:
+            if hasattr(main, 'version_min') and main.version_min:
+                vm = main.version_min
+                result["min_os"] = result.get("min_os") or f"{vm.version[0]}.{vm.version[1]}.{vm.version[2]}"
+                result["sdk"] = result.get("sdk") or f"{vm.sdk[0]}.{vm.sdk[1]}.{vm.sdk[2]}"
+        except Exception:
+            pass
+
+        try:
+            if hasattr(main, 'uuid') and main.uuid:
+                uuid_bytes = main.uuid.uuid
+                result["uuid"] = "-".join(f"{b:02x}" for b in uuid_bytes)
+        except Exception:
+            pass
+
+        result["pie"] = bool("PIE" in result.get("flags", []))
+
+        rpaths = []
+        try:
+            for cmd in main.commands:
+                cmd_type = str(cmd.command).split(".")[-1]
+                if cmd_type == "RPATH" and hasattr(cmd, 'path'):
+                    rpaths.append(str(cmd.path))
+        except Exception:
+            pass
+        result["rpaths"] = rpaths
+
+        return result
+    except Exception:
+        return {}
+
+
+def diff_functions(funcs1, funcs2):
+    """Compare functions between two binaries"""
+    names1 = set(funcs1.keys())
+    names2 = set(funcs2.keys())
+
+    added = sorted(names2 - names1)
+    removed = sorted(names1 - names2)
+
+    modified = []
+    for name in sorted(names1 & names2):
+        s1 = funcs1[name]
+        s2 = funcs2[name]
+        if s1 != s2:
+            modified.append({
+                "name": name,
+                "old_size": s1,
+                "new_size": s2,
+                "diff": s2 - s1,
+                "pct": round(((s2 - s1) / max(s1, 1)) * 100, 1),
+            })
+
+    modified.sort(key=lambda x: abs(x["diff"]), reverse=True)
+
+    return {
+        "added": added[:50],
+        "removed": removed[:50],
+        "modified": modified[:50],
+        "added_count": len(added),
+        "removed_count": len(removed),
+        "modified_count": len(modified),
+        "has_changes": bool(added or removed or modified),
+    }
+
+
+def diff_macho_headers(h1, h2):
+    """Compare Mach-O headers between two binaries"""
+    changes = []
+
+    if h1.get("cpu_type") != h2.get("cpu_type"):
+        changes.append({"field": "CPU Type", "old": h1.get("cpu_type", "—"), "new": h2.get("cpu_type", "—")})
+
+    if h1.get("file_type") != h2.get("file_type"):
+        changes.append({"field": "File Type", "old": h1.get("file_type", "—"), "new": h2.get("file_type", "—")})
+
+    if h1.get("min_os") != h2.get("min_os"):
+        changes.append({"field": "Min OS", "old": h1.get("min_os", "—"), "new": h2.get("min_os", "—")})
+
+    if h1.get("sdk") != h2.get("sdk"):
+        changes.append({"field": "SDK", "old": h1.get("sdk", "—"), "new": h2.get("sdk", "—")})
+
+    if h1.get("platform") != h2.get("platform"):
+        changes.append({"field": "Platform", "old": h1.get("platform", "—"), "new": h2.get("platform", "—")})
+
+    if h1.get("uuid") != h2.get("uuid"):
+        changes.append({"field": "UUID", "old": h1.get("uuid", "—"), "new": h2.get("uuid", "—")})
+
+    if h1.get("pie") != h2.get("pie"):
+        changes.append({"field": "PIE (ASLR)", "old": str(h1.get("pie", False)), "new": str(h2.get("pie", False))})
+
+    flags1 = set(h1.get("flags", []))
+    flags2 = set(h2.get("flags", []))
+    flags_added = sorted(flags2 - flags1)
+    flags_removed = sorted(flags1 - flags2)
+
+    cmds1 = h1.get("load_commands", [])
+    cmds2 = h2.get("load_commands", [])
+    from collections import Counter
+    c1 = Counter(cmds1)
+    c2 = Counter(cmds2)
+    cmds_added = sorted((c2 - c1).elements())
+    cmds_removed = sorted((c1 - c2).elements())
+
+    rpaths1 = set(h1.get("rpaths", []))
+    rpaths2 = set(h2.get("rpaths", []))
+
+    return {
+        "changes": changes,
+        "flags_added": flags_added,
+        "flags_removed": flags_removed,
+        "load_commands_added": cmds_added,
+        "load_commands_removed": cmds_removed,
+        "rpaths_added": sorted(rpaths2 - rpaths1),
+        "rpaths_removed": sorted(rpaths1 - rpaths2),
+        "has_changes": bool(changes or flags_added or flags_removed or cmds_added or cmds_removed or rpaths1 != rpaths2),
+    }
+
+
+def extract_codesign_from_archive(archive_path, original_name):
+    """Extract codesign info from IPA"""
+    import plistlib
+    lower = original_name.lower()
+    info = {}
+
+    try:
+        if lower.endswith(".ipa") or lower.endswith(".zip"):
+            import zipfile
+            with zipfile.ZipFile(archive_path, 'r') as zf:
+                for name in zf.namelist():
+                    if name.endswith('embedded.mobileprovision'):
+                        try:
+                            data = zf.read(name)
+                            start = data.find(b'<?xml')
+                            end = data.find(b'</plist>') + len(b'</plist>')
+                            if start >= 0 and end > start:
+                                plist = plistlib.loads(data[start:end])
+                                info["team_name"] = plist.get("TeamName", "")
+                                info["team_id"] = ""
+                                team_ids = plist.get("TeamIdentifier", [])
+                                if team_ids:
+                                    info["team_id"] = team_ids[0]
+                                info["app_id"] = plist.get("AppIDName", "")
+                                info["profile_name"] = plist.get("Name", "")
+                                info["creation_date"] = str(plist.get("CreationDate", ""))
+                                info["expiration_date"] = str(plist.get("ExpirationDate", ""))
+                                info["provisioned_devices"] = len(plist.get("ProvisionedDevices", []))
+                                info["is_enterprise"] = plist.get("ProvisionsAllDevices", False)
+                                app_id_prefix = plist.get("ApplicationIdentifierPrefix", [])
+                                info["app_id_prefix"] = app_id_prefix[0] if app_id_prefix else ""
+                                ent = plist.get("Entitlements", {})
+                                info["get_task_allow"] = ent.get("get-task-allow", False)
+                        except Exception:
+                            pass
+                        break
+
+                for name in zf.namelist():
+                    if name.endswith('Info.plist') and 'Payload/' in name:
+                        try:
+                            data = zf.read(name)
+                            plist = plistlib.loads(data)
+                            info["bundle_id"] = plist.get("CFBundleIdentifier", "")
+                            info["bundle_version"] = plist.get("CFBundleShortVersionString", "")
+                            info["build_number"] = plist.get("CFBundleVersion", "")
+                        except Exception:
+                            pass
+                        break
+    except Exception:
+        pass
+
+    return info
+
+
+def diff_codesign(cs1, cs2):
+    """Compare codesign info between two versions"""
+    changes = []
+
+    fields = [
+        ("team_name", "Team Name"),
+        ("team_id", "Team ID"),
+        ("app_id", "App ID"),
+        ("app_id_prefix", "App ID Prefix"),
+        ("profile_name", "Profile Name"),
+        ("bundle_id", "Bundle ID"),
+        ("bundle_version", "Version"),
+        ("build_number", "Build"),
+        ("creation_date", "Created"),
+        ("expiration_date", "Expires"),
+    ]
+
+    for key, label in fields:
+        v1 = cs1.get(key, "")
+        v2 = cs2.get(key, "")
+        if v1 and v2 and str(v1) != str(v2):
+            changes.append({"field": label, "old": str(v1), "new": str(v2)})
+
+    flags = []
+    if cs1.get("team_id") and cs2.get("team_id") and cs1["team_id"] != cs2["team_id"]:
+        flags.append("Team ID changed — possible re-sign detected")
+    if cs1.get("get_task_allow") != cs2.get("get_task_allow"):
+        if cs2.get("get_task_allow"):
+            flags.append("get-task-allow enabled — debug/development build")
+        else:
+            flags.append("get-task-allow disabled — production build")
+    if cs1.get("is_enterprise") != cs2.get("is_enterprise"):
+        if cs2.get("is_enterprise"):
+            flags.append("Changed to enterprise distribution")
+        else:
+            flags.append("Changed from enterprise to standard distribution")
+    dev1 = cs1.get("provisioned_devices", 0)
+    dev2 = cs2.get("provisioned_devices", 0)
+    if dev1 != dev2:
+        flags.append(f"Provisioned devices: {dev1} → {dev2}")
+
+    return {
+        "changes": changes,
+        "flags": flags,
+        "old": cs1,
+        "new": cs2,
+        "has_changes": bool(changes or flags),
+    }
+
+
 def file_hash(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -1133,6 +1436,16 @@ def diff_binaries(path1, path2, name1, name2):
         result["classes"].get("added", []),
     )
 
+    funcs1 = get_functions(path1, parsed1)
+    funcs2 = get_functions(path2, parsed2)
+    if funcs1 or funcs2:
+        result["functions"] = diff_functions(funcs1, funcs2)
+
+    headers1 = get_macho_headers(path1, parsed1)
+    headers2 = get_macho_headers(path2, parsed2)
+    if headers1 or headers2:
+        result["headers"] = diff_macho_headers(headers1, headers2)
+
     result["insights"] = generate_insights(result)
 
     result["security"] = generate_security_assessment(result)
@@ -1178,6 +1491,13 @@ if __name__ == "__main__":
             result["entitlements"] = diff_entitlements(ent1, ent2)
         else:
             result["entitlements"] = {"has_changes": False, "added": {}, "removed": {}, "changed": {}, "unchanged_count": 0, "info_plist": {}}
+
+        cs1 = extract_codesign_from_archive(p1, n1)
+        cs2 = extract_codesign_from_archive(p2, n2)
+        if cs1 or cs2:
+            result["codesign"] = diff_codesign(cs1, cs2)
+        else:
+            result["codesign"] = {"has_changes": False, "changes": [], "flags": [], "old": {}, "new": {}}
 
         print(json.dumps(result, ensure_ascii=False, default=str))
     except Exception as e:

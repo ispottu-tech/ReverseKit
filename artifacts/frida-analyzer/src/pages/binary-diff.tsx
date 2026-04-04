@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw, Shield, Globe, Eye, AlertTriangle, CheckCircle, Info, Download, FileText, Key } from "lucide-react";
+import { Upload, Loader2, X, ArrowLeftRight, Plus, Minus, RefreshCw, Shield, Globe, Eye, AlertTriangle, CheckCircle, Info, Download, FileText, Key, Fingerprint, Cpu, Binary } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "").replace(/\/[^/]+$/, "") + "/api";
@@ -119,6 +119,26 @@ ${!result.libraries?.added?.length && !result.libraries?.removed?.length ? "<p s
 ${(result.classes?.added || []).map((c: string) => `<div class="item item-add">+ ${esc(c)}</div>`).join("")}
 ${(result.classes?.removed || []).map((c: string) => `<div class="item item-rem">- ${esc(c)}</div>`).join("")}
 ${(result.classes?.modified || []).map((m: any) => `<div class="item item-chg">~ ${esc(m.class)} (+${m.added_methods?.length || 0} / -${m.removed_methods?.length || 0} methods)</div>`).join("")}
+
+${result.codesign?.has_changes ? `<div class="panel" style="border-color:#ec489930;background:#ec489908">
+<h3 style="margin:0 0 10px;color:#e2e8f0;font-size:14px">🔏 Code Signature</h3>
+${(result.codesign.changes || []).map((ch: any) => `<div class="item item-chg">~ ${esc(ch.field)}: ${esc(ch.old)} → ${esc(ch.new)}</div>`).join("")}
+${(result.codesign.flags || []).map((f: string) => `<div class="item ${f.includes("re-sign") || f.includes("Team ID") ? "item-rem" : "item-add"}">${esc(f)}</div>`).join("")}
+</div>` : ""}
+
+${result.functions?.has_changes ? `<h2>⚡ Function Changes (+${result.functions.added_count} / -${result.functions.removed_count} / ~${result.functions.modified_count})</h2>
+${(result.functions.modified || []).slice(0, 20).map((fn: any) => `<div class="item item-chg">~ ${esc(fn.name)}: ${fn.old_size} → ${fn.new_size} (${fn.diff > 0 ? "+" : ""}${fn.diff}, ${fn.pct > 0 ? "+" : ""}${fn.pct}%)</div>`).join("")}
+${(result.functions.added || []).slice(0, 20).map((fn: string) => `<div class="item item-add">+ ${esc(fn)}</div>`).join("")}
+${(result.functions.removed || []).slice(0, 20).map((fn: string) => `<div class="item item-rem">- ${esc(fn)}</div>`).join("")}
+` : ""}
+
+${result.headers?.has_changes ? `<h2>📦 Mach-O Header Changes</h2>
+${(result.headers.changes || []).map((ch: any) => `<div class="item item-chg">~ ${esc(ch.field)}: ${esc(ch.old)} → ${esc(ch.new)}</div>`).join("")}
+${(result.headers.flags_added || []).map((f: string) => `<div class="item item-add">+ Flag: ${esc(f)}</div>`).join("")}
+${(result.headers.flags_removed || []).map((f: string) => `<div class="item item-rem">- Flag: ${esc(f)}</div>`).join("")}
+${(result.headers.load_commands_added || []).map((c: string) => `<div class="item item-add">+ Load Command: ${esc(c)}</div>`).join("")}
+${(result.headers.load_commands_removed || []).map((c: string) => `<div class="item item-rem">- Load Command: ${esc(c)}</div>`).join("")}
+` : ""}
 
 <h2>Section Changes</h2>
 ${result.sections?.length ? `<table><tr><th>Section</th><th>Change</th><th>Size</th></tr>
@@ -261,6 +281,7 @@ ${result.sections.map((s: any) => `<tr><td class="mono">${esc(s.name)}</td><td>$
                 {result.classes && <DiffBadge added={result.classes.added_count} removed={result.classes.removed_count} label="Classes" />}
                 {result.symbols && <DiffBadge added={result.symbols.added_count} removed={result.symbols.removed_count} label="Symbols" />}
                 {result.strings && <DiffBadge added={result.strings.added_count} removed={result.strings.removed_count} label="Strings" />}
+                {result.functions && <DiffBadge added={result.functions.added_count} removed={result.functions.removed_count} label="Functions" />}
               </div>
 
               {/* Security Assessment Panel */}
@@ -534,6 +555,148 @@ ${result.sections.map((s: any) => `<tr><td class="mono">${esc(s.name)}</td><td>$
                     )}
                   </div>
                 </div>
+              )}
+
+              {/* Codesign Diff Panel */}
+              {result.codesign?.has_changes && (
+                <div className="p-4 rounded-xl bg-pink-500/5 border-2 border-pink-500/30">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Fingerprint className="w-4 h-4 text-pink-400" />
+                    Code Signature
+                  </h3>
+                  <div className="space-y-1.5">
+                    {result.codesign.changes?.map((ch: any, i: number) => (
+                      <div key={i} className="flex items-start gap-2 text-xs font-mono p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                        <ArrowLeftRight className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
+                        <div className="break-all">
+                          <span className="text-amber-400 font-semibold">{ch.field}</span>
+                          <div className="text-red-400/70 mt-0.5">- {ch.old}</div>
+                          <div className="text-emerald-400/70">+ {ch.new}</div>
+                        </div>
+                      </div>
+                    ))}
+                    {result.codesign.flags?.map((flag: string, i: number) => (
+                      <div key={`cf-${i}`} className={cn(
+                        "flex items-center gap-2 text-xs p-2 rounded border",
+                        flag.includes("re-sign") || flag.includes("Team ID changed") ? "bg-red-500/5 border-red-500/15" : "bg-primary/5 border-primary/15"
+                      )}>
+                        <AlertTriangle className={cn("w-3 h-3 shrink-0",
+                          flag.includes("re-sign") || flag.includes("Team ID changed") ? "text-red-400" : "text-primary"
+                        )} />
+                        <span className={flag.includes("re-sign") || flag.includes("Team ID changed") ? "text-red-300" : "text-primary"}>{flag}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Function Diff Panel */}
+              {result.functions?.has_changes && (
+                <details className="group" open>
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-cyan-400" />
+                    Function Changes (+{result.functions.added_count} / -{result.functions.removed_count} / ~{result.functions.modified_count})
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {result.functions.modified?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Modified Functions (by size change)</div>
+                        <div className="space-y-1">
+                          {result.functions.modified.slice(0, 20).map((fn: any, i: number) => (
+                            <div key={i} className="flex items-center gap-3 text-xs font-mono p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                              <span className="text-amber-400 truncate flex-1">{fn.name}</span>
+                              <span className="text-muted-foreground shrink-0">{fn.old_size} → {fn.new_size}</span>
+                              <span className={cn("shrink-0 font-semibold", fn.diff > 0 ? "text-emerald-400" : "text-red-400")}>
+                                {fn.diff > 0 ? "+" : ""}{fn.diff} ({fn.pct > 0 ? "+" : ""}{fn.pct}%)
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {result.functions.added?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">New Functions ({result.functions.added_count})</div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.functions.added.slice(0, 30).map((fn: string, i: number) => (
+                            <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 truncate max-w-[300px]">{fn}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {result.functions.removed?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Removed Functions ({result.functions.removed_count})</div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.functions.removed.slice(0, 30).map((fn: string, i: number) => (
+                            <span key={i} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15 truncate max-w-[300px]">{fn}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </details>
+              )}
+
+              {/* Mach-O Header Diff Panel */}
+              {result.headers?.has_changes && (
+                <details className="group">
+                  <summary className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors flex items-center gap-2">
+                    <Binary className="w-4 h-4 text-orange-400" />
+                    Mach-O Header Changes
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {result.headers.changes?.length > 0 && (
+                      <div className="space-y-1">
+                        {result.headers.changes.map((ch: any, i: number) => (
+                          <div key={i} className="flex items-center gap-3 text-xs font-mono p-2 rounded bg-amber-500/5 border border-amber-500/15">
+                            <span className="text-amber-400 font-semibold w-24 shrink-0">{ch.field}</span>
+                            <span className="text-red-400/70">{ch.old}</span>
+                            <span className="text-muted-foreground">→</span>
+                            <span className="text-emerald-400/70">{ch.new}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {(result.headers.flags_added?.length > 0 || result.headers.flags_removed?.length > 0) && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Flags</div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.headers.flags_added?.map((f: string, i: number) => (
+                            <span key={`fa-${i}`} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">+{f}</span>
+                          ))}
+                          {result.headers.flags_removed?.map((f: string, i: number) => (
+                            <span key={`fr-${i}`} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15">-{f}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {(result.headers.load_commands_added?.length > 0 || result.headers.load_commands_removed?.length > 0) && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">Load Commands</div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.headers.load_commands_added?.map((c: string, i: number) => (
+                            <span key={`ca-${i}`} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">+{c}</span>
+                          ))}
+                          {result.headers.load_commands_removed?.map((c: string, i: number) => (
+                            <span key={`cr-${i}`} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15">-{c}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {(result.headers.rpaths_added?.length > 0 || result.headers.rpaths_removed?.length > 0) && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-1.5">RPaths</div>
+                        {result.headers.rpaths_added?.map((r: string, i: number) => (
+                          <div key={`ra-${i}`} className="text-[10px] font-mono text-emerald-400 mb-0.5">+ {r}</div>
+                        ))}
+                        {result.headers.rpaths_removed?.map((r: string, i: number) => (
+                          <div key={`rr-${i}`} className="text-[10px] font-mono text-red-400 mb-0.5">- {r}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </details>
               )}
 
               {/* Key Insights */}
